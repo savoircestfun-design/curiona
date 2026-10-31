@@ -1,4 +1,21 @@
 // Le thème et la façon de jouer sont deux choix indépendants.
+let themeSearch='';
+let lastMilestone=null;
+function searchThemes(){return `<div class="theme-search" role="search"><label for="theme-search">${icon('compass')}<span class="sr-only">Rechercher un univers ou un sous-thème</span><input id="theme-search" type="search" placeholder="Trouver un thème… plantes, logique, espace" value="${esc(themeSearch)}" autocomplete="off"></label><span class="search-shortcut" aria-hidden="true">/</span></div><p id="theme-search-empty" class="empty" hidden>Aucun thème trouvé. Essaie un autre mot.</p><span id="theme-search-status" class="sr-only" role="status"></span>`;}
+function filterThemeCards(query){
+  themeSearch=query;
+  const normalize=text=>text.toLocaleLowerCase('fr').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const term=normalize(query.trim());let matches=0;
+  document.querySelectorAll('[data-skill-theme]').forEach(card=>{const c=CATEGORIES.find(c=>c.id===card.dataset.skillTheme),text=normalize([c.name,...c.subs].join(' '));const match=!term||term.split(/\s+/).every(word=>text.includes(word));card.hidden=!match;if(match)matches++;});
+  const surprise=document.querySelector('.world-card.surprise');if(surprise)surprise.hidden=!!term;
+  const empty=$('#theme-search-empty');if(empty)empty.hidden=matches>0;
+  const status=$('#theme-search-status');if(status)status.textContent=term?`${matches} univers trouvé${matches>1?'s':''}`:'';
+}
+function milestoneCard(q){
+  if(lastMilestone?.id!==q.id)return '';
+  const parts=[];if(lastMilestone.skill)parts.push(`${q.subtheme} passe au niveau ${lastMilestone.skill}`);if(lastMilestone.player)parts.push(`Explorateur niveau ${lastMilestone.player}`);
+  return parts.length?`<div class="milestone-card" role="status">${icon('spark')}<div><strong>Un nouveau palier !</strong><span>${parts.map(esc).join(' · ')}</span></div></div>`:'';
+}
 const PLAY_STYLES = [
   {id:'learn',label:'Apprendre',icon:'book',description:'Sans chrono, avec une explication après chaque réponse.'},
   {id:'challenge',label:'Défi',icon:'flag',description:'30 secondes par question et un objectif de points.'},

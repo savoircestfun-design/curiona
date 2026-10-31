@@ -1,11 +1,11 @@
-# Validation de Curiona 1.2
+# Validation de Curiona 1.3
 
 Vérifications effectuées le **31 octobre 2026**, sur cet ordinateur Windows. La version livrée est celle de `dist/`, issue de `npm run build`.
 
 ## Résultats
 
 - **42 tests automatisés réussis**, zéro échec (`npm test`).
-- **73 contrôles d’intégration réussis dans Google Chrome**, zéro exception JavaScript (`npm run qa`).
+- **78 contrôles d’intégration réussis dans Google Chrome**, zéro exception JavaScript (`npm run qa`).
 - Banque intégrée : **336 questions**, dont **304 QCM et 32 vrais/faux**. Sept univers de 48 questions, trois sous-thèmes par univers, seize questions par sous-thème et quatre questions par difficulté dans chaque sous-thème.
 - **21 reformulations alternatives** présentes dans le jeu généré, une par sous-thème. Elles conservent les choix et leur bonne réponse.
 - Raccourci du Bureau réellement créé, cible et fichier vérifiés, puis **ouvert avec succès**. La fenêtre obtenue s’intitule « Curiona — La curiosité se cultive - Google Chrome ».
@@ -37,6 +37,8 @@ Captures inspectées sur ordinateur (1440 px) et en **émulation mobile 390 × 8
 Les captures et la liste détaillée des contrôles figurent dans `artifacts/`. Le script ferme son propre Chrome de test ; la fenêtre personnelle ouverte depuis le raccourci reste disponible.
 
 ## Contenu
+
+Les améliorations 1.3 sont aussi contrôlées dans Chrome : recherche par sous-thème sans accent, message sans résultat, restauration de tous les univers après effacement, suggestion de découverte et célébration du passage de niveau directement dans la correction. Les délais des rappels sont présentés en minutes, heures ou jours ; aucun service réseau ni nouvelle donnée personnelle n’est ajouté.
 
 Contrôles de structure et d’unicité des identifiants et énoncés, relecture croisée des explications, vérification des calculs et de points spécialisés à partir de sources primaires ou institutionnelles. Les distracteurs trop caricaturaux ont été remaniés. Les formulations psychologiques précisent les limites et ne servent pas au diagnostic. Les références et limites de chaque lot sont documentées dans `docs/source-notes-*.md`.
 

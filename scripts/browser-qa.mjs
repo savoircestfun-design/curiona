@@ -30,6 +30,13 @@ try{
   check((await evaluate('Curiona.bank().filter(q=>q.variant).length'))===21,'Les 21 reformulations sont intégrées au jeu livré');
   check(await evaluate('document.querySelectorAll(".world-card").length===8'),'Accueil complet et sept univers');
   check(await evaluate('document.querySelectorAll(".subtheme-links button").length===21&&!document.querySelector("button button")'),'Les 21 sous-thèmes sont accessibles directement avec un niveau, sans boutons imbriqués');
+  check(await evaluate('!!document.querySelector(".discovery-card")'),'Une suggestion de découverte accueille le joueur');
+  await evaluate('(()=>{const input=document.querySelector("#theme-search");input.value="geometrie";input.dispatchEvent(new Event("input",{bubbles:true}));})()');
+  check(await evaluate('document.querySelectorAll(".theme-card:not([hidden])").length===1&&!document.querySelector("[data-skill-theme=math]").hidden'),'La recherche trouve les sous-thèmes même sans les accents');
+  await evaluate('(()=>{const input=document.querySelector("#theme-search");input.value="introuvablexyz";input.dispatchEvent(new Event("input",{bubbles:true}));})()');
+  check(await evaluate('!document.querySelector("#theme-search-empty").hidden'),'Une recherche vide explique comment continuer');
+  await evaluate('(()=>{const input=document.querySelector("#theme-search");input.value="";input.dispatchEvent(new Event("input",{bubbles:true}));})()');
+  check(await evaluate('document.querySelectorAll(".theme-card:not([hidden])").length===7'),'Effacer la recherche restaure les sept univers');
   check(!(await evaluate('Curiona.audio().playing')),'La musique attend le lancement volontaire d’une partie');
   await click('[data-action="music"]');await send('Page.reload');await delay(200);
   check((await snapshot()).state.music===false,'Le choix de couper la musique survit au rechargement');
@@ -68,6 +75,7 @@ try{
     s=await snapshot();check(s.session.answers.at(-1).correct,'Raccourci clavier et bonne correction après mélange');
     check(await evaluate('document.querySelector(".answer.correct").textContent.includes("Bonne réponse")'),'Correction explicite avec texte et symbole');
     if(i===0)check(await evaluate('Curiona.audio().playing'),'La musique continue pendant la lecture des explications');
+    if(i===2)check(await evaluate('document.querySelector(".milestone-card").textContent.includes("niveau 2")'),'Le passage de niveau est célébré sans quitter la correction');
     if(i===0){await screenshot('02-correction-desktop');const before=s.state.xp;await click('.answer');check((await snapshot()).state.xp===before,'Double clic : aucun score supplémentaire');}
     await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter'});
   }

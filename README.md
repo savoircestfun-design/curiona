@@ -20,6 +20,8 @@ Cette option d’exécution ne s’applique qu’à ce processus et ne change pa
 
 Choisir d’abord **les thèmes** : un univers complet, un sous-thème précis, tous les univers ou un mélange personnalisé. Les cartes de l’accueil donnent accès directement aux 21 sous-thèmes et à leur niveau. Le bouton **Modifier** dans les réglages permet de changer cette sélection.
 
+La version **1.3** ajoute une recherche rapide dans les univers et sous-thèmes (accents facultatifs, raccourci **/**), une suggestion de découverte selon le carnet et le délai du prochain rappel. Les passages de niveau global et de compétence sont signalés doucement dans la correction, sans interrompre la partie.
+
 Choisir ensuite **la façon de jouer**, qui conserve toujours les thèmes sélectionnés :
 
 - **Apprendre** : questions et explications, sans chrono.
@@ -77,6 +79,7 @@ Le serveur est réservé au développement. Jouer sur son URL crée un espace de
 - `src/engine.mjs` : tirage, scores, répétition espacée, progression, validation des sauvegardes.
 - `src/app.js` : interface et audio synthétisé localement.
 - `src/theme-ui.js` : compétences, choix des thèmes et façons de jouer.
+- `src/discovery-ui.js` : suggestions et indications des prochains rappels.
 - `src/music.js` : musique douce, enveloppes audio et gestion des pauses.
 - `src/variants.mjs` : reformulations associées aux identifiants stables.
 - `dist/data/` : banques de questions éditables.
