@@ -10,6 +10,7 @@ validateBank(bank);if(bank.length<300)throw Error('Au moins 300 questions sont n
 const engine=(await readFile(path.join(root,'src/engine.mjs'),'utf8')).replace(/^export /gm,'');
 const app=await readFile(path.join(root,'src/app.js'),'utf8');
 const music=await readFile(path.join(root,'src/music.js'),'utf8');
+const themeUi=await readFile(path.join(root,'src/theme-ui.js'),'utf8');
 await mkdir(path.join(root,'dist'),{recursive:true});
-await writeFile(path.join(root,'dist/game.bundle.js'),`/* Curiona 1.1 — généré par npm run build. */\n(()=>{\n'use strict';\n${engine}\nconst QUESTIONS=${JSON.stringify(bank)};\n${music}\n${app}\n})();\n`);
+await writeFile(path.join(root,'dist/game.bundle.js'),`/* Curiona 1.2 — généré par npm run build. */\n(()=>{\n'use strict';\n${engine}\nconst QUESTIONS=${JSON.stringify(bank)};\n${music}\n${themeUi}\n${app}\n})();\n`);
 console.log(`${bank.length} questions intégrées. Distribution : ${CATEGORIES.map(c=>c.name+' '+bank.filter(q=>q.category===c.id).length).join(' · ')}`);

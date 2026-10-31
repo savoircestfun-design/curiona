@@ -27,7 +27,7 @@ export const BADGES = [
   {id:'expert',name:'En profondeur',description:'Réussir 10 questions de niveau expert.',icon:'shapes'}
 ];
 export function freshState() {
-  return {version:1,xp:0,points:0,total:0,correct:0,bestStreak:0,reviewCorrect:0,expertCorrect:0,questions:{},topics:{},history:[],badges:[],sound:false,music:true,active:null};
+  return {version:1,xp:0,points:0,total:0,correct:0,bestStreak:0,reviewCorrect:0,expertCorrect:0,questions:{},topics:{},subtopics:{},history:[],badges:[],sound:false,music:true,active:null};
 }
 export function shuffle(items,rng=Math.random) {
   const result=[...items]; for(let i=result.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[result[i],result[j]]=[result[j],result[i]];} return result;
@@ -35,9 +35,13 @@ export function shuffle(items,rng=Math.random) {
 export function shuffledOptions(question,rng=Math.random){return shuffle(question.options.map((text,id)=>({text,id})),rng);}
 export function isCorrect(question,optionId){return optionId===question.correct;}
 export function filterQuestions(bank,config,state,now=Date.now()) {
+  const scoped=config.scope==='single'||config.scope==='custom';
+  const legacyScoped=config.scope===undefined&&['specific','custom'].includes(config.mode);
+  const themes=Array.isArray(config.themes)?config.themes:[];
+  if(config.scope!==undefined&&!['all','single','custom'].includes(config.scope))return [];
   return bank.filter(q=>{
     if(config.difficulty!=='adaptive' && q.difficulty!==Number(config.difficulty)) return false;
-    if(['specific','custom'].includes(config.mode) && !config.themes.some(t=>t===q.category || t===`${q.category}::${q.subtheme}`)) return false;
+    if((scoped||legacyScoped)&&!themes.some(t=>t===q.category || t===`${q.category}::${q.subtheme}`)) return false;
     if(config.mode==='review') {const s=state.questions[q.id]; if(!s || s.nextDue>now) return false;}
     return true;
   });
@@ -50,7 +54,7 @@ export function pickQuestion(bank,state,config,used=[],rng=Math.random,now=Date.
   if(eligible.length>1&&now-latest.time<600000)eligible=eligible.filter(q=>q.id!==latest.id);
   const counts={}; used.forEach(id=>{const c=bank.find(q=>q.id===id)?.category;if(c)counts[c]=(counts[c]||0)+1;});
   const weights=eligible.map(q=>{
-    const s=state.questions[q.id],level=state.topics[q.category]?.level||1;
+    const s=state.questions[q.id],level=state.subtopics?.[`${q.category}::${q.subtheme}`]?.level||(state.subtopics?1:state.topics[q.category]?.level||1);
     let w=1/Math.pow(1+(s?.seen||0),1.4);
     if(config.difficulty==='adaptive') w*=Math.pow(0.16,Math.abs(q.difficulty-level));
     if(s && s.nextDue<=now) w*=s.box===0?4:2;
@@ -67,9 +71,12 @@ export function recordAnswer(state,q,correct,streak,mode,now=Date.now()) {
   const s=state.questions[q.id]||{seen:0,correct:0,box:0,lastSeen:0,nextDue:0};
   s.seen++;if(correct)s.correct++;s.box=correct?Math.min(5,s.box+1):0;s.lastSeen=now;
   s.nextDue=now+(correct?[0,1,3,7,14,30][s.box]*86400000:600000);state.questions[q.id]=s;
-  const t=state.topics[q.category]||{level:1,momentum:0,total:0,correct:0};t.total++;if(correct)t.correct++;
-  t.momentum=correct?Math.max(0,t.momentum)+1:Math.min(0,t.momentum)-1;
-  if(t.momentum>=3){t.level=Math.min(4,t.level+1);t.momentum=0;}if(t.momentum<=-2){t.level=Math.max(1,t.level-1);t.momentum=0;}state.topics[q.category]=t;
+  state.topics ||= {};state.subtopics ||= {};
+  for(const [collection,key] of [[state.topics,q.category],[state.subtopics,`${q.category}::${q.subtheme}`]]){
+    const t=collection[key]||{level:1,momentum:0,total:0,correct:0,xp:0};t.total++;if(correct)t.correct++;t.xp=(t.xp||0)+r.xp;
+    t.momentum=correct?Math.max(0,t.momentum)+1:Math.min(0,t.momentum)-1;
+    if(t.momentum>=3){t.level=Math.min(4,t.level+1);t.momentum=0;}if(t.momentum<=-2){t.level=Math.max(1,t.level-1);t.momentum=0;}collection[key]=t;
+  }
   if(mode==='review'&&correct)state.reviewCorrect++;if(q.difficulty===4&&correct)state.expertCorrect++;
   return r;
 }
@@ -78,6 +85,24 @@ export function earnedBadges(state) {
   return BADGES.filter(b=>conditions[b.id]&&!state.badges.includes(b.id)).map(b=>b.id);
 }
 export function playerLevel(xp){return 1+Math.floor(Math.sqrt(xp/100));}
+function questionSkillTotals(bank,state,theme){
+  const questions=bank.filter(q=>q.category===theme||`${q.category}::${q.subtheme}`===theme);
+  let xp=0,answered=0,correct=0,seen=0,mastered=0;
+  for(const q of questions){
+    const s=state.questions[q.id];if(!s)continue;
+    const attempts=s.seen||0,right=s.correct||0;
+    answered+=attempts;correct+=right;if(attempts>0)seen++;if(s.box>=2)mastered++;
+    xp+=right*reward(q.difficulty,true,1).xp+(attempts-right)*reward(q.difficulty,false,0).xp;
+  }
+  return {xp,answered,correct,seen,mastered,total:questions.length};
+}
+export function skillProgress(bank,state,theme){
+  const totals=questionSkillTotals(bank,state,theme);
+  const profile=theme.includes('::')?state.subtopics?.[theme]:state.topics?.[theme];
+  const xp=profile?.xp??totals.xp,answered=profile?.total??totals.answered,correct=profile?.correct??totals.correct;
+  const level=playerLevel(xp),nextXp=level**2*100,base=(level-1)**2*100,adaptiveLevel=profile?.level||1;
+  return {level,xp,nextXp,progress:Math.max(0,Math.min(100,(xp-base)/(nextXp-base)*100)),answered,correct,accuracy:answered?Math.round(correct/answered*100):0,seen:totals.seen,mastered:totals.mastered,total:totals.total,adaptiveLevel,label:answered?DIFFICULTIES[adaptiveLevel]:'À découvrir'};
+}
 export function validateBank(bank) {
   const ids=new Set(),texts=new Set();for(const q of bank){
     if(ids.has(q.id))throw Error('Identifiant dupliqué : '+q.id);ids.add(q.id);
@@ -100,13 +125,30 @@ export function parseSave(input,bank) {
     if(!ids.has(id))continue;if(!s||!['seen','correct','box','lastSeen','nextDue'].every(k=>number(s[k],k.includes('Seen')||k==='nextDue'?1e14:1e9))||s.correct>s.seen||s.box>5)throw Error('Progression invalide.');
     result.questions[id]={seen:Math.floor(s.seen),correct:Math.floor(s.correct),box:Math.floor(s.box),lastSeen:s.lastSeen,nextDue:s.nextDue};
   }
-  for(const c of CATEGORIES){const t=raw.topics?.[c.id];if(!t)continue;if(!number(t.level,4)||t.level<1||!number(t.total)||!number(t.correct)||t.correct>t.total||!Number.isInteger(t.momentum)||Math.abs(t.momentum)>3)throw Error('Niveau de thème invalide.');result.topics[c.id]={level:Math.floor(t.level),total:Math.floor(t.total),correct:Math.floor(t.correct),momentum:t.momentum};}
+  for(const collection of ['topics','subtopics'])if(raw[collection]!==undefined&&(!raw[collection]||typeof raw[collection]!=='object'||Array.isArray(raw[collection])))throw Error('Compétences sauvegardées invalides.');
+  const readProfile=(profile,theme)=>{
+    const totals=questionSkillTotals(bank,result,theme);
+    if(profile!==undefined){
+      if(!profile||!number(profile.level,4)||profile.level<1||!number(profile.total)||!number(profile.correct)||profile.correct>profile.total||!Number.isInteger(profile.momentum)||Math.abs(profile.momentum)>3||(profile.xp!==undefined&&!number(profile.xp)))throw Error('Niveau de thème invalide.');
+      return {level:Math.floor(profile.level),total:Math.floor(profile.total),correct:Math.floor(profile.correct),momentum:profile.momentum,xp:profile.xp===undefined?totals.xp:Math.floor(profile.xp)};
+    }
+    // Les anciens carnets gardent les réussites et l'XP. L'ordre des réponses
+    // manque : on ne prétend pas reconstruire une série adaptative passée.
+    return totals.answered?{level:1,momentum:0,total:totals.answered,correct:totals.correct,xp:totals.xp}:null;
+  };
+  for(const c of CATEGORIES){
+    const profile=readProfile(raw.topics?.[c.id],c.id);if(profile)result.topics[c.id]=profile;
+    for(const sub of c.subs){const key=`${c.id}::${sub}`,subprofile=readProfile(raw.subtopics?.[key],key);if(subprofile)result.subtopics[key]=subprofile;}
+  }
   if(!Array.isArray(raw.history)||raw.history.length>100)throw Error('Historique invalide.');
   result.history=raw.history.map(h=>{
     if(!h||!MODES.some(m=>m.id===h.mode)||!['score','correct','total','xp','date','target'].every(k=>number(h[k],k==='date'?1e14:1e9))||h.correct>h.total||!Array.isArray(h.answers)||h.answers.length>50)throw Error('Partie invalide.');
     const answers=h.answers.map(a=>{if(!a||!ids.has(a.id)||typeof a.correct!=='boolean')throw Error('Réponse invalide.');return{id:a.id,correct:a.correct};});
     if(answers.length!==h.total||answers.filter(a=>a.correct).length!==h.correct||new Set(answers.map(a=>a.id)).size!==answers.length)throw Error('Historique incohérent.');
-    return {mode:h.mode,score:h.score,correct:h.correct,total:h.total,xp:h.xp,date:h.date,target:h.target,abandoned:!!h.abandoned,answers};
+    const entry={mode:h.mode,score:h.score,correct:h.correct,total:h.total,xp:h.xp,date:h.date,target:h.target,abandoned:!!h.abandoned,answers};
+    const config=h.config,validThemes=new Set(CATEGORIES.flatMap(c=>[c.id,...c.subs.map(sub=>`${c.id}::${sub}`)]));
+    if(config&&typeof config==='object'&&config.mode===h.mode&&['all','single','custom'].includes(config.scope)&&['adaptive',1,2,3,4].includes(config.difficulty)&&[8,12,20,50].includes(config.count)&&Array.isArray(config.themes)&&config.themes.length<=28&&config.themes.every(theme=>validThemes.has(theme))&&new Set(config.themes).size===config.themes.length&&(config.scope==='all'||config.themes.length>0)&&(config.scope!=='single'||config.themes.length===1))entry.config={mode:config.mode,scope:config.scope,themes:[...config.themes],difficulty:config.difficulty,count:config.count};
+    return entry;
   });
   result.sound=raw.sound===true;result.music=raw.music!==false;result.badges=BADGES.filter(b=>Array.isArray(raw.badges)&&raw.badges.includes(b.id)).map(b=>b.id);
   // Une sauvegarde importée reprend le carnet, jamais un script ou une session arbitraire.

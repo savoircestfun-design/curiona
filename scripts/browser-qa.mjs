@@ -29,6 +29,7 @@ try{
   check((await evaluate('Curiona.info().questions'))===336,'Chrome ouvre 336 questions en file:// avec réseau coupé');
   check((await evaluate('Curiona.bank().filter(q=>q.variant).length'))===21,'Les 21 reformulations sont intégrées au jeu livré');
   check(await evaluate('document.querySelectorAll(".world-card").length===8'),'Accueil complet et sept univers');
+  check(await evaluate('document.querySelectorAll(".subtheme-links button").length===21&&!document.querySelector("button button")'),'Les 21 sous-thèmes sont accessibles directement avec un niveau, sans boutons imbriqués');
   check(!(await evaluate('Curiona.audio().playing')),'La musique attend le lancement volontaire d’une partie');
   await click('[data-action="music"]');await send('Page.reload');await delay(200);
   check((await snapshot()).state.music===false,'Le choix de couper la musique survit au rechargement');
@@ -36,7 +37,15 @@ try{
   await click('[data-action="sound"]');check((await snapshot()).state.sound===true,'Activation des sons discrets');await click('[data-action="sound"]');check((await snapshot()).state.sound===false,'Désactivation des sons persistée');
   await screenshot('01-accueil-desktop');
   check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Accueil ordinateur sans débordement');
-  await click('[data-category="animals"]');await select('#difficulty',4);await select('#subtheme-select','Insectes');await select('#question-count',20);
+  await click('[data-category="nature"]');
+  check(await evaluate('document.querySelector("#setup-title").textContent==="Nature & jardin"&&!document.querySelector("#setup-dialog").textContent.includes("Général")'),'Choisir Nature ouvre directement ses réglages, sans mode Général ambigu');
+  for(const mode of ['challenge','relax','review','learn']){await click(`[data-action="switch-mode"][data-mode="${mode}"]`);check(await evaluate('document.querySelector("#setup-title").textContent==="Nature & jardin"&&document.querySelector("[data-theme-key=nature]").getAttribute("aria-pressed")==="true"'),'Changer la façon de jouer conserve Nature : '+mode);}
+  await screenshot('09-reglages-nature-desktop');
+  await click('[data-action="choose-subtheme"][data-theme-key="nature::Plantes"]');
+  check(await evaluate('document.querySelector("#setup-title").textContent==="Plantes"&&document.querySelector("[data-setup-skill]").dataset.setupSkill==="nature::Plantes"'),'Sélection précise : titre et compétence Plantes cohérents');
+  await click('[data-action="close-setup"]');await click('[data-action="subtheme"][data-theme-key="nature::Arbres"]');
+  check(await evaluate('document.querySelector("#setup-title").textContent==="Arbres"'),'Un sous-thème de l’accueil ouvre directement la bonne sélection');await click('[data-action="close-setup"]');
+  await click('[data-category="animals"]');await select('#difficulty',4);await click('[data-action="choose-subtheme"][data-theme-key="animals::Insectes"]');await select('#question-count',20);
   check(await evaluate('document.querySelector("#availability").textContent.includes("4 questions disponibles")'),'Filtre sous-thème expert : quatre questions, avertissement de partie raccourcie');
   await click('[data-action="start"]');
   let s=await snapshot();check(s.session.limit===4,'La longueur respecte le nombre de questions filtrées');
@@ -64,6 +73,8 @@ try{
   }
   check(new Set(ids).size===4,'Aucun doublon jusqu’à épuisement du filtre');s=await snapshot();check(s.view==='result'&&s.result.correct===4&&s.result.total===4,'Bilan après épuisement');
   check(s.result.score===175+185+195+205&&s.result.xp===180,'Score expert et bonus de série exacts');
+  check(s.state.subtopics['animals::Insectes'].xp===180&&s.state.topics.animals.xp===180&&!s.state.subtopics['animals::Faune'],'La compétence Insectes progresse avec son univers, sans modifier Faune');
+  await click('[data-action="replay"]');check(await evaluate('document.querySelector("#setup-title").textContent==="Insectes"&&document.querySelector("#difficulty").value==="4"'),'Rejouer conserve le sous-thème et la difficulté');await click('[data-action="close-setup"]');
   await screenshot('03-bilan-desktop');
   await delay(900);check(await evaluate('!Curiona.audio().playing&&Curiona.audio().activeVoices===0'),'La musique s’arrête proprement en fin de partie');
   check(s.state.badges.includes('first'),'Badge de première partie attribué');
@@ -83,18 +94,24 @@ try{
   await evaluate('window.__exportBlob=null;window.__oldCreate=URL.createObjectURL;URL.createObjectURL=b=>{window.__exportBlob=b;return window.__oldCreate(b);};');await click('[data-action="export"]');
   check(await evaluate('(async()=>{const save=JSON.parse(await window.__exportBlob.text());return save.app==="curiona"&&save.state.xp===Curiona.snapshot().state.xp;})()'),'Export JSON contient la progression exacte');
   await click('[data-action="setup"][data-mode="custom"]');
-  for(const cat of ['animals','nature','math','mind','science','world','tech'])await click(`[data-theme="${cat}"]`);
   check(await evaluate('document.querySelector("[data-action=start]").disabled'),'Mélange vide : départ désactivé');
-  await click('[data-theme="tech::Programmation"]');await select('#difficulty',3);check(await evaluate('document.querySelector("#availability").textContent.includes("4 questions disponibles")'),'Mode personnalisé : sous-thème précis et difficulté cumulés');await click('[data-action="close-setup"]');
+  await click('details[data-cat="tech"] summary');await click('[data-theme="tech::Programmation"]');await select('#difficulty',3);check(await evaluate('document.querySelector("#availability").textContent.includes("4 questions disponibles")'),'Mode personnalisé : sous-thème précis et difficulté cumulés');await click('[data-action="switch-mode"][data-mode="relax"]');check(await evaluate('document.querySelector("#availability").textContent.includes("4 questions disponibles")'),'Passer en Détente conserve le mélange personnalisé');await click('[data-action="close-setup"]');
   await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});await screenshot('04-accueil-mobile');
   check(await evaluate('document.querySelector(".resume-banner").getBoundingClientRect().top>=document.querySelector(".nav").getBoundingClientRect().bottom'),'Bannière de reprise mobile sous la navigation, sans chevauchement');
+  await click('[data-action="subtheme"][data-theme-key="nature::Jardinage"]');await select('#difficulty','adaptive');
+  check(await evaluate('document.querySelector("#setup-dialog").scrollWidth<=document.querySelector("#setup-dialog").clientWidth&&document.querySelector("#setup-title").textContent==="Jardinage"'),'Réglages mobiles du sous-thème lisibles sans débordement horizontal');
+  check(await evaluate('(()=>{const r=document.querySelector("#setup-dialog [data-action=start]").getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight;})()'),'Le bouton Commencer reste visible sur mobile sans faire défiler les réglages');await screenshot('10-reglages-jardinage-mobile');await click('[data-action="close-setup"]');
   check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Accueil mobile 390 px sans débordement');await click('[data-action="resume"]');check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Question mobile sans débordement');await screenshot('05-question-mobile');
   s=await snapshot();const mobileQ=bank.find(q=>q.id===s.session.current.id);await click(`[data-answer="${mobileQ.correct}"]`);await screenshot('06-correction-mobile');
   check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Correction mobile sans débordement');
   await click('[data-action="stats"]');await screenshot('07-statistiques-mobile');check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Statistiques et historique mobiles sans débordement');
   await click('[data-action="help"]');check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Carnet de route mobile sans débordement');
   await send('Emulation.setDeviceMetricsOverride',{width:1440,height:1080,deviceScaleFactor:1,mobile:false});await click('[data-action="stats"]');await screenshot('08-statistiques-desktop');
-  await click('[data-action="home"]');await click('[data-action="setup"][data-mode="challenge"]');await select('#difficulty',1);await click('[data-action="start"]');await click('#accept-confirm');
+  await click('[data-action="home"]');await click('[data-action="subtheme"][data-theme-key="nature::Jardinage"]');await click('[data-action="switch-mode"][data-mode="relax"]');await select('#difficulty',1);await click('[data-action="start"]');await click('#accept-confirm');
+  s=await snapshot();check(s.session.config.mode==='relax'&&s.session.config.scope==='single'&&s.session.config.themes[0]==='nature::Jardinage'&&bank.find(q=>q.id===s.session.current.id).subtheme==='Jardinage','Détente joue réellement le sous-thème choisi, sans élargir aux autres univers');
+  await click('[data-action="pause"]');await send('Page.reload');await delay(200);s=await snapshot();check(s.session.config.scope==='single'&&s.session.config.themes[0]==='nature::Jardinage','Le thème précis reste associé à la partie après rechargement');
+  await click('[data-action="setup"][data-mode="challenge"]');await select('#difficulty',1);await click('[data-action="start"]');await click('#accept-confirm');
+  s=await snapshot();check(s.session.config.themes[0]==='nature::Jardinage'&&bank.find(q=>q.id===s.session.current.id).subtheme==='Jardinage','Passer au Défi conserve Jardinage jusque dans les questions tirées');
   await send('Emulation.setVirtualTimePolicy',{policy:'advance',budget:31000,maxVirtualTimeTaskStarvationCount:10000});await delay(300);
   s=await snapshot();check(s.session.current.answered&&s.session.current.selected===-1&&s.session.answers.at(-1).correct===false,'Expiration réelle du chrono Chrome : correction ouverte, réponse incorrecte unique');
   await send('Emulation.setVirtualTimePolicy',{policy:'pause'});

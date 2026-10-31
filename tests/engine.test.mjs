@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   CATEGORIES, BADGES, freshState, shuffle, shuffledOptions, isCorrect,
   filterQuestions, pickQuestion, reward, recordAnswer, earnedBadges,
-  playerLevel, validateBank, parseSave
+  playerLevel, validateBank, parseSave, skillProgress
 } from '../src/engine.mjs';
 import nature from '../dist/data/nature.js';
 import sciences from '../dist/data/sciences.js';
@@ -139,6 +139,75 @@ test('le niveau de joueur est stable aux seuils et croît avec les XP', () => {
   assert.equal(playerLevel(900), 4);
 });
 
+test('chaque sous-thème acquiert ses propres XP et son propre niveau adaptatif', () => {
+  const state = freshState();
+  const calcul = bank.find(q => q.category === 'math' && q.subtheme === 'Calcul' && q.difficulty === 1);
+  const logique = bank.find(q => q.category === 'math' && q.subtheme === 'Logique' && q.difficulty === 1);
+  for (let i = 0; i < 3; i++) recordAnswer(state, calcul, true, i + 1, 'specific', 1_000 + i);
+  assert.equal(state.topics.math.xp, 90);
+  assert.equal(state.subtopics['math::Calcul'].xp, 90);
+  assert.equal(state.subtopics['math::Calcul'].level, 2);
+  assert.equal(state.subtopics['math::Calcul'].total, 3);
+  assert.equal(state.subtopics['math::Logique'], undefined);
+  for (let i = 0; i < 2; i++) recordAnswer(state, logique, false, 0, 'challenge', 2_000 + i);
+  assert.equal(state.topics.math.xp, 106);
+  assert.equal(state.subtopics['math::Calcul'].level, 2);
+  assert.equal(state.subtopics['math::Calcul'].correct, 3);
+  assert.equal(state.subtopics['math::Logique'].xp, 16);
+  assert.equal(state.subtopics['math::Logique'].total, 2);
+  assert.equal(state.subtopics['math::Logique'].correct, 0);
+  assert.equal(state.subtopics['math::Logique'].level, 1);
+});
+
+test('la compétence indique le niveau XP et la consolidation du thème demandé', () => {
+  const state = freshState();
+  const calcul = bank.find(q => q.category === 'math' && q.subtheme === 'Calcul' && q.difficulty === 1);
+  for (let i = 0; i < 4; i++) recordAnswer(state, calcul, true, i + 1, 'relax', 1_000 + i);
+  const detail = skillProgress(bank, state, 'math::Calcul');
+  assert.equal(detail.xp, 120);
+  assert.equal(detail.level, 2);
+  assert.equal(detail.nextXp, 400);
+  assert.ok(Math.abs(detail.progress - 100 * 20 / 300) < 1e-8);
+  assert.equal(detail.answered, 4);
+  assert.equal(detail.correct, 4);
+  assert.equal(detail.accuracy, 100);
+  assert.equal(detail.seen, 1);
+  assert.equal(detail.mastered, 1);
+  assert.equal(detail.total, 16);
+  assert.equal(detail.adaptiveLevel, 2);
+  assert.equal(skillProgress(bank, state, 'math').total, 48);
+  assert.equal(skillProgress(bank, state, 'math').xp, 120);
+  const untouched = skillProgress(bank, state, 'math::Logique');
+  assert.equal(untouched.level, 1);
+  assert.equal(untouched.xp, 0);
+  assert.equal(untouched.answered, 0);
+  assert.equal(untouched.seen, 0);
+  assert.equal(untouched.label, 'À découvrir');
+});
+
+test('le tirage adaptatif utilise le sous-thème plutôt que la moyenne de son univers', () => {
+  const state = freshState();
+  const fixture = [1, 2, 3, 4].map(difficulty => ({ ...question, id: `precise-${difficulty}`, subtheme: 'Calcul', difficulty }));
+  state.topics.math = { level: 4 };
+  state.subtopics['math::Calcul'] = { level: 1 };
+  const cfg = config({ scope: 'single', themes: ['math::Calcul'] });
+  assert.equal(pickQuestion(fixture, state, cfg, [], () => 0.5, 1_000).difficulty, 1);
+  state.subtopics['math::Calcul'].level = 4;
+  state.topics.math.level = 1;
+  assert.equal(pickQuestion(fixture, state, cfg, [], () => 0.5, 1_000).difficulty, 4);
+});
+
+test('un sous-thème non exploré commence débutant même lorsque son univers est avancé', () => {
+  const state = freshState();
+  const fixture = [1, 2, 3, 4].map(difficulty => ({ ...question, id: `unexplored-${difficulty}`, subtheme: 'Logique', difficulty }));
+  state.topics.math = { level: 4, momentum: 0, total: 30, correct: 29, xp: 1_200 };
+  state.subtopics['math::Calcul'] = { level: 4, momentum: 0, total: 30, correct: 29, xp: 1_200 };
+  const cfg = config({ scope: 'single', themes: ['math::Logique'] });
+  assert.equal(state.subtopics['math::Logique'], undefined);
+  assert.equal(skillProgress(bank, state, 'math::Logique').adaptiveLevel, 1);
+  assert.equal(pickQuestion(fixture, state, cfg, [], () => 0.5, 1_000).difficulty, 1);
+});
+
 test('les filtres de difficulté restent stricts, y compris en révision', () => {
   const state = freshState();
   for (const q of bank) state.questions[q.id] = { nextDue: 0 };
@@ -180,6 +249,50 @@ test('général et détente donnent accès au mélange complet indépendamment d
   for (const mode of ['general', 'relax', 'challenge']) {
     assert.equal(filterQuestions(bank, config({ mode, themes: ['math'] }), state).length, 336);
   }
+});
+
+test('une portée précise reste appliquée dans tous les modes, y compris défi, détente et révision', () => {
+  const state = freshState();
+  for (const q of bank) state.questions[q.id] = { nextDue: 0 };
+  for (const mode of ['general', 'specific', 'custom', 'review', 'challenge', 'relax']) {
+    const selected = filterQuestions(bank, config({ mode, scope: 'single', themes: ['nature::Plantes'] }), state, 1);
+    assert.equal(selected.length, 16, mode);
+    assert.ok(selected.every(q => q.category === 'nature' && q.subtheme === 'Plantes'), mode);
+    const expert = filterQuestions(bank, config({ mode, scope: 'single', themes: ['nature::Plantes'], difficulty: 4 }), state, 1);
+    assert.equal(expert.length, 4, mode);
+    assert.ok(expert.every(q => q.difficulty === 4), mode);
+  }
+});
+
+test('les portées tous les thèmes, univers entier et mélange personnalisé ont des ensembles explicites', () => {
+  const state = freshState();
+  for (const q of bank) state.questions[q.id] = { nextDue: 0 };
+  for (const mode of ['general', 'specific', 'custom', 'review', 'challenge', 'relax']) {
+    assert.equal(filterQuestions(bank, config({ mode, scope: 'all', themes: ['math'] }), state, 1).length, 336, mode);
+    const universe = filterQuestions(bank, config({ mode, scope: 'single', themes: ['nature'] }), state, 1);
+    assert.equal(universe.length, 48, mode);
+    assert.ok(universe.every(q => q.category === 'nature'), mode);
+    const custom = filterQuestions(bank, config({ mode, scope: 'custom', themes: ['math', 'math::Calcul', 'science::Astronomie'] }), state, 1);
+    assert.equal(custom.length, 64, mode);
+    assert.equal(new Set(custom.map(q => q.id)).size, 64, mode);
+    assert.deepEqual(filterQuestions(bank, config({ mode, scope: 'single', themes: [] }), state, 1), [], mode);
+    assert.deepEqual(filterQuestions(bank, config({ mode, scope: 'custom', themes: [] }), state, 1), [], mode);
+  }
+});
+
+test('un défi sur un sous-thème épuise son filtre sans répéter ni élargir aux autres thèmes', () => {
+  const state = freshState(), used = [], random = rng(57);
+  const cfg = config({ mode: 'challenge', scope: 'single', themes: ['nature::Plantes'], difficulty: 4 });
+  for (let i = 0; i < 4; i++) {
+    const next = pickQuestion(bank, state, cfg, used, random);
+    assert.ok(next);
+    assert.equal(next.category, 'nature');
+    assert.equal(next.subtheme, 'Plantes');
+    assert.equal(next.difficulty, 4);
+    assert.ok(!used.includes(next.id));
+    used.push(next.id);
+  }
+  assert.equal(pickQuestion(bank, state, cfg, used, random), null);
 });
 
 test('une partie épuise un filtre court sans aucune répétition puis s’arrête proprement', () => {
@@ -241,8 +354,9 @@ test('une erreur interrompt l’élan adaptatif sans baisser à elle seule un ni
   assert.equal(state.topics.math.momentum, 1);
 });
 
-test('le tirage adaptatif favorise le niveau propre à chaque thème', () => {
+test('un objet ancien sans suivi des sous-thèmes garde le niveau adaptatif de son univers', () => {
   const state = freshState();
+  delete state.subtopics;
   const fixture = [1, 2, 3, 4].map(difficulty => ({ ...question, id: `fixture-${difficulty}`, difficulty }));
   state.topics.math = { level: 1 };
   assert.equal(pickQuestion(fixture, state, config(), [], () => 0.5, 1_000).difficulty, 1);
@@ -303,6 +417,61 @@ test('export JSON et import restaurent le carnet, les réponses, les badges et l
   imported.history[0].answers[0].correct = false;
   assert.equal(serialized.state.questions[question.id].seen, 1);
   assert.equal(serialized.state.history[0].answers[0].correct, true);
+});
+
+test('les anciens carnets reconstruisent les compétences précises sans perdre la progression globale', () => {
+  const legacy = freshState();
+  legacy.xp = 744;
+  legacy.points = 2_500;
+  legacy.total = 5;
+  legacy.correct = 3;
+  legacy.sound = true;
+  legacy.music = false;
+  legacy.topics.math = { level: 3, momentum: 1, total: 5, correct: 3 };
+  legacy.questions[question.id] = { seen: 5, correct: 3, box: 2, lastSeen: 1_000_000, nextDue: 2_000_000 };
+  delete legacy.subtopics;
+  const imported = parseSave(saveEnvelope(legacy), bank);
+  assert.equal(imported.xp, 744);
+  assert.equal(imported.points, 2_500);
+  assert.equal(imported.total, 5);
+  assert.equal(imported.correct, 3);
+  assert.equal(imported.sound, true);
+  assert.equal(imported.music, false);
+  assert.deepEqual(imported.questions, legacy.questions);
+  assert.equal(imported.topics.math.level, 3);
+  assert.equal(imported.topics.math.xp, 3 * reward(question.difficulty, true, 1).xp + 2 * 8);
+  const precise = imported.subtopics[`${question.category}::${question.subtheme}`];
+  assert.equal(precise.total, 5);
+  assert.equal(precise.correct, 3);
+  assert.equal(precise.xp, 3 * reward(question.difficulty, true, 1).xp + 2 * 8);
+  assert.equal(skillProgress(bank, imported, `${question.category}::${question.subtheme}`).seen, 1);
+});
+
+test('les compétences précises et les choix de la partie sont conservés par export et import', () => {
+  const state = freshState();
+  recordAnswer(state, question, true, 1, 'challenge', 1_000_000);
+  const savedConfig = { mode: 'challenge', scope: 'single', themes: ['math::Calcul'], difficulty: 'adaptive', count: 12 };
+  state.history = [{ mode: 'challenge', score: 100, correct: 1, total: 1, xp: 30, date: 1_000_000, target: 1_200, abandoned: true, answers: [{ id: question.id, correct: true }], config: savedConfig }];
+  const imported = parseSave(saveEnvelope(state), bank);
+  assert.deepEqual(imported.topics, state.topics);
+  assert.deepEqual(imported.subtopics, state.subtopics);
+  assert.deepEqual(imported.history[0].config, savedConfig);
+  imported.subtopics['math::Calcul'].xp = 999;
+  imported.history[0].config.themes.push('animals');
+  assert.notEqual(state.subtopics['math::Calcul'].xp, 999);
+  assert.deepEqual(savedConfig.themes, ['math::Calcul']);
+});
+
+test('les compétences précises invalides sont refusées plutôt que chargées silencieusement', () => {
+  const valid = { level: 1, momentum: 0, total: 2, correct: 1, xp: 38 };
+  for (const change of [
+    { level: 5 }, { level: 0 }, { xp: -1 }, { xp: Infinity },
+    { total: -1 }, { correct: 3 }, { momentum: 4 }
+  ]) {
+    const state = freshState();
+    state.subtopics['math::Calcul'] = { ...valid, ...change };
+    assert.throws(() => parseSave({ app: 'curiona', version: 1, state }, bank));
+  }
 });
 
 test('une sauvegarde provenant d’une autre application ou version est refusée', () => {

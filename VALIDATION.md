@@ -1,18 +1,22 @@
-# Validation de Curiona 1.1
+# Validation de Curiona 1.2
 
 Vérifications effectuées le **31 octobre 2026**, sur cet ordinateur Windows. La version livrée est celle de `dist/`, issue de `npm run build`.
 
 ## Résultats
 
-- **32 tests automatisés réussis**, zéro échec (`npm test`).
-- **57 contrôles d’intégration réussis dans Google Chrome**, zéro exception JavaScript (`npm run qa`).
+- **42 tests automatisés réussis**, zéro échec (`npm test`).
+- **73 contrôles d’intégration réussis dans Google Chrome**, zéro exception JavaScript (`npm run qa`).
 - Banque intégrée : **336 questions**, dont **304 QCM et 32 vrais/faux**. Sept univers de 48 questions, trois sous-thèmes par univers, seize questions par sous-thème et quatre questions par difficulté dans chaque sous-thème.
 - **21 reformulations alternatives** présentes dans le jeu généré, une par sous-thème. Elles conservent les choix et leur bonne réponse.
 - Raccourci du Bureau réellement créé, cible et fichier vérifiés, puis **ouvert avec succès**. La fenêtre obtenue s’intitule « Curiona — La curiosité se cultive - Google Chrome ».
 
 ## Logique et apprentissage
 
-Les tests couvrent le mélange des choix en conservant leurs identifiants, les scores et bonus plafonnés, les XP après erreur, les seuils de niveaux, l’indépendance de l’adaptatif par univers et les délais de rappel de 10 minutes puis 1/3/7/14/30 jours. Les filtres stricts de difficulté, les catégories, sous-thèmes et unions personnalisées sont vérifiés.
+Les tests couvrent le mélange des choix en conservant leurs identifiants, les scores et bonus plafonnés, les XP après erreur, les seuils de niveaux, l’indépendance de la compétence et de l’adaptatif par sous-thème et les délais de rappel de 10 minutes puis 1/3/7/14/30 jours. Les filtres stricts de difficulté, les catégories, sous-thèmes et unions personnalisées sont vérifiés.
+
+La version 1.2 affiche une compétence avec niveau et XP pour chaque univers et chacun des 21 sous-thèmes. Les niveaux sont accessibles depuis les cartes, les réglages, les questions et les statistiques. L’XP d’un sous-thème ne modifie pas ses voisins. Un sous-thème jamais exploré commence au niveau débutant, même si son univers a déjà progressé. L’import et la lecture des anciens carnets reconstruisent l’XP précise depuis les réponses enregistrées tout en conservant le niveau global, les points, les badges, la musique et les historiques.
+
+Les thèmes sont séparés des quatre façons de jouer. Les contrôles Chrome vérifient que Nature conserve son titre en Apprendre, Défi, Détente et Révision, que les liens de sous-thèmes ouvrent directement leur sélection, et que le rejeu garde thème et difficulté. Des parties réelles en Détente puis en Défi conservent Jardinage jusque dans les questions tirées ; le filtre reste associé à une partie rechargée. Les réglages mobiles n’ont pas de débordement horizontal et le bouton Commencer reste visible pendant que leur contenu défile.
 
 Le tirage de la banque entière ne répète aucun identifiant dans une partie. Un petit filtre s’épuise proprement. La dernière question rencontrée est écartée au départ suivant lorsqu’un autre choix existe et que la rencontre est récente. Les questions déjà très vues sont défavorisées. Les huit objectifs de badges sont contrôlés, y compris les conditions qui ne doivent pas les débloquer.
 

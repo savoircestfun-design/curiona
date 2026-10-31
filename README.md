@@ -1,6 +1,6 @@
 # Curiona — La curiosité se cultive
 
-Un jeu éducatif original en français : **336 questions**, **7 univers**, **21 sous-thèmes**, **4 difficultés** et **6 modes**. Sans compte, sans abonnement, sans appel à une IA. Les explications et toutes les ressources nécessaires sont intégrées au dossier.
+Un jeu éducatif original en français : **336 questions**, **7 univers**, **21 sous-thèmes**, **4 difficultés** et **4 façons de jouer** combinables avec les thèmes choisis. Sans compte, sans abonnement, sans appel à une IA. Les explications et toutes les ressources nécessaires sont intégrées au dossier.
 
 ## Jouer
 
@@ -18,12 +18,16 @@ Cette option d’exécution ne s’applique qu’à ce processus et ne change pa
 
 ## Jouer à son rythme
 
-- **Général — Grand mélange** : tous les univers.
-- **Spécifique — À la carte** : un univers complet ou un sous-thème.
-- **Personnalisé — Sur mesure** : plusieurs univers ou sous-thèmes combinés.
-- **Révision — Le bon rappel** : les questions déjà rencontrées dont le rappel est arrivé.
-- **Défi — Cap sur le défi** : 30 secondes par question ; objectif de 100 points par question prévue.
-- **Détente — À ton rythme** : tous les univers sans chrono.
+Choisir d’abord **les thèmes** : un univers complet, un sous-thème précis, tous les univers ou un mélange personnalisé. Les cartes de l’accueil donnent accès directement aux 21 sous-thèmes et à leur niveau. Le bouton **Modifier** dans les réglages permet de changer cette sélection.
+
+Choisir ensuite **la façon de jouer**, qui conserve toujours les thèmes sélectionnés :
+
+- **Apprendre** : questions et explications, sans chrono.
+- **Défi** : 30 secondes par question ; objectif de 100 points par question prévue.
+- **Détente** : une exploration tranquille, sans chrono.
+- **Révision** : les questions déjà rencontrées dont le rappel est arrivé, parmi les thèmes choisis.
+
+Par exemple, cliquer **Nature & jardin → Jardinage → Défi** propose un défi de jardinage. Le titre, les questions, la reprise de partie et **Rejouer** gardent cette sélection. Les anciens intitulés Général / Spécifique / Personnalisé ne sont plus présentés comme des façons de jouer concurrentes du thème choisi.
 
 Une partie compte 8, 12, 20 ou 50 questions. Un filtre trop petit réduit sa longueur, avec un message avant le départ. Il n’y a jamais de doublon au cours d’une même partie. Les questions peu vues et les notions à revoir sont favorisées lors du tirage.
 
@@ -37,7 +41,11 @@ Depuis la version **1.1**, une **musique douce originale** accompagne les questi
 
 Une bonne réponse rapporte 100 / 125 / 150 / 175 points selon la difficulté, plus un bonus de série allant jusqu’à 50 points. Elle donne 30 / 35 / 40 / 45 XP. Une erreur donne 8 XP et ne retire rien. Le niveau joueur vaut `1 + floor(sqrt(XP / 100))`.
 
-L’adaptatif suit chaque univers séparément, à partir du niveau débutant : trois réussites consécutives le font monter d’un cran ; deux erreurs consécutives le font redescendre. Le tirage favorise le niveau ciblé sans exclure totalement les autres niveaux. Le choix explicite d’une difficulté constitue, lui, un filtre strict.
+Depuis la version **1.2**, chaque univers et chacun des **21 sous-thèmes** possède aussi son propre niveau de compétence, sa jauge d’expérience, sa précision et ses notions consolidées. Une réponse en Jardinage fait progresser Jardinage et Nature & jardin, sans ajouter d’XP à Plantes ou à Arbres. Le niveau de compétence utilise les mêmes seuils d’XP que le niveau global. Il reflète la progression dans le jeu ; la précision et la consolidation complètent cet indicateur.
+
+La **difficulté conseillée** est distincte du niveau de compétence : l’adaptatif suit chaque sous-thème séparément, à partir du niveau débutant. Trois réussites consécutives le font monter d’un cran ; deux erreurs consécutives le font redescendre. Le tirage favorise le niveau ciblé sans exclure totalement les autres niveaux. Le choix explicite d’une difficulté constitue, lui, un filtre strict.
+
+Les carnets antérieurs sont migrés automatiquement : l’expérience par thème précis est reconstituée depuis les réponses déjà enregistrées. Le niveau global, les points, les badges, les historiques et les réglages audio sont conservés. L’ordre des anciennes réponses ne permettant pas de retrouver les séries par sous-thème, leur difficulté adaptative démarre prudemment au niveau débutant, puis évolue avec les nouvelles réponses.
 
 Une erreur programme un rappel à **10 minutes** ; une réussite espace les rappels à **1, 3, 7, 14 puis 30 jours**, selon le nombre de réussites consécutives sur cette question. Deux réussites successives consolident une notion. Un oubli ramène ce compteur à zéro. La Révision n’inclut que les rappels arrivés à échéance. **21 questions proposent une formulation alternative** lors d’une nouvelle rencontre ; ce ne sont pas des questions supplémentaires.
 
@@ -68,11 +76,12 @@ Le serveur est réservé au développement. Jouer sur son URL crée un espace de
 
 - `src/engine.mjs` : tirage, scores, répétition espacée, progression, validation des sauvegardes.
 - `src/app.js` : interface et audio synthétisé localement.
+- `src/theme-ui.js` : compétences, choix des thèmes et façons de jouer.
 - `src/music.js` : musique douce, enveloppes audio et gestion des pauses.
 - `src/variants.mjs` : reformulations associées aux identifiants stables.
 - `dist/data/` : banques de questions éditables.
 - `dist/game.bundle.js` : fichier généré, à reconstruire après une modification du contenu ou du code.
-- `dist/style.css`, `dist/icon.svg` : présentation et illustrations vectorielles locales.
+- `dist/style.css`, `dist/themes.css`, `dist/icon.svg` : présentation et illustrations vectorielles locales.
 - `docs/source-notes-*.md` : sources consultées et limites éditoriales.
 
 ## Ajouter des questions
