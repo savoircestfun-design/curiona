@@ -1,11 +1,11 @@
-# Validation de Curiona 1.0
+# Validation de Curiona 1.1
 
 Vérifications effectuées le **31 octobre 2026**, sur cet ordinateur Windows. La version livrée est celle de `dist/`, issue de `npm run build`.
 
 ## Résultats
 
-- **31 tests automatisés réussis**, zéro échec (`npm test`).
-- **46 contrôles d’intégration réussis dans Google Chrome**, zéro exception JavaScript (`npm run qa`).
+- **32 tests automatisés réussis**, zéro échec (`npm test`).
+- **57 contrôles d’intégration réussis dans Google Chrome**, zéro exception JavaScript (`npm run qa`).
 - Banque intégrée : **336 questions**, dont **304 QCM et 32 vrais/faux**. Sept univers de 48 questions, trois sous-thèmes par univers, seize questions par sous-thème et quatre questions par difficulté dans chaque sous-thème.
 - **21 reformulations alternatives** présentes dans le jeu généré, une par sous-thème. Elles conservent les choix et leur bonne réponse.
 - Raccourci du Bureau réellement créé, cible et fichier vérifiés, puis **ouvert avec succès**. La fenêtre obtenue s’intitule « Curiona — La curiosité se cultive - Google Chrome ».
@@ -25,6 +25,8 @@ Les tests lancent le véritable exécutable Google Chrome avec un profil tempora
 Parcours contrôlés : accueil, choix d’un sous-thème expert, avertissement de partie raccourcie, réponse au clavier, correction après mélange, garde contre le double clic, épuisement, bilan, calcul des points, badge, rechargement, reprise de session, export et import réel via l’entrée fichier, confirmation d’import, rejet d’un fichier corrompu, révision et mélange personnalisé vide.
 
 Le chrono est contrôlé en fonctionnement, en correction, à l’accueil et lorsque le document est masqué. Son expiration est testée grâce au temps virtuel de Chrome : une seule erreur est enregistrée et la correction reste à lire. Le réglage du son est vérifié dans les deux sens.
+
+La musique douce de la version 1.1 est contrôlée séparément des effets : attente d’un lancement volontaire, démarrage pendant les questions, présence d’un signal à faible niveau, maintien pendant les corrections, coupure avec fondu et nettoyage des notes, reprise, basculements rapides sans accumulation, pause hors de l’onglet et arrêt en fin de partie. Le choix reste mémorisé après rechargement et l’import des anciens carnets demeure compatible. Le niveau du signal est mesuré dans Chrome ; ce contrôle ne mesure pas le volume physique des enceintes de l’utilisateur.
 
 Captures inspectées sur ordinateur (1440 px) et en **émulation mobile 390 × 844** : accueil, question, correction, bilan et statistiques. Aucun débordement horizontal détecté sur les vues contrôlées. Un chevauchement de la bannière de reprise avec la navigation mobile a été corrigé et fait l’objet d’une assertion dédiée. Les corrections distinguent les réponses par texte, symbole et bordure, en plus de la couleur.
 

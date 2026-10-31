@@ -27,7 +27,7 @@ export const BADGES = [
   {id:'expert',name:'En profondeur',description:'Réussir 10 questions de niveau expert.',icon:'shapes'}
 ];
 export function freshState() {
-  return {version:1,xp:0,points:0,total:0,correct:0,bestStreak:0,reviewCorrect:0,expertCorrect:0,questions:{},topics:{},history:[],badges:[],sound:false,active:null};
+  return {version:1,xp:0,points:0,total:0,correct:0,bestStreak:0,reviewCorrect:0,expertCorrect:0,questions:{},topics:{},history:[],badges:[],sound:false,music:true,active:null};
 }
 export function shuffle(items,rng=Math.random) {
   const result=[...items]; for(let i=result.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[result[i],result[j]]=[result[j],result[i]];} return result;
@@ -108,7 +108,7 @@ export function parseSave(input,bank) {
     if(answers.length!==h.total||answers.filter(a=>a.correct).length!==h.correct||new Set(answers.map(a=>a.id)).size!==answers.length)throw Error('Historique incohérent.');
     return {mode:h.mode,score:h.score,correct:h.correct,total:h.total,xp:h.xp,date:h.date,target:h.target,abandoned:!!h.abandoned,answers};
   });
-  result.sound=raw.sound===true;result.badges=BADGES.filter(b=>Array.isArray(raw.badges)&&raw.badges.includes(b.id)).map(b=>b.id);
+  result.sound=raw.sound===true;result.music=raw.music!==false;result.badges=BADGES.filter(b=>Array.isArray(raw.badges)&&raw.badges.includes(b.id)).map(b=>b.id);
   // Une sauvegarde importée reprend le carnet, jamais un script ou une session arbitraire.
   result.active=null;return result;
 }

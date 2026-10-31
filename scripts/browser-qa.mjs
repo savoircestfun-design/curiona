@@ -29,6 +29,10 @@ try{
   check((await evaluate('Curiona.info().questions'))===336,'Chrome ouvre 336 questions en file:// avec réseau coupé');
   check((await evaluate('Curiona.bank().filter(q=>q.variant).length'))===21,'Les 21 reformulations sont intégrées au jeu livré');
   check(await evaluate('document.querySelectorAll(".world-card").length===8'),'Accueil complet et sept univers');
+  check(!(await evaluate('Curiona.audio().playing')),'La musique attend le lancement volontaire d’une partie');
+  await click('[data-action="music"]');await send('Page.reload');await delay(200);
+  check((await snapshot()).state.music===false,'Le choix de couper la musique survit au rechargement');
+  await click('[data-action="music"]');
   await click('[data-action="sound"]');check((await snapshot()).state.sound===true,'Activation des sons discrets');await click('[data-action="sound"]');check((await snapshot()).state.sound===false,'Désactivation des sons persistée');
   await screenshot('01-accueil-desktop');
   check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Accueil ordinateur sans débordement');
@@ -36,6 +40,17 @@ try{
   check(await evaluate('document.querySelector("#availability").textContent.includes("4 questions disponibles")'),'Filtre sous-thème expert : quatre questions, avertissement de partie raccourcie');
   await click('[data-action="start"]');
   let s=await snapshot();check(s.session.limit===4,'La longueur respecte le nombre de questions filtrées');
+  await delay(1100);
+  const music=await evaluate('Curiona.audio()');
+  check(music.playing&&music.contextState==='running'&&music.activeVoices>0,'La musique douce joue pendant les questions, même avec les effets coupés');
+  check(music.outputRms>0.00001&&music.outputRms<0.15,'Signal musical présent à faible niveau, sans silence ni niveau excessif');
+  const beforeMusicToggle=(await snapshot()).session.score;
+  await click('[data-action="music"]');await delay(900);
+  check(await evaluate('!Curiona.audio().playing&&Curiona.audio().activeVoices===0'),'Bouton musique : fondu et nettoyage des notes en cours');
+  await click('[data-action="music"]');await delay(200);
+  check((await evaluate('Curiona.audio().playing'))&&(await snapshot()).session.score===beforeMusicToggle,'Réactiver la musique conserve la question et le score');
+  for(let i=0;i<6;i++)await click('[data-action="music"]');await delay(200);
+  check(await evaluate('Curiona.audio().playing&&Curiona.audio().activeVoices<24'),'Coupures et reprises rapides sans accumulation de voix');
   const ids=[],bank=await evaluate('Curiona.bank()');
   for(let i=0;i<4;i++){
     s=await snapshot();const q=bank.find(q=>q.id===s.session.current.id);ids.push(q.id);
@@ -43,18 +58,20 @@ try{
     const answerIndex=s.session.current.order.indexOf(q.correct);await send('Input.dispatchKeyEvent',{type:'keyDown',key:String(answerIndex+1),code:'Digit'+(answerIndex+1),windowsVirtualKeyCode:49+answerIndex});await send('Input.dispatchKeyEvent',{type:'keyUp',key:String(answerIndex+1)});
     s=await snapshot();check(s.session.answers.at(-1).correct,'Raccourci clavier et bonne correction après mélange');
     check(await evaluate('document.querySelector(".answer.correct").textContent.includes("Bonne réponse")'),'Correction explicite avec texte et symbole');
+    if(i===0)check(await evaluate('Curiona.audio().playing'),'La musique continue pendant la lecture des explications');
     if(i===0){await screenshot('02-correction-desktop');const before=s.state.xp;await click('.answer');check((await snapshot()).state.xp===before,'Double clic : aucun score supplémentaire');}
     await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter'});
   }
   check(new Set(ids).size===4,'Aucun doublon jusqu’à épuisement du filtre');s=await snapshot();check(s.view==='result'&&s.result.correct===4&&s.result.total===4,'Bilan après épuisement');
   check(s.result.score===175+185+195+205&&s.result.xp===180,'Score expert et bonus de série exacts');
   await screenshot('03-bilan-desktop');
+  await delay(900);check(await evaluate('!Curiona.audio().playing&&Curiona.audio().activeVoices===0'),'La musique s’arrête proprement en fin de partie');
   check(s.state.badges.includes('first'),'Badge de première partie attribué');
   const savedXp=s.state.xp;await send('Page.reload');await delay(200);check((await snapshot()).state.xp===savedXp,'La progression survit au rechargement dans Chrome');
   await click('[data-action="setup"][data-mode="challenge"]');await select('#question-count',8);await select('#difficulty',1);await click('[data-action="start"]');await delay(550);s=await snapshot();check(s.session.remaining<30,'Chronomètre du Défi actif');
   const q=bank.find(q=>q.id===s.session.current.id);await click(`[data-answer="${q.correct}"]`);const paused=(await snapshot()).session.remaining;await delay(1100);check((await snapshot()).session.remaining===paused,'Chronomètre immobile pendant la correction');
   await click('[data-action="next"]');await delay(200);
-  await evaluate('Object.defineProperty(document,"hidden",{configurable:true,get:()=>true});document.dispatchEvent(new Event("visibilitychange"));');const hiddenTime=(await snapshot()).session.remaining;await delay(450);check((await snapshot()).session.remaining===hiddenTime,'Chronomètre immobile lorsque le document est masqué');await evaluate('delete document.hidden;document.dispatchEvent(new Event("visibilitychange"));');
+  await evaluate('Object.defineProperty(document,"hidden",{configurable:true,get:()=>true});document.dispatchEvent(new Event("visibilitychange"));');const hiddenTime=(await snapshot()).session.remaining;await delay(900);check((await snapshot()).session.remaining===hiddenTime,'Chronomètre immobile lorsque le document est masqué');check(await evaluate('!Curiona.audio().playing&&Curiona.audio().activeVoices===0'),'Onglet masqué : la musique se met en pause et libère ses notes');await evaluate('delete document.hidden;document.dispatchEvent(new Event("visibilitychange"));');await delay(150);check(await evaluate('Curiona.audio().playing'),'La musique reprend au retour dans l’onglet');
   await click('[data-action="pause"]');const time=(await snapshot()).session.remaining;await delay(400);check((await snapshot()).session.remaining===time,'Chronomètre immobile à l’accueil');
   await send('Page.reload');await delay(200);s=await snapshot();check(s.session&&s.session.answers.length===1,'Exploration en cours restaurée après rechargement');await click('[data-action="resume"]');
   const wrongQ=bank.find(q=>q.id===(s.session.current.id));await click(`[data-answer="${(wrongQ.correct+1)%wrongQ.options.length}"]`);s=await snapshot();check(s.session.answers.at(-1).correct===false&&s.session.current.reward.xp===8,'Erreur : explication et 8 XP');

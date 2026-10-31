@@ -22,6 +22,20 @@ function rng(seed = 2026) {
 }
 const question = bank.find(q => q.category === 'math' && q.difficulty === 1);
 
+test('la préférence musicale est indépendante des effets et compatible avec les anciens carnets', () => {
+  const state = freshState();
+  assert.equal(state.music, true);
+  assert.equal(state.sound, false);
+  state.music = false;
+  state.sound = true;
+  const imported = parseSave(saveEnvelope(state), bank);
+  assert.equal(imported.music, false);
+  assert.equal(imported.sound, true);
+  const legacy = saveEnvelope(state);
+  delete legacy.state.music;
+  assert.equal(parseSave(legacy, bank).music, true);
+});
+
 test('la banque complète contient 336 questions, sept catégories équilibrées et quatre difficultés', () => {
   assert.equal(bank.length, 336);
   assert.equal(validateBank(bank), true);

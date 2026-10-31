@@ -29,7 +29,9 @@ Une partie compte 8, 12, 20 ou 50 questions. Un filtre trop petit réduit sa lon
 
 Toutes les réponses sont mélangées avec leurs identifiants d’origine. Les questions Vrai ou faux sont aussi mélangées ; lire les propositions avant de choisir. Une correction donne la bonne réponse et son explication. Le bouton suivant reste manuel. Le chrono du Défi s’arrête en correction, quand l’onglet est masqué et à l’accueil. Aucun autre mode n’a de chrono. Aucun point ne dépend de la vitesse.
 
-Clavier : **1–4** ou **A–D** pour répondre ; **Entrée** après correction ; **Échap** pour mettre la partie de côté. Tabulation parcourt les commandes. Le bouton de haut-parleur active ou désactive les sons. Les animations suivent la préférence système de réduction des mouvements.
+Clavier : **1–4** ou **A–D** pour répondre ; **Entrée** après correction ; **Échap** pour mettre la partie de côté. Tabulation parcourt les commandes. Le bouton de haut-parleur active ou désactive les petits effets sonores. Les animations suivent la préférence système de réduction des mouvements.
+
+Depuis la version **1.1**, une **musique douce originale** accompagne les questions et la lecture des explications : accords lents et notes légères, à faible volume, sans percussion. Elle démarre au lancement volontaire d’une partie. Le bouton **♪**, en haut à droite, l’active ou la coupe indépendamment des effets sonores. Ce choix est sauvegardé. La musique se met en pause à l’accueil, en fin de partie et lorsque l’onglet est masqué ; elle reprend en revenant aux questions. Elle est synthétisée sur l’appareil et fonctionne entièrement hors ligne.
 
 ## Progression et mémoire
 
@@ -66,6 +68,7 @@ Le serveur est réservé au développement. Jouer sur son URL crée un espace de
 
 - `src/engine.mjs` : tirage, scores, répétition espacée, progression, validation des sauvegardes.
 - `src/app.js` : interface et audio synthétisé localement.
+- `src/music.js` : musique douce, enveloppes audio et gestion des pauses.
 - `src/variants.mjs` : reformulations associées aux identifiants stables.
 - `dist/data/` : banques de questions éditables.
 - `dist/game.bundle.js` : fichier généré, à reconstruire après une modification du contenu ou du code.
