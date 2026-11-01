@@ -1,6 +1,6 @@
 {
   "name": "curiona",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "private": true,
   "type": "module",
   "description": "Un carnet d'exploration du savoir, entièrement hors ligne.",

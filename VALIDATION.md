@@ -1,11 +1,11 @@
-# Validation de Curiona 1.4
+# Validation de Curiona 1.4.1
 
 Vérifications initiales le **31 octobre 2026**, mises à jour le **1er novembre 2026**, sur cet ordinateur Windows. La version livrée est celle de `dist/`, issue de `npm run build`.
 
 ## Résultats
 
 - **49 tests automatisés réussis**, zéro échec (`npm test`).
-- **89 contrôles d’intégration réussis dans Google Chrome**, zéro exception JavaScript (`npm run qa`).
+- **102 contrôles d’intégration réussis dans Google Chrome**, zéro exception JavaScript (`npm run qa`).
 - Banque intégrée : **336 questions**, dont **304 QCM et 32 vrais/faux**. Sept univers de 48 questions, trois sous-thèmes par univers, seize questions par sous-thème et quatre questions par difficulté dans chaque sous-thème.
 - **21 reformulations alternatives** présentes dans le jeu généré, une par sous-thème. Elles conservent les choix et leur bonne réponse.
 - Raccourci du Bureau réellement créé, cible et fichier vérifiés, puis **ouvert avec succès**. La fenêtre obtenue s’intitule « Curiona — La curiosité se cultive - Google Chrome ».
@@ -23,6 +23,8 @@ Le tirage de la banque entière ne répète aucun identifiant dans une partie. U
 L’import/export JSON est vérifié par aller-retour. Les fichiers d’une autre application, les statistiques invalides et les historiques incohérents sont refusés. Les données arbitraires ne sont pas restaurées.
 
 ## Chrome et interface
+
+Le correctif 1.4.1 fixe la barre Question suivante dans le viewport, seulement après réponse. Les tests reproduisent une très longue explication en 1366 × 768, vérifient la position et la cible réelle de clic en haut, au milieu et en fin de page, puis effectuent un clic de souris sans défilement. La fin de la correction reste lisible au-dessus de la barre. Celle-ci disparaît à la nouvelle question ou au bilan et affiche Voir mon bilan à la dernière correction. Les contrôles couvrent également le mobile en portrait et en paysage. Captures dédiées : `14-suivante-fixe-desktop.png` et `15-suivante-fixe-mobile.png`.
 
 Les tests lancent le véritable exécutable Google Chrome avec un profil temporaire distinct, sur **l’adresse `file://` de livraison**, avec le réseau désactivé. Ils ne modifient pas le profil personnel.
 

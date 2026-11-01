@@ -14,6 +14,8 @@ async function click(selector){return evaluate(`(()=>{const el=document.querySel
 async function select(selector,value){return evaluate(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});el.value=${JSON.stringify(String(value))};el.dispatchEvent(new Event('change',{bubbles:true}));})()`);}
 const snapshot=()=>evaluate('Curiona.snapshot()');
 async function screenshot(name){await delay(350);const {data}=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});await writeFile(path.join(root,'artifacts',name+'.png'),Buffer.from(data,'base64'));}
+async function nextButtonVisible(){return evaluate('(()=>{const b=document.querySelector(".game-next-fixed [data-action=next]");if(!b)return false;const r=b.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight&&r.left>=0&&r.right<=innerWidth&&document.elementFromPoint(r.left+r.width/2,r.top+r.height/2)?.closest("[data-action=next]")===b;})()');}
+async function clickVisibleNext(){const r=await evaluate('(()=>{const r=document.querySelector(".game-next-fixed [data-action=next]").getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2};})()');await send('Input.dispatchMouseEvent',{type:'mousePressed',...r,button:'left',clickCount:1});await send('Input.dispatchMouseEvent',{type:'mouseReleased',...r,button:'left',clickCount:1});}
 async function importState(state,accept=true){
   await evaluate(`(()=>{const file=new File([JSON.stringify({app:'curiona',version:1,state:${JSON.stringify(state)}})],'qa-save.json',{type:'application/json'});const dt=new DataTransfer();dt.items.add(file);const input=document.querySelector('#import-file');input.files=dt.files;input.dispatchEvent(new Event('change'));})()`);
   await delay(100);if(accept)await click('#accept-confirm');
@@ -59,6 +61,7 @@ try{
   check(await evaluate('document.querySelector("#availability").textContent.includes("4 questions disponibles")'),'Filtre sous-thème expert : quatre questions, avertissement de partie raccourcie');
   await click('[data-action="start"]');
   let s=await snapshot();check(s.session.limit===4,'La longueur respecte le nombre de questions filtrées');
+  check(await evaluate('!document.querySelector(".game-next-fixed")'),'Le bouton suivant reste absent avant la réponse');
   await delay(1100);
   const music=await evaluate('Curiona.audio()');
   check(music.playing&&music.contextState==='running'&&music.activeVoices>0,'La musique douce joue pendant les questions, même avec les effets coupés');
@@ -81,7 +84,20 @@ try{
     if(i===0)check(await evaluate('Curiona.audio().playing'),'La musique continue pendant la lecture des explications');
     if(i===2)check(await evaluate('document.querySelector(".milestone-card").textContent.includes("niveau 2")'),'Le passage de niveau est célébré sans quitter la correction');
     if(i===0){await screenshot('02-correction-desktop');const before=s.state.xp;await click('.answer');check((await snapshot()).state.xp===before,'Double clic : aucun score supplémentaire');await click('[data-action="bookmark"]');check((await snapshot()).state.bookmarks.includes(q.id)&&(await snapshot()).state.xp===before,'Garder une fiche conserve le score et la correction en cours');}
-    await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter'});
+    if(i===0){
+      await send('Emulation.setDeviceMetricsOverride',{width:1366,height:768,deviceScaleFactor:1,mobile:false});
+      await evaluate('window.__originalExplanation=document.querySelector(".explain").textContent;document.querySelector(".explain").textContent=window.__originalExplanation.repeat(35);window.scrollTo({top:0,behavior:"instant"});');
+      check(await nextButtonVisible(),'Écran 1366 × 768 : bouton suivant visible immédiatement malgré une très longue correction');
+      await evaluate('window.scrollTo({top:document.documentElement.scrollHeight/2,behavior:"instant"})');check(await nextButtonVisible(),'Le bouton reste accessible au milieu de l’explication');
+      await evaluate('window.scrollTo({top:document.documentElement.scrollHeight,behavior:"instant"})');check(await nextButtonVisible(),'Le bouton reste accessible à la fin de l’explication');
+      check(await evaluate('document.querySelector(".correction-footer").getBoundingClientRect().bottom<=document.querySelector(".game-next-fixed").getBoundingClientRect().top'),'La fin de la correction reste lisible au-dessus de la barre');
+      await evaluate('document.querySelector(".explain").textContent=window.__originalExplanation;window.scrollTo({top:0,behavior:"instant"})');await delay(350);const shot=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await writeFile(path.join(root,'artifacts/14-suivante-fixe-desktop.png'),Buffer.from(shot.data,'base64'));
+      await clickVisibleNext();check((await snapshot()).session.used.length===2,'Un vrai clic sur la barre passe à la question suivante sans défiler');await send('Emulation.setDeviceMetricsOverride',{width:1440,height:1080,deviceScaleFactor:1,mobile:false});
+    }else{
+      if(i===3)check((await nextButtonVisible())&&await evaluate('document.querySelector(".game-next-fixed").textContent.includes("Voir mon bilan")'),'La dernière correction affiche un bilan également accessible');
+      await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter'});
+    }
+    check(await evaluate('!document.querySelector(".game-next-fixed")&&!document.body.classList.contains("has-fixed-next")'),'La barre se retire après avoir continué, sans cacher la prochaine question');
   }
   check(new Set(ids).size===4,'Aucun doublon jusqu’à épuisement du filtre');s=await snapshot();check(s.view==='result'&&s.result.correct===4&&s.result.total===4,'Bilan après épuisement');
   check(s.result.score===175+185+195+205&&s.result.xp===180,'Score expert et bonus de série exacts');
@@ -118,6 +134,8 @@ try{
   check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Accueil mobile 390 px sans débordement');await click('[data-action="resume"]');check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Question mobile sans débordement');await screenshot('05-question-mobile');
   s=await snapshot();const mobileQ=bank.find(q=>q.id===s.session.current.id);await click(`[data-answer="${mobileQ.correct}"]`);await screenshot('06-correction-mobile');
   check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Correction mobile sans débordement');
+  await evaluate('window.scrollTo({top:0,behavior:"instant"})');check(await nextButtonVisible(),'Mobile : question suivante visible sans descendre dans la correction');await delay(350);const mobileShot=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await writeFile(path.join(root,'artifacts/15-suivante-fixe-mobile.png'),Buffer.from(mobileShot.data,'base64'));
+  await send('Emulation.setDeviceMetricsOverride',{width:844,height:390,deviceScaleFactor:1,mobile:true});check(await nextButtonVisible(),'Mobile en paysage : la barre reste accessible');await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
   await click('[data-action="stats"]');await screenshot('07-statistiques-mobile');check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Statistiques et historique mobiles sans débordement');
   await click('[data-action="help"]');check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Carnet de route mobile sans débordement');
   await click('[data-action="notebook"]');check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Mes fiches reste lisible sur mobile');await click('.notebook-card summary');await screenshot('12-mes-fiches-mobile');await click('[data-action="bookmark"]');check((await snapshot()).state.bookmarks.length===0,'Une fiche se retire du carnet et de la sauvegarde');await click('.audio-settings summary');check(await evaluate('(()=>{const r=document.querySelector(".audio-settings-panel").getBoundingClientRect();return r.left>=0&&r.right<=innerWidth;})()'),'Le réglage du volume reste dans l’écran mobile');await screenshot('13-volume-mobile');await click('.audio-settings summary');

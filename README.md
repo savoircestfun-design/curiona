@@ -37,6 +37,8 @@ Une partie compte 8, 12, 20 ou 50 questions. Un filtre trop petit réduit sa lon
 
 Toutes les réponses sont mélangées avec leurs identifiants d’origine. Les questions Vrai ou faux sont aussi mélangées ; lire les propositions avant de choisir. Une correction donne la bonne réponse et son explication. Le bouton suivant reste manuel. Le chrono du Défi s’arrête en correction, quand l’onglet est masqué et à l’accueil. Aucun autre mode n’a de chrono. Aucun point ne dépend de la vitesse.
 
+Depuis la version **1.4.1**, après chaque réponse, **Question suivante** reste fixé en bas de l’écran sur ordinateur et mobile. Il reste accessible quelle que soit la longueur de l’explication et devient **Voir mon bilan** à la dernière question. Les explications sont conservées en entier ; une marge permet de lire leur fin sans qu’elle soit masquée par la barre. La touche **Entrée** permet aussi de continuer.
+
 Clavier : **1–4** ou **A–D** pour répondre ; **Entrée** après correction ; **Échap** pour mettre la partie de côté. Tabulation parcourt les commandes. Le bouton de haut-parleur active ou désactive les petits effets sonores. Les animations suivent la préférence système de réduction des mouvements.
 
 Depuis la version **1.1**, une **musique douce originale** accompagne les questions et la lecture des explications : accords lents et notes légères, à faible volume, sans percussion. Elle démarre au lancement volontaire d’une partie. Le bouton **♪**, en haut à droite, l’active ou la coupe indépendamment des effets sonores. Ce choix est sauvegardé. La musique se met en pause à l’accueil, en fin de partie et lorsque l’onglet est masqué ; elle reprend en revenant aux questions. Elle est synthétisée sur l’appareil et fonctionne entièrement hors ligne.
