@@ -18,6 +18,15 @@ function createCalmMusic() {
   let context = null, master = null, analyser = null, samples = null;
   let timer = null, playing = false, wanted = false, generation = 0;
   let step = 0, nextTime = 0, scheduledNotes = 0, unavailable = false;
+  let volumePercent = 35;
+
+  function targetVolume() {
+    // Le réglage initial conserve le niveau de la composition d'origine.
+    // Le haut du curseur reste plafonné, sans gain disproportionné.
+    return volumePercent <= 35
+      ? 0.22 * volumePercent / 35
+      : Math.min(0.42, 0.22 + 0.2 * (volumePercent - 35) / 65);
+  }
 
   function status() {
     let outputRms = 0;
@@ -32,7 +41,8 @@ function createCalmMusic() {
       contextState: context?.state || (unavailable ? 'unavailable' : 'not-created'),
       activeVoices: voices.size,
       scheduledNotes,
-      outputRms
+      outputRms,
+      volume: volumePercent
     };
   }
 
@@ -63,6 +73,21 @@ function createCalmMusic() {
       parameter.cancelScheduledValues(now);
       parameter.setValueAtTime(value, now);
     }
+  }
+
+  function setVolume(percent) {
+    if (!Number.isFinite(percent)) return status();
+    const bounded = Math.max(0, Math.min(100, percent));
+    if (bounded === volumePercent) return status();
+    volumePercent = bounded;
+    // Changer le réglage à l'arrêt ne doit ni interrompre le fondu vers
+    // le silence, ni créer un contexte, ni reprendre la partition.
+    if (playing && wanted && master && context?.state !== 'closed') {
+      const now = context.currentTime;
+      hold(master.gain, now);
+      master.gain.linearRampToValueAtTime(targetVolume(), now + 0.12);
+    }
+    return status();
   }
 
   function release(voice) {
@@ -144,7 +169,7 @@ function createCalmMusic() {
       playing = true;
       const now = audio.currentTime;
       hold(master.gain, now);
-      master.gain.linearRampToValueAtTime(0.22, now + 0.9);
+      master.gain.linearRampToValueAtTime(targetVolume(), now + 0.9);
       nextTime = now + 0.06;
       // Une reprise au milieu d'un accord retrouve doucement sa nappe.
       if (step % 4) pad(chords[Math.floor(step / 4)], nextTime, 8.6 - (step % 4) * beatSeconds);
@@ -179,5 +204,5 @@ function createCalmMusic() {
     }
   }
 
-  return { start, stop, getStatus: status };
+  return { start, stop, setVolume, getStatus: status };
 }

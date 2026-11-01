@@ -22,6 +22,8 @@ Choisir d’abord **les thèmes** : un univers complet, un sous-thème précis, 
 
 La version **1.3** ajoute une recherche rapide dans les univers et sous-thèmes (accents facultatifs, raccourci **/**), une suggestion de découverte selon le carnet et le délai du prochain rappel. Les passages de niveau global et de compétence sont signalés doucement dans la correction, sans interrompre la partie.
 
+La version **1.4** ajoute **Mes fiches** : après une réponse, cliquer sur **Garder cette fiche** pour conserver son explication. L’onglet Mes fiches permet de relire, chercher, filtrer par univers et retirer ces fiches, sans chrono ni modification des scores ou de l’expérience. Elles restent sur l’appareil et sont incluses dans l’export/import. Les anciennes sauvegardes restent compatibles.
+
 Choisir ensuite **la façon de jouer**, qui conserve toujours les thèmes sélectionnés :
 
 - **Apprendre** : questions et explications, sans chrono.
@@ -38,6 +40,8 @@ Toutes les réponses sont mélangées avec leurs identifiants d’origine. Les q
 Clavier : **1–4** ou **A–D** pour répondre ; **Entrée** après correction ; **Échap** pour mettre la partie de côté. Tabulation parcourt les commandes. Le bouton de haut-parleur active ou désactive les petits effets sonores. Les animations suivent la préférence système de réduction des mouvements.
 
 Depuis la version **1.1**, une **musique douce originale** accompagne les questions et la lecture des explications : accords lents et notes légères, à faible volume, sans percussion. Elle démarre au lancement volontaire d’une partie. Le bouton **♪**, en haut à droite, l’active ou la coupe indépendamment des effets sonores. Ce choix est sauvegardé. La musique se met en pause à l’accueil, en fin de partie et lorsque l’onglet est masqué ; elle reprend en revenant aux questions. Elle est synthétisée sur l’appareil et fonctionne entièrement hors ligne.
+
+Le petit bouton de **réglage à côté de la note de musique** ouvre son volume de 0 à 100 %. Le niveau initial de 35 % conserve l’ambiance douce de la version précédente. Les changements sont lissés, sans relancer la mélodie, et le réglage est sauvegardé. Échap ferme ce panneau sans quitter la partie. Les effets de réponse restent contrôlés séparément par le haut-parleur.
 
 ## Progression et mémoire
 
@@ -80,6 +84,7 @@ Le serveur est réservé au développement. Jouer sur son URL crée un espace de
 - `src/app.js` : interface et audio synthétisé localement.
 - `src/theme-ui.js` : compétences, choix des thèmes et façons de jouer.
 - `src/discovery-ui.js` : suggestions et indications des prochains rappels.
+- `src/notebook-ui.js`, `src/comfort-ui.js` : fiches personnelles et réglage du volume.
 - `src/music.js` : musique douce, enveloppes audio et gestion des pauses.
 - `src/variants.mjs` : reformulations associées aux identifiants stables.
 - `dist/data/` : banques de questions éditables.

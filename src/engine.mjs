@@ -27,7 +27,7 @@ export const BADGES = [
   {id:'expert',name:'En profondeur',description:'Réussir 10 questions de niveau expert.',icon:'shapes'}
 ];
 export function freshState() {
-  return {version:1,xp:0,points:0,total:0,correct:0,bestStreak:0,reviewCorrect:0,expertCorrect:0,questions:{},topics:{},subtopics:{},history:[],badges:[],sound:false,music:true,active:null};
+  return {version:1,xp:0,points:0,total:0,correct:0,bestStreak:0,reviewCorrect:0,expertCorrect:0,questions:{},topics:{},subtopics:{},history:[],badges:[],bookmarks:[],sound:false,music:true,musicVolume:35,active:null};
 }
 export function shuffle(items,rng=Math.random) {
   const result=[...items]; for(let i=result.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[result[i],result[j]]=[result[j],result[i]];} return result;
@@ -121,6 +121,14 @@ export function parseSave(input,bank) {
   for(const key of ['xp','points','total','correct','bestStreak','reviewCorrect','expertCorrect']){if(!number(raw[key]))throw Error('La sauvegarde contient des statistiques invalides.');result[key]=Math.floor(raw[key]);}
   if(result.correct>result.total)throw Error('Statistiques incohérentes.');
   const ids=new Set(bank.map(q=>q.id));if(!raw.questions||typeof raw.questions!=='object'||Array.isArray(raw.questions))throw Error('Questions sauvegardées invalides.');
+  if(raw.bookmarks!==undefined){
+    if(!Array.isArray(raw.bookmarks)||raw.bookmarks.length>2000||!raw.bookmarks.every(id=>typeof id==='string'))throw Error('Fiches sauvegardées invalides.');
+    result.bookmarks=[...new Set(raw.bookmarks.filter(id=>ids.has(id)))];
+  }
+  if(raw.musicVolume!==undefined){
+    if(!number(raw.musicVolume,100))throw Error('Volume musical invalide.');
+    result.musicVolume=raw.musicVolume;
+  }
   for(const [id,s] of Object.entries(raw.questions)){
     if(!ids.has(id))continue;if(!s||!['seen','correct','box','lastSeen','nextDue'].every(k=>number(s[k],k.includes('Seen')||k==='nextDue'?1e14:1e9))||s.correct>s.seen||s.box>5)throw Error('Progression invalide.');
     result.questions[id]={seen:Math.floor(s.seen),correct:Math.floor(s.correct),box:Math.floor(s.box),lastSeen:s.lastSeen,nextDue:s.nextDue};

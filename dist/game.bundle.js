@@ -1,4 +1,4 @@
-/* Curiona 1.3 — généré par npm run build. */
+/* Curiona 1.4 — généré par npm run build. */
 (()=>{
 'use strict';
 const CATEGORIES = [
@@ -30,7 +30,7 @@ const BADGES = [
   {id:'expert',name:'En profondeur',description:'Réussir 10 questions de niveau expert.',icon:'shapes'}
 ];
 function freshState() {
-  return {version:1,xp:0,points:0,total:0,correct:0,bestStreak:0,reviewCorrect:0,expertCorrect:0,questions:{},topics:{},subtopics:{},history:[],badges:[],sound:false,music:true,active:null};
+  return {version:1,xp:0,points:0,total:0,correct:0,bestStreak:0,reviewCorrect:0,expertCorrect:0,questions:{},topics:{},subtopics:{},history:[],badges:[],bookmarks:[],sound:false,music:true,musicVolume:35,active:null};
 }
 function shuffle(items,rng=Math.random) {
   const result=[...items]; for(let i=result.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[result[i],result[j]]=[result[j],result[i]];} return result;
@@ -124,6 +124,14 @@ function parseSave(input,bank) {
   for(const key of ['xp','points','total','correct','bestStreak','reviewCorrect','expertCorrect']){if(!number(raw[key]))throw Error('La sauvegarde contient des statistiques invalides.');result[key]=Math.floor(raw[key]);}
   if(result.correct>result.total)throw Error('Statistiques incohérentes.');
   const ids=new Set(bank.map(q=>q.id));if(!raw.questions||typeof raw.questions!=='object'||Array.isArray(raw.questions))throw Error('Questions sauvegardées invalides.');
+  if(raw.bookmarks!==undefined){
+    if(!Array.isArray(raw.bookmarks)||raw.bookmarks.length>2000||!raw.bookmarks.every(id=>typeof id==='string'))throw Error('Fiches sauvegardées invalides.');
+    result.bookmarks=[...new Set(raw.bookmarks.filter(id=>ids.has(id)))];
+  }
+  if(raw.musicVolume!==undefined){
+    if(!number(raw.musicVolume,100))throw Error('Volume musical invalide.');
+    result.musicVolume=raw.musicVolume;
+  }
   for(const [id,s] of Object.entries(raw.questions)){
     if(!ids.has(id))continue;if(!s||!['seen','correct','box','lastSeen','nextDue'].every(k=>number(s[k],k.includes('Seen')||k==='nextDue'?1e14:1e9))||s.correct>s.seen||s.box>5)throw Error('Progression invalide.');
     result.questions[id]={seen:Math.floor(s.seen),correct:Math.floor(s.correct),box:Math.floor(s.box),lastSeen:s.lastSeen,nextDue:s.nextDue};
@@ -179,6 +187,15 @@ function createCalmMusic() {
   let context = null, master = null, analyser = null, samples = null;
   let timer = null, playing = false, wanted = false, generation = 0;
   let step = 0, nextTime = 0, scheduledNotes = 0, unavailable = false;
+  let volumePercent = 35;
+
+  function targetVolume() {
+    // Le réglage initial conserve le niveau de la composition d'origine.
+    // Le haut du curseur reste plafonné, sans gain disproportionné.
+    return volumePercent <= 35
+      ? 0.22 * volumePercent / 35
+      : Math.min(0.42, 0.22 + 0.2 * (volumePercent - 35) / 65);
+  }
 
   function status() {
     let outputRms = 0;
@@ -193,7 +210,8 @@ function createCalmMusic() {
       contextState: context?.state || (unavailable ? 'unavailable' : 'not-created'),
       activeVoices: voices.size,
       scheduledNotes,
-      outputRms
+      outputRms,
+      volume: volumePercent
     };
   }
 
@@ -224,6 +242,21 @@ function createCalmMusic() {
       parameter.cancelScheduledValues(now);
       parameter.setValueAtTime(value, now);
     }
+  }
+
+  function setVolume(percent) {
+    if (!Number.isFinite(percent)) return status();
+    const bounded = Math.max(0, Math.min(100, percent));
+    if (bounded === volumePercent) return status();
+    volumePercent = bounded;
+    // Changer le réglage à l'arrêt ne doit ni interrompre le fondu vers
+    // le silence, ni créer un contexte, ni reprendre la partition.
+    if (playing && wanted && master && context?.state !== 'closed') {
+      const now = context.currentTime;
+      hold(master.gain, now);
+      master.gain.linearRampToValueAtTime(targetVolume(), now + 0.12);
+    }
+    return status();
   }
 
   function release(voice) {
@@ -305,7 +338,7 @@ function createCalmMusic() {
       playing = true;
       const now = audio.currentTime;
       hold(master.gain, now);
-      master.gain.linearRampToValueAtTime(0.22, now + 0.9);
+      master.gain.linearRampToValueAtTime(targetVolume(), now + 0.9);
       nextTime = now + 0.06;
       // Une reprise au milieu d'un accord retrouve doucement sa nappe.
       if (step % 4) pad(chords[Math.floor(step / 4)], nextTime, 8.6 - (step % 4) * beatSeconds);
@@ -340,7 +373,7 @@ function createCalmMusic() {
     }
   }
 
-  return { start, stop, getStatus: status };
+  return { start, stop, setVolume, getStatus: status };
 }
 
 // Le thème et la façon de jouer sont deux choix indépendants.
@@ -471,6 +504,66 @@ function discoveryCard() {
   return `<section class="discovery-card" aria-label="Suggestion de découverte"><span class="discovery-icon">${icon('compass')}</span><div class="discovery-copy"><h3>${title}</h3><p>${esc(description)}</p></div><button class="secondary discovery-action" data-action="subtheme" data-theme-key="${esc(selected.key)}">Explorer ${esc(selected.name)} ${icon('arrow')}</button></section>`;
 }
 
+// Les fiches sont des repères personnels : leur lecture n'ajoute ni points ni XP.
+let notebookSearch='';
+let notebookTheme='all';
+function notebookNormalize(text){return String(text).toLocaleLowerCase('fr').normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+function bookmarkedQuestions(){const bank=new Map(QUESTIONS.map(q=>[q.id,q]));return (state.bookmarks||[]).map(id=>bank.get(id)).filter(Boolean);}
+function notebookMatches(q){
+  if(notebookTheme!=='all'&&q.category!==notebookTheme)return false;
+  const c=CATEGORIES.find(c=>c.id===q.category);
+  const text=notebookNormalize([q.question,q.subtheme,c?.name,q.options[q.correct],q.explanation,q.tip||''].join(' '));
+  return notebookNormalize(notebookSearch.trim()).split(/\s+/).filter(Boolean).every(word=>text.includes(word));
+}
+function bookmarkButton(q){
+  const kept=(state.bookmarks||[]).includes(q.id);
+  const label=kept?(view==='notebook'?'Retirer cette fiche':'Fiche gardée'):'Garder cette fiche';
+  return `<button class="secondary bookmark-button ${kept?'saved':''}" data-action="bookmark" data-question="${esc(q.id)}" aria-pressed="${kept}">${icon('book')}<span>${label}</span></button>`;
+}
+function notebookView(){
+  const questions=bookmarkedQuestions(),visible=questions.filter(notebookMatches).length;
+  return `<div class="view notebook-view"><div class="view-header"><div class="eyebrow" style="color:var(--coral)">Les découvertes à garder près de soi</div><h1>Mes fiches</h1><p>${fmt(questions.length)} fiche${questions.length>1?'s gardées':' gardée'}. Relis les notions utiles à ton rythme, sans chronomètre et sans modifier tes scores.</p></div><div class="notebook-toolbar"><div class="theme-search" role="search"><label for="notebook-search">${icon('compass')}<span class="sr-only">Rechercher dans mes fiches</span><input id="notebook-search" type="search" placeholder="Retrouver une notion, une explication…" value="${esc(notebookSearch)}" autocomplete="off"></label></div><div class="form-field"><label class="sr-only" for="notebook-theme">Filtrer les fiches par univers</label><select id="notebook-theme"><option value="all" ${notebookTheme==='all'?'selected':''}>Tous les univers</option>${CATEGORIES.map(c=>`<option value="${c.id}" ${notebookTheme===c.id?'selected':''}>${c.name}</option>`).join('')}</select></div></div><p id="notebook-results" class="save-note" role="status">${visible} fiche${visible>1?'s':''} affichée${visible>1?'s':''}</p><div class="notebook-list">${questions.map(q=>{
+    const c=CATEGORIES.find(c=>c.id===q.category);
+    return `<details class="notebook-card" data-notebook-id="${esc(q.id)}" ${notebookMatches(q)?'':'hidden'}><summary><span class="notebook-question">${esc(q.question)}</span><span class="notebook-card-meta"><span class="pill" style="background:${c.bg};color:${c.color}">${esc(c.name)} · ${esc(q.subtheme)}</span><span class="tag muted">${esc(DIFFICULTIES[q.difficulty])}</span></span></summary><div class="notebook-card-body"><p class="notebook-answer"><strong>La bonne réponse : ${esc(q.options[q.correct])}.</strong></p><p>${esc(q.explanation)}</p>${q.tip?`<p class="tip"><strong>Pour retenir.</strong> ${esc(q.tip)}</p>`:''}<div class="notebook-card-actions">${bookmarkButton(q)}${q.source&&q.source.startsWith('https://')?`<a class="source" href="${esc(q.source)}" target="_blank" rel="noopener noreferrer">Consulter la source ↗</a>`:''}</div></div></details>`;
+  }).join('')}</div><div id="notebook-empty" class="empty" ${visible?'hidden':''}><h2>${questions.length?'Aucune fiche pour cette recherche':'Ton carnet de fiches commence ici'}</h2><p>${questions.length?'Essaie un autre mot ou choisis tous les univers.':'Après une réponse, utilise « Garder cette fiche » dans la correction pour retrouver ici son explication.'}</p>${questions.length?'':'<button class="primary" data-action="home">Explorer les univers</button>'}</div><p class="save-note">Tes fiches sont sauvegardées sur cet appareil et incluses dans l’export du carnet. Tu peux les retirer à tout moment.</p></div>`;
+}
+function refreshNotebookFilters(){
+  const questions=new Map(bookmarkedQuestions().map(q=>[q.id,q]));let visible=0;
+  document.querySelectorAll('[data-notebook-id]').forEach(card=>{const q=questions.get(card.dataset.notebookId),matches=!!q&&notebookMatches(q);card.hidden=!matches;if(matches)visible++;});
+  const empty=$('#notebook-empty');if(empty)empty.hidden=visible>0;
+  const results=$('#notebook-results');if(results)results.textContent=`${visible} fiche${visible>1?'s':''} affichée${visible>1?'s':''}`;
+}
+function updateNotebookSearch(el){
+  if(el.id==='notebook-search')notebookSearch=el.value;
+  if(el.id==='notebook-theme')notebookTheme=el.value==='all'||CATEGORIES.some(c=>c.id===el.value)?el.value:'all';
+  refreshNotebookFilters();
+}
+function toggleBookmark(id){
+  const q=QUESTIONS.find(q=>q.id===id);if(!q)return false;
+  state.bookmarks ||= [];
+  const index=state.bookmarks.indexOf(id),adding=index<0;
+  if(adding){if(state.bookmarks.length>=2000){notify('Ton carnet contient déjà 2 000 fiches. Retire une fiche avant d’en ajouter une autre.');return false;}state.bookmarks.unshift(id);}
+  else state.bookmarks.splice(index,1);
+  save();
+  if(view==='notebook'){
+    const focusedId=document.activeElement?.dataset?.question;
+    render();
+    if(focusedId===id)$('#notebook-search')?.focus({preventScroll:true});
+  }else{
+    document.querySelectorAll('[data-action="bookmark"]').forEach(button=>{if(button.dataset.question!==id)return;button.setAttribute('aria-pressed',String(adding));button.classList.toggle('saved',adding);button.innerHTML=`${icon('book')}<span>${adding?'Fiche gardée':'Garder cette fiche'}</span>`;});
+  }
+  notify(adding?'Fiche gardée dans Mes fiches.':'Fiche retirée de Mes fiches.');
+  return adding;
+}
+
+function musicVolumeControl(){return `<details class="audio-settings"><summary aria-label="Régler le volume de la musique" title="Volume de la musique">${icon('sliders')}</summary><div class="audio-settings-panel"><label for="music-volume">Volume de la musique <output id="music-volume-value" for="music-volume">${state.musicVolume} %</output></label><input id="music-volume" type="range" min="0" max="100" step="5" value="${state.musicVolume}" aria-label="Volume de la musique"><p>Un fond discret, à ton goût. Ce réglage est mémorisé.</p></div></details>`;}
+function updateMusicVolume(value){
+  const volume=Number(value);if(!Number.isFinite(volume))return;
+  state.musicVolume=Math.max(0,Math.min(100,volume));calmMusic.setVolume(state.musicVolume);
+  const output=$('#music-volume-value');if(output)output.textContent=state.musicVolume+' %';
+  save();
+}
+
 const STORAGE_KEY='curiona.save.v1';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -509,6 +602,7 @@ let timerHandle=null,lastTick=0,toastHandle=null,audioContext=null;
 const calmMusic=createCalmMusic();
 let musicAllowed=false;
 function syncMusic(){
+  calmMusic.setVolume(state.musicVolume);
   if(state.music&&musicAllowed&&view==='game'&&!document.hidden){
     calmMusic.start().catch(()=>{musicAllowed=false;notify('La musique est en pause. Utilise le bouton ♪ pour réessayer.');});
   }else calmMusic.stop();
@@ -548,7 +642,7 @@ function dueCount(){return QUESTIONS.filter(q=>state.questions[q.id]?.nextDue<=D
 function mastered(category){return QUESTIONS.filter(q=>(!category||q.category===category)&&(state.questions[q.id]?.box||0)>=2).length;}
 function header(){
   const {level}=levelData();
-  return `<header class="header"><button class="brand" data-action="home" aria-label="Curiona, accueil"><span class="brand-mark">${icon('spark')}</span><span><span class="brand-name">curiona<span style="color:var(--coral)">.</span></span><span class="brand-caption">La curiosité se cultive</span></span></button><nav class="nav" aria-label="Navigation principale"><button class="nav-button ${['home','game','result'].includes(view)?'active':''}" data-action="home">Explorer</button><button class="nav-button ${view==='stats'?'active':''}" data-action="stats">Mes progrès</button><button class="nav-button ${view==='help'?'active':''}" data-action="help">Le carnet de route</button></nav><div class="header-actions"><button class="sound music-button" data-action="music" aria-label="${state.music?'Couper':'Activer'} la musique douce" aria-pressed="${state.music}" title="${state.music?'Couper':'Activer'} la musique douce">${icon('music')}${state.music?'':'<span class="music-off" aria-hidden="true"></span>'}</button><button class="sound" data-action="sound" aria-label="${state.sound?'Désactiver':'Activer'} les effets sonores" aria-pressed="${state.sound}" title="${state.sound?'Désactiver':'Activer'} les effets sonores">${icon(state.sound?'sound':'mute')}</button><div class="level-pill"><span>Niveau ${level}</span><div class="avatar" aria-label="Niveau ${level}">${icon('leaf')}</div></div></div></header>`;
+  return `<header class="header"><button class="brand" data-action="home" aria-label="Curiona, accueil"><span class="brand-mark">${icon('spark')}</span><span><span class="brand-name">curiona<span style="color:var(--coral)">.</span></span><span class="brand-caption">La curiosité se cultive</span></span></button><nav class="nav" aria-label="Navigation principale"><button class="nav-button ${['home','game','result'].includes(view)?'active':''}" data-action="home">Explorer</button><button class="nav-button ${view==='stats'?'active':''}" data-action="stats">Mes progrès</button><button class="nav-button ${view==='notebook'?'active':''}" data-action="notebook">Mes fiches</button><button class="nav-button ${view==='help'?'active':''}" data-action="help">Le carnet de route</button></nav><div class="header-actions">${musicVolumeControl()}<button class="sound music-button" data-action="music" aria-label="${state.music?'Couper':'Activer'} la musique douce" aria-pressed="${state.music}" title="${state.music?'Couper':'Activer'} la musique douce">${icon('music')}${state.music?'':'<span class="music-off" aria-hidden="true"></span>'}</button><button class="sound" data-action="sound" aria-label="${state.sound?'Désactiver':'Activer'} les effets sonores" aria-pressed="${state.sound}" title="${state.sound?'Désactiver':'Activer'} les effets sonores">${icon(state.sound?'sound':'mute')}</button><div class="level-pill"><span>Niveau ${level}</span><div class="avatar" aria-label="Niveau ${level}">${icon('leaf')}</div></div></div></header>`;
 }
 function footer(){return `<footer class="footer"><span>${icon('leaf')} Un peu de curiosité, chaque jour.</span><span>${icon('lock')} Ton carnet reste sur cet appareil · ${QUESTIONS.length} questions intégrées</span><div class="footer-actions"><button data-action="export">Exporter ma sauvegarde</button><button data-action="import">Importer</button></div></footer>`;}
 function heroArt(){return `<div class="hero-art" aria-hidden="true"><svg viewBox="0 0 490 335" fill="none"><defs><pattern id="dots" width="17" height="17" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".8" fill="#d3d8c8"/></pattern><clipPath id="earth-clip"><circle cx="250" cy="162" r="88"/></clipPath></defs><ellipse cx="255" cy="165" rx="190" ry="147" fill="url(#dots)"/><circle cx="255" cy="162" r="119" stroke="#d1d7c6" stroke-dasharray="3 8"/><ellipse cx="252" cy="167" rx="174" ry="70" stroke="#c6cbb9" transform="rotate(-25 252 167)"/><circle cx="250" cy="162" r="88" fill="#d6e3d3" stroke="#567561" stroke-width="1.8"/><g clip-path="url(#earth-clip)" fill="#799b78" stroke="#567561" stroke-width="1.2"><path d="m177 93 29-12 19 12 4 16-18 13-5 21-18 9-17-18-11-4Zm49 67 19-8 24 11 5 25-18 13-1 22-17 20-12-17 1-26-11-19Z"/><path d="m283 88 16 12 36 4 17 18-13 14-23-4-11 13-16-2-5 20-16 2-19-20 8-15 18 1 7-16-11-12Z"/><path d="m300 193 20-9 25 10 11 28-35 9-17-11Z"/></g><g stroke="#69826b" opacity=".45"><ellipse cx="250" cy="162" rx="44" ry="88"/><path d="M162 162h176M177 115c43 23 100 23 146 0m-146 94c43-23 100-23 146 0"/></g><path d="M172 271q86 25 166-2" stroke="#9caa92"/><path d="M234 251v21m30-22v23" stroke="#647b64" stroke-width="3"/><path d="M212 275h78" stroke="#647b64" stroke-width="3" stroke-linecap="round"/><g stroke="#566e4b" stroke-width="2"><path d="M112 267q-16-61 13-110M113 242q-35-6-34-34 29 2 34 25M112 222q26-3 29-29-26 2-28 21M117 194q-18-10-15-30 21 9 17 24" fill="#aabd8e"/><path d="M376 265q18-56-5-93m4 69q30-9 26-31-24 4-26 23m4-20q-24-3-25-26 22 1 24 19" fill="#c0cca6"/></g><g transform="translate(79 82) rotate(-17)"><rect width="58" height="44" rx="4" fill="#f9f6e9" stroke="#ae9670" stroke-width="1.5"/><path d="M29 5v34M6 9l17 1m-17 7 17 1m-17 7 17 1m12-15 16-1m-16 9 16-1m-16 9 16-1" stroke="#b0ac8d"/></g><g transform="translate(368 81) rotate(15)"><circle r="27" fill="#f3dec7" stroke="#b17d56"/><path d="m11-12-6 17-17 7 6-17Z" fill="#bf6849" stroke="#9f5138"/><circle r="2" fill="#f9efdf"/></g><g stroke="#b17c4d" stroke-width="1.5"><path d="M306 36v14m-7-7h14M146 55v9m-4.5-4.5h9M416 213v12m-6-6h12"/><path d="m316 284 2 5 5 2-5 2-2 5-2-5-5-2 5-2Z" fill="#d3aa6e"/></g><g transform="translate(131 282) rotate(-13)"><rect width="56" height="7" rx="2" fill="#c76c4c"/><path d="m56 0 11 3.5L56 7Z" fill="#d8bc88"/><path d="m64 2 3 1.5L64 5Z" fill="#324a3c"/></g><circle cx="400" cy="151" r="4" fill="#c97750"/><circle cx="154" cy="245" r="3" fill="#be855e"/></svg><div class="art-label top">${icon('spark')} Chaque erreur est un déclic.</div><div class="art-label bottom">${icon('compass')} Suis ta curiosité.</div></div>`;}
@@ -562,9 +656,9 @@ function startTimer(){
   timerHandle=setInterval(()=>{const now=performance.now(),delta=(now-lastTick)/1000;lastTick=now;if(document.hidden)return;session.remaining=Math.max(0,session.remaining-delta);const timer=$('#timer-value');if(timer){timer.textContent=Math.ceil(session.remaining)+' s';timer.closest('.timer').classList.toggle('urgent',session.remaining<8);}if(now-savedAt>5000){save();savedAt=now;}if(session.remaining<=0)answer(-1);},150);
 }
 function currentQuestion(){return QUESTIONS.find(q=>q.id===session?.current.id);}
-function game(){const q=currentQuestion(),c=CATEGORIES.find(c=>c.id===q.category),answered=session.current.answered,correct=answered&&isCorrect(q,session.current.selected),progress=session.answers.length/session.limit*100;return `<div class="game-wrap"><div class="game-toolbar"><button class="text-button" data-action="pause">${icon('pause')} Mettre de côté</button><div class="game-status"><span><strong>${session.used.length}</strong> / ${session.limit}</span><span><strong>${fmt(session.score)}</strong> pts</span>${session.streak>1?`<span>${session.streak} de suite ✦</span>`:''}${session.config.mode==='challenge'?`<span class="timer">${icon('clock')} <span id="timer-value">${answered?'En pause':Math.ceil(session.remaining)+' s'}</span></span>`:''}</div></div><div class="game-progress" role="progressbar" aria-label="Progression dans la partie" aria-valuenow="${session.answers.length}" aria-valuemin="0" aria-valuemax="${session.limit}"><span style="width:${progress}%"></span></div>${activeSkill(q)}<article class="question-card"><div class="question-top"><div class="question-tags"><span class="pill" style="color:${c.color};background:${c.bg}">${icon(c.icon)} ${c.name}</span><span class="pill">${esc(q.subtheme)}</span></div><span class="tag muted">Question · ${DIFFICULTIES[q.difficulty]}</span></div><h1 id="question-title" tabindex="-1">${esc(session.current.variant&&q.variant?q.variant:q.question)}</h1><p class="question-note">${q.options.length===2?'Vrai ou faux ?':'Une seule bonne réponse.'} ${session.config.mode==='challenge'?`Objectif : ${fmt(session.target)} points.`:'Prends le temps de réfléchir.'}</p><div class="answers">${session.current.order.map((id,index)=>{const isRight=answered&&id===q.correct,isWrong=answered&&id===session.current.selected&&!correct;return `<button class="answer ${isRight?'correct':isWrong?'wrong':''}" data-answer="${id}" ${answered?'disabled':''}><span class="answer-key">${String.fromCharCode(65+index)}</span><span>${esc(q.options[id])}${isRight?'<span class="answer-status">✓ Bonne réponse</span>':isWrong?'<span class="answer-status">× Ta réponse</span>':''}</span></button>`;}).join('')}</div></article>${answered?`<section class="correction ${correct?'':'incorrect'}" aria-labelledby="correction-title">${milestoneCard(q)}<div id="correction-title" class="correction-title" tabindex="-1">${icon(correct?'check':'book')} ${correct?'Bien vu ! Une découverte de plus.':session.current.selected===-1?'Le temps est écoulé. Prenons le temps de comprendre.':'Pas tout à fait. Voici le déclic.'}</div><p><strong>La bonne réponse : ${esc(q.options[q.correct])}.</strong></p><p class="explain">${esc(q.explanation)}</p>${q.tip?`<p class="tip"><strong>Pour retenir.</strong> ${esc(q.tip)}</p>`:''}<div class="correction-footer"><span class="reward-label">+ ${session.current.reward.xp} XP${correct?` · + ${session.current.reward.points} points`:' · chaque essai fait avancer'}</span>${q.source?`<a class="source" href="${esc(q.source)}" target="_blank" rel="noopener noreferrer">Consulter la source ↗</a>`:''}</div></section><div class="game-next"><small>La correction reste aussi longtemps que tu veux.<span class="desktop-key"> <span class="keycap">Entrée</span> pour continuer.</span></small><button class="primary" data-action="next">${session.answers.length>=session.limit?'Voir mon bilan':'La prochaine découverte'} ${icon('arrow')}</button></div>`:`<div class="game-next"><small>Clavier : <span class="keycap">1</span> à <span class="keycap">${q.options.length}</span>, ou A à ${String.fromCharCode(64+q.options.length)}.</small><small>${session.config.mode==='challenge'?'Le chrono s’arrête pendant les corrections.':'Ici, la vitesse ne compte pas.'}</small></div>`}</div>`;}
+function game(){const q=currentQuestion(),c=CATEGORIES.find(c=>c.id===q.category),answered=session.current.answered,correct=answered&&isCorrect(q,session.current.selected),progress=session.answers.length/session.limit*100;return `<div class="game-wrap"><div class="game-toolbar"><button class="text-button" data-action="pause">${icon('pause')} Mettre de côté</button><div class="game-status"><span><strong>${session.used.length}</strong> / ${session.limit}</span><span><strong>${fmt(session.score)}</strong> pts</span>${session.streak>1?`<span>${session.streak} de suite ✦</span>`:''}${session.config.mode==='challenge'?`<span class="timer">${icon('clock')} <span id="timer-value">${answered?'En pause':Math.ceil(session.remaining)+' s'}</span></span>`:''}</div></div><div class="game-progress" role="progressbar" aria-label="Progression dans la partie" aria-valuenow="${session.answers.length}" aria-valuemin="0" aria-valuemax="${session.limit}"><span style="width:${progress}%"></span></div>${activeSkill(q)}<article class="question-card"><div class="question-top"><div class="question-tags"><span class="pill" style="color:${c.color};background:${c.bg}">${icon(c.icon)} ${c.name}</span><span class="pill">${esc(q.subtheme)}</span></div><span class="tag muted">Question · ${DIFFICULTIES[q.difficulty]}</span></div><h1 id="question-title" tabindex="-1">${esc(session.current.variant&&q.variant?q.variant:q.question)}</h1><p class="question-note">${q.options.length===2?'Vrai ou faux ?':'Une seule bonne réponse.'} ${session.config.mode==='challenge'?`Objectif : ${fmt(session.target)} points.`:'Prends le temps de réfléchir.'}</p><div class="answers">${session.current.order.map((id,index)=>{const isRight=answered&&id===q.correct,isWrong=answered&&id===session.current.selected&&!correct;return `<button class="answer ${isRight?'correct':isWrong?'wrong':''}" data-answer="${id}" ${answered?'disabled':''}><span class="answer-key">${String.fromCharCode(65+index)}</span><span>${esc(q.options[id])}${isRight?'<span class="answer-status">✓ Bonne réponse</span>':isWrong?'<span class="answer-status">× Ta réponse</span>':''}</span></button>`;}).join('')}</div></article>${answered?`<section class="correction ${correct?'':'incorrect'}" aria-labelledby="correction-title">${milestoneCard(q)}<div id="correction-title" class="correction-title" tabindex="-1">${icon(correct?'check':'book')} ${correct?'Bien vu ! Une découverte de plus.':session.current.selected===-1?'Le temps est écoulé. Prenons le temps de comprendre.':'Pas tout à fait. Voici le déclic.'}</div><p><strong>La bonne réponse : ${esc(q.options[q.correct])}.</strong></p><p class="explain">${esc(q.explanation)}</p>${q.tip?`<p class="tip"><strong>Pour retenir.</strong> ${esc(q.tip)}</p>`:''}${bookmarkButton(q)}<div class="correction-footer"><span class="reward-label">+ ${session.current.reward.xp} XP${correct?` · + ${session.current.reward.points} points`:' · chaque essai fait avancer'}</span>${q.source?`<a class="source" href="${esc(q.source)}" target="_blank" rel="noopener noreferrer">Consulter la source ↗</a>`:''}</div></section><div class="game-next"><small>La correction reste aussi longtemps que tu veux.<span class="desktop-key"> <span class="keycap">Entrée</span> pour continuer.</span></small><button class="primary" data-action="next">${session.answers.length>=session.limit?'Voir mon bilan':'La prochaine découverte'} ${icon('arrow')}</button></div>`:`<div class="game-next"><small>Clavier : <span class="keycap">1</span> à <span class="keycap">${q.options.length}</span>, ou A à ${String.fromCharCode(64+q.options.length)}.</small><small>${session.config.mode==='challenge'?'Le chrono s’arrête pendant les corrections.':'Ici, la vitesse ne compte pas.'}</small></div>`}</div>`;}
 function results(){const wrong=result.answers.filter(a=>!a.correct),groups=CATEGORIES.map(c=>({c,total:result.answers.filter(a=>QUESTIONS.find(q=>q.id===a.id).category===c.id).length,correct:result.answers.filter(a=>a.correct&&QUESTIONS.find(q=>q.id===a.id).category===c.id).length})).filter(g=>g.total>0),strong=[...groups].sort((a,b)=>b.correct/b.total-a.correct/a.total).filter(g=>g.correct>0).slice(0,3);return `<div class="view"><div class="result-head">${icon(result.mode==='challenge'&&result.score>=result.target?'flag':'leaf')}<div class="eyebrow" style="color:var(--coral);margin-bottom:16px">Une page de plus dans ton carnet</div><h1>${result.mode==='challenge'?(result.score>=result.target?'Cap atteint, belle exploration !':'Un défi, de nouveaux repères.'):wrong.length===0?'Une belle récolte de déclics !':'Ta curiosité a fait du chemin.'}</h1><p>${wrong.length?'Ce que tu as découvert compte autant que le score. Les notions à revoir reviendront au bon moment.':'Prends un instant pour savourer. Les rappels t’aideront à garder ces notions en mémoire.'}${result.mode==='challenge'?`<br>Objectif : ${fmt(result.target)} points · ${fmt(result.score)} points obtenus.`:''}</p></div><div class="stats-grid"><div class="stat"><small>Points gagnés</small><strong>${fmt(result.score)}</strong><small>Sans bonus de vitesse</small></div><div class="stat"><small>Précision</small><strong>${Math.round(result.correct/result.total*100)} %</strong><small>${result.correct} / ${result.total} réponses</small></div><div class="stat"><small>Expérience</small><strong>+ ${result.xp}</strong><small>Niveau ${playerLevel(state.xp)}</small></div><div class="stat"><small>À consolider</small><strong>${wrong.length}</strong><small>${wrong.length?'Rappel dans 10 minutes':'De belles racines'}</small></div></div><div class="result-actions"><button class="primary" data-action="replay">Une nouvelle exploration ${icon('arrow')}</button><button class="secondary" data-action="home">Retour aux univers</button></div><div class="result-concepts"><section><h2>Tes points forts</h2>${strong.length?strong.map(g=>`<p><strong>${g.c.name}</strong> · ${g.correct} / ${g.total} réussites</p>`).join(''):'<p>Tu as rencontré de nouvelles notions. Leur compréhension se construit aussi en lisant les explications et en réessayant.</p>'}<p style="margin-top:16px">Une partie donne un aperçu, pas une mesure définitive de tes connaissances.</p></section><section><h2>Les prochains déclics</h2>${wrong.length?wrong.map(a=>{const q=QUESTIONS.find(q=>q.id===a.id);return `<details class="result-answer"><summary>${esc(q.question)}</summary><p><strong>${esc(q.options[q.correct])}.</strong> ${esc(q.explanation)}</p></details>`;}).join(''):'<p>Tout est juste aujourd’hui. Les rappels reviendront à partir de demain, pour laisser le temps à la mémoire de travailler.</p>'}</section></div></div>`;}
-function render(focus=false){stopTimer();$('#app').innerHTML=`<div class="shell">${header()}<main id="main">${loadIssue?`<div class="warning">${esc(loadIssue)} <button class="text-button" data-action="recover">Repartir avec un nouveau carnet</button></div>`:storageIssue?`<div class="warning" role="alert">${esc(storageIssue)}</div>`:''}${view==='home'?home():view==='stats'?stats():view==='help'?help():view==='game'?game():results()}</main>${footer()}</div>`;if(focus){window.scrollTo({top:0,behavior:'instant'});const title=view==='game'?$('#question-title'):$('main h1');if(title){title.setAttribute('tabindex','-1');title.focus({preventScroll:true});}}if(view==='game')startTimer();if(view==='home')filterThemeCards(themeSearch);syncMusic();}
+function render(focus=false){stopTimer();$('#app').innerHTML=`<div class="shell">${header()}<main id="main">${loadIssue?`<div class="warning">${esc(loadIssue)} <button class="text-button" data-action="recover">Repartir avec un nouveau carnet</button></div>`:storageIssue?`<div class="warning" role="alert">${esc(storageIssue)}</div>`:''}${view==='home'?home():view==='stats'?stats():view==='help'?help():view==='notebook'?notebookView():view==='game'?game():results()}</main>${footer()}</div>`;if(focus){window.scrollTo({top:0,behavior:'instant'});const title=view==='game'?$('#question-title'):$('main h1');if(title){title.setAttribute('tabindex','-1');title.focus({preventScroll:true});}}if(view==='game')startTimer();if(view==='home')filterThemeCards(themeSearch);if(view==='notebook')refreshNotebookFilters();syncMusic();}
 function navigate(destination){save();view=destination;render(true);}
 function setupAvailability(){return filterQuestions(QUESTIONS,setup,state).length;}
 function askConfirmation(title,body,label,onConfirm){const dlg=$('#confirm-dialog');dlg.innerHTML=`<h2 id="confirm-title">${esc(title)}</h2><p>${esc(body)}</p><div class="confirm-actions"><button class="secondary" id="cancel-confirm">Annuler</button><button class="primary" id="accept-confirm">${esc(label)}</button></div>`;$('#cancel-confirm').onclick=()=>dlg.close();$('#accept-confirm').onclick=()=>{dlg.close();onConfirm();};dlg.showModal();}
@@ -590,7 +684,7 @@ document.addEventListener('click',event=>{
   const option=event.target.closest('[data-answer]');if(option){answer(Number(option.dataset.answer));return;}
   const el=event.target.closest('[data-action]');if(!el)return;
   switch(el.dataset.action){
-    case 'home':navigate('home');break;case 'stats':navigate('stats');break;case 'help':navigate('help');break;
+    case 'home':navigate('home');break;case 'notebook':navigate('notebook');break;case 'bookmark':toggleBookmark(el.dataset.question);break;case 'stats':navigate('stats');break;case 'help':navigate('help');break;
     case 'sound':state.sound=!state.sound;save();render();if(state.sound)playSound(true);notify(state.sound?'Sons activés':'Sons désactivés');break;
     case 'music':musicAllowed=true;state.music=!state.music;save();render();notify(state.music?'Musique douce activée pour les questions':'Musique douce coupée');break;
     case 'setup':openSetup(el.dataset.mode,null,el.dataset.scope==='all'?{...setup,mode:el.dataset.mode,scope:'all',themes:[]}:null);break;case 'category':openSetup('specific',el.dataset.category);break;
@@ -610,6 +704,7 @@ document.addEventListener('click',event=>{
 });
 document.addEventListener('change',event=>{
   const el=event.target;
+  if(el.id==='notebook-theme'){updateNotebookSearch(el);return;}
   if(el.id==='difficulty'){setup.difficulty=el.value==='adaptive'?'adaptive':Number(el.value);setupDialog('difficulty');}
   else if(el.id==='question-count'){setup.count=Number(el.value);setupDialog('question-count');}
   else if(el.id==='category-select'){setup.themes=[el.value];setupDialog('category-select');}
@@ -620,9 +715,10 @@ $('#import-file').addEventListener('change',async event=>{
   if(file.size>5*1024*1024){notify('Ce fichier est trop volumineux (maximum 5 Mo).');return;}
   try{const imported=parseSave(JSON.parse(await file.text()),QUESTIONS);askConfirmation('Retrouver ce carnet ?',`Ce fichier contient ${imported.total} réponses, ${imported.xp} XP et ${imported.history.length} parties. Il remplacera le carnet actuel. Exporte ton carnet actuel pour le conserver.`,'Importer ce carnet',()=>{stopTimer();state=imported;session=null;loadIssue='';save();view='stats';render(true);notify('Ton carnet a été restauré.');});}catch(error){notify(error instanceof SyntaxError?'Ce fichier JSON est illisible.':error.message);}
 });
-document.addEventListener('input',event=>{if(event.target.id==='theme-search')filterThemeCards(event.target.value);});
+document.addEventListener('input',event=>{if(event.target.id==='theme-search')filterThemeCards(event.target.value);else if(event.target.id==='music-volume')updateMusicVolume(event.target.value);else if(event.target.id==='notebook-search')updateNotebookSearch(event.target);});
 document.addEventListener('keydown',event=>{
   if(event.ctrlKey||event.altKey||event.metaKey)return;
+  if(event.key==='Escape'&&$('.audio-settings[open]')){event.preventDefault();const details=$('.audio-settings');details.open=false;details.querySelector('summary').focus();return;}
   if($('dialog[open]')||['INPUT','SELECT','TEXTAREA'].includes(event.target.tagName))return;
   if(view==='home'&&event.key==='/'){event.preventDefault();$('#theme-search')?.focus();return;}
   if(view!=='game'||!session)return;

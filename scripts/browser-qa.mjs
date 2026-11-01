@@ -31,6 +31,7 @@ try{
   check(await evaluate('document.querySelectorAll(".world-card").length===8'),'Accueil complet et sept univers');
   check(await evaluate('document.querySelectorAll(".subtheme-links button").length===21&&!document.querySelector("button button")'),'Les 21 sous-thèmes sont accessibles directement avec un niveau, sans boutons imbriqués');
   check(await evaluate('!!document.querySelector(".discovery-card")'),'Une suggestion de découverte accueille le joueur');
+  await click('[data-action="notebook"]');check(await evaluate('document.querySelector("#notebook-empty").textContent.includes("Garder cette fiche")'),'Le carnet vide explique comment garder une fiche');await click('[data-action="home"]');
   await evaluate('(()=>{const input=document.querySelector("#theme-search");input.value="geometrie";input.dispatchEvent(new Event("input",{bubbles:true}));})()');
   check(await evaluate('document.querySelectorAll(".theme-card:not([hidden])").length===1&&!document.querySelector("[data-skill-theme=math]").hidden'),'La recherche trouve les sous-thèmes même sans les accents');
   await evaluate('(()=>{const input=document.querySelector("#theme-search");input.value="introuvablexyz";input.dispatchEvent(new Event("input",{bubbles:true}));})()');
@@ -40,6 +41,8 @@ try{
   check(!(await evaluate('Curiona.audio().playing')),'La musique attend le lancement volontaire d’une partie');
   await click('[data-action="music"]');await send('Page.reload');await delay(200);
   check((await snapshot()).state.music===false,'Le choix de couper la musique survit au rechargement');
+  await click('.audio-settings summary');await evaluate('(()=>{const input=document.querySelector("#music-volume");input.value="20";input.dispatchEvent(new Event("input",{bubbles:true}));})()');await send('Page.reload');await delay(200);
+  check((await snapshot()).state.musicVolume===20&&(await evaluate('Curiona.audio().volume'))===20,'Le volume choisi est mémorisé sans lancer la musique');await evaluate('(()=>{const input=document.querySelector("#music-volume");input.value="35";input.dispatchEvent(new Event("input",{bubbles:true}));})()');
   await click('[data-action="music"]');
   await click('[data-action="sound"]');check((await snapshot()).state.sound===true,'Activation des sons discrets');await click('[data-action="sound"]');check((await snapshot()).state.sound===false,'Désactivation des sons persistée');
   await screenshot('01-accueil-desktop');
@@ -60,6 +63,7 @@ try{
   const music=await evaluate('Curiona.audio()');
   check(music.playing&&music.contextState==='running'&&music.activeVoices>0,'La musique douce joue pendant les questions, même avec les effets coupés');
   check(music.outputRms>0.00001&&music.outputRms<0.15,'Signal musical présent à faible niveau, sans silence ni niveau excessif');
+  await click('.audio-settings summary');await evaluate('(()=>{const input=document.querySelector("#music-volume");input.value="0";input.dispatchEvent(new Event("input",{bubbles:true}));})()');await delay(300);check(await evaluate('Curiona.audio().volume===0&&Curiona.audio().playing&&Curiona.audio().outputRms<0.00001'),'Le volume zéro rend la musique silencieuse sans arrêter la partition');await evaluate('(()=>{const input=document.querySelector("#music-volume");input.value="35";input.dispatchEvent(new Event("input",{bubbles:true}));})()');await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Escape'});check(await evaluate('!document.querySelector(".audio-settings").open&&Curiona.snapshot().view==="game"'),'Échap ferme le volume sans mettre de côté la partie');
   const beforeMusicToggle=(await snapshot()).session.score;
   await click('[data-action="music"]');await delay(900);
   check(await evaluate('!Curiona.audio().playing&&Curiona.audio().activeVoices===0'),'Bouton musique : fondu et nettoyage des notes en cours');
@@ -76,7 +80,7 @@ try{
     check(await evaluate('document.querySelector(".answer.correct").textContent.includes("Bonne réponse")'),'Correction explicite avec texte et symbole');
     if(i===0)check(await evaluate('Curiona.audio().playing'),'La musique continue pendant la lecture des explications');
     if(i===2)check(await evaluate('document.querySelector(".milestone-card").textContent.includes("niveau 2")'),'Le passage de niveau est célébré sans quitter la correction');
-    if(i===0){await screenshot('02-correction-desktop');const before=s.state.xp;await click('.answer');check((await snapshot()).state.xp===before,'Double clic : aucun score supplémentaire');}
+    if(i===0){await screenshot('02-correction-desktop');const before=s.state.xp;await click('.answer');check((await snapshot()).state.xp===before,'Double clic : aucun score supplémentaire');await click('[data-action="bookmark"]');check((await snapshot()).state.bookmarks.includes(q.id)&&(await snapshot()).state.xp===before,'Garder une fiche conserve le score et la correction en cours');}
     await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});await send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter'});
   }
   check(new Set(ids).size===4,'Aucun doublon jusqu’à épuisement du filtre');s=await snapshot();check(s.view==='result'&&s.result.correct===4&&s.result.total===4,'Bilan après épuisement');
@@ -86,6 +90,8 @@ try{
   await screenshot('03-bilan-desktop');
   await delay(900);check(await evaluate('!Curiona.audio().playing&&Curiona.audio().activeVoices===0'),'La musique s’arrête proprement en fin de partie');
   check(s.state.badges.includes('first'),'Badge de première partie attribué');
+  await click('[data-action="notebook"]');check(await evaluate('document.querySelectorAll(".notebook-card").length===1'),'La fiche gardée se retrouve dans le carnet');const xpBeforeNotebook=(await snapshot()).state.xp;await click('.notebook-card summary');check((await snapshot()).state.xp===xpBeforeNotebook,'Relire une fiche ne change pas l’expérience');await screenshot('11-mes-fiches-desktop');
+  await evaluate('(()=>{const input=document.querySelector("#notebook-search");input.value="introuvablexyz";input.dispatchEvent(new Event("input",{bubbles:true}));})()');check(await evaluate('!document.querySelector("#notebook-empty").hidden'),'La recherche des fiches gère une absence de résultat');await evaluate('(()=>{const input=document.querySelector("#notebook-search");input.value="";input.dispatchEvent(new Event("input",{bubbles:true}));})()');await click('[data-action="home"]');
   const savedXp=s.state.xp;await send('Page.reload');await delay(200);check((await snapshot()).state.xp===savedXp,'La progression survit au rechargement dans Chrome');
   await click('[data-action="setup"][data-mode="challenge"]');await select('#question-count',8);await select('#difficulty',1);await click('[data-action="start"]');await delay(550);s=await snapshot();check(s.session.remaining<30,'Chronomètre du Défi actif');
   const q=bank.find(q=>q.id===s.session.current.id);await click(`[data-answer="${q.correct}"]`);const paused=(await snapshot()).session.remaining;await delay(1100);check((await snapshot()).session.remaining===paused,'Chronomètre immobile pendant la correction');
@@ -114,6 +120,7 @@ try{
   check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Correction mobile sans débordement');
   await click('[data-action="stats"]');await screenshot('07-statistiques-mobile');check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Statistiques et historique mobiles sans débordement');
   await click('[data-action="help"]');check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Carnet de route mobile sans débordement');
+  await click('[data-action="notebook"]');check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Mes fiches reste lisible sur mobile');await click('.notebook-card summary');await screenshot('12-mes-fiches-mobile');await click('[data-action="bookmark"]');check((await snapshot()).state.bookmarks.length===0,'Une fiche se retire du carnet et de la sauvegarde');await click('.audio-settings summary');check(await evaluate('(()=>{const r=document.querySelector(".audio-settings-panel").getBoundingClientRect();return r.left>=0&&r.right<=innerWidth;})()'),'Le réglage du volume reste dans l’écran mobile');await screenshot('13-volume-mobile');await click('.audio-settings summary');
   await send('Emulation.setDeviceMetricsOverride',{width:1440,height:1080,deviceScaleFactor:1,mobile:false});await click('[data-action="stats"]');await screenshot('08-statistiques-desktop');
   await click('[data-action="home"]');await click('[data-action="subtheme"][data-theme-key="nature::Jardinage"]');await click('[data-action="switch-mode"][data-mode="relax"]');await select('#difficulty',1);await click('[data-action="start"]');await click('#accept-confirm');
   s=await snapshot();check(s.session.config.mode==='relax'&&s.session.config.scope==='single'&&s.session.config.themes[0]==='nature::Jardinage'&&bank.find(q=>q.id===s.session.current.id).subtheme==='Jardinage','Détente joue réellement le sous-thème choisi, sans élargir aux autres univers');
