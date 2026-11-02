@@ -1,20 +1,20 @@
-# Validation de Curiona 1.4.1
+# Validation de Curiona 2.0
 
-Vérifications initiales le **31 octobre 2026**, mises à jour le **1er novembre 2026**, sur cet ordinateur Windows. La version livrée est celle de `dist/`, issue de `npm run build`.
+Vérifications initiales le **31 octobre 2026**, mises à jour le **2 novembre 2026**, sur cet ordinateur Windows. La version livrée est celle de `dist/`, issue de `npm run build`.
 
 ## Résultats
 
-- **49 tests automatisés réussis**, zéro échec (`npm test`).
-- **102 contrôles d’intégration réussis dans Google Chrome**, zéro exception JavaScript (`npm run qa`).
-- Banque intégrée : **336 questions**, dont **304 QCM et 32 vrais/faux**. Sept univers de 48 questions, trois sous-thèmes par univers, seize questions par sous-thème et quatre questions par difficulté dans chaque sous-thème.
-- **21 reformulations alternatives** présentes dans le jeu généré, une par sous-thème. Elles conservent les choix et leur bonne réponse.
+- **52 tests automatisés réussis**, zéro échec (`npm test`).
+- **141 contrôles d’intégration réussis dans Google Chrome**, zéro exception JavaScript (`npm run qa`).
+- Banque intégrée : **1 800 questions**, dont **1 561 QCM et 239 vrais/faux**. Neuf univers de 200 questions, quatre sous-thèmes par univers et 50 questions par sous-thème. Chaque univers contient 50 questions de chaque difficulté ; chaque sous-thème en contient 12 ou 13 par difficulté.
+- **21 reformulations alternatives** présentes dans le jeu généré, une par sous-thème historique. Elles conservent les choix et leur bonne réponse et ne comptent pas comme des questions supplémentaires.
 - Raccourci du Bureau réellement créé, cible et fichier vérifiés, puis **ouvert avec succès**. La fenêtre obtenue s’intitule « Curiona — La curiosité se cultive - Google Chrome ».
 
 ## Logique et apprentissage
 
 Les tests couvrent le mélange des choix en conservant leurs identifiants, les scores et bonus plafonnés, les XP après erreur, les seuils de niveaux, l’indépendance de la compétence et de l’adaptatif par sous-thème et les délais de rappel de 10 minutes puis 1/3/7/14/30 jours. Les filtres stricts de difficulté, les catégories, sous-thèmes et unions personnalisées sont vérifiés.
 
-La version 1.2 affiche une compétence avec niveau et XP pour chaque univers et chacun des 21 sous-thèmes. Les niveaux sont accessibles depuis les cartes, les réglages, les questions et les statistiques. L’XP d’un sous-thème ne modifie pas ses voisins. Un sous-thème jamais exploré commence au niveau débutant, même si son univers a déjà progressé. L’import et la lecture des anciens carnets reconstruisent l’XP précise depuis les réponses enregistrées tout en conservant le niveau global, les points, les badges, la musique et les historiques.
+La version 2.0 affiche une compétence avec niveau et XP pour chacun des neuf univers et des 36 sous-thèmes. Les niveaux sont accessibles depuis les cartes, les réglages, les questions et les statistiques. L’XP d’un sous-thème ne modifie pas ses voisins. Un sous-thème jamais exploré commence au niveau débutant, même si son univers a déjà progressé. L’import et la lecture des anciens carnets reconstruisent l’XP précise depuis les réponses enregistrées tout en conservant le niveau global, les points, les badges, la musique et les historiques.
 
 Les thèmes sont séparés des quatre façons de jouer. Les contrôles Chrome vérifient que Nature conserve son titre en Apprendre, Défi, Détente et Révision, que les liens de sous-thèmes ouvrent directement leur sélection, et que le rejeu garde thème et difficulté. Des parties réelles en Détente puis en Défi conservent Jardinage jusque dans les questions tirées ; le filtre reste associé à une partie rechargée. Les réglages mobiles n’ont pas de débordement horizontal et le bouton Commencer reste visible pendant que leur contenu défile.
 
@@ -40,6 +40,10 @@ Les captures et la liste détaillée des contrôles figurent dans `artifacts/`. 
 
 ## Contenu
 
+La version 2.0 ajoute **1 464 questions** et les univers **Langue française** et **Vie quotidienne**. Les empreintes des trois banques historiques garantissent que les 336 questions précédentes et leurs identifiants restent inchangés. Les tests couvrent les effectifs exacts, les filtres de tous les modes dans les nouveaux univers et la conservation d’un carnet antérieur. Chrome vérifie leurs cartes à 200 questions, puis joue une question de Vocabulaire et de Cuisine avec correction et progression de compétence.
+
+`npm run audit:content` contrôle la structure complète, les répartitions, les explications identiques et les proximités lexicales à relire. Aucun énoncé ni aucune explication identique n’est détecté. Les quatre paires proches restantes correspondent à des notions distinctes : fusion/vaporisation, IPv4/IPv6, homophones verbaux/adjectif et confidentialité/intégrité. Les révisions et références des nouveaux lots sont documentées dans `docs/expansion-*-sources.md` et `docs/editorial-review-v2.md`.
+
 La version 1.4 ajoute des fiches personnelles sauvegardées et un volume musical indépendant. Les tests contrôlent la migration des anciens carnets, l’export/import des fiches, la déduplication et le refus des valeurs invalides. Chrome vérifie l’ajout depuis la correction sans modifier l’XP, la lecture sans score, la recherche, le retrait et le rendu mobile. Le volume est conservé après rechargement ; à 0 %, le signal devient silencieux sans arrêter la partition. Échap ferme le réglage sans quitter la partie. Les commandes du volume restent dans la largeur du mobile.
 
 Les améliorations 1.3 sont aussi contrôlées dans Chrome : recherche par sous-thème sans accent, message sans résultat, restauration de tous les univers après effacement, suggestion de découverte et célébration du passage de niveau directement dans la correction. Les délais des rappels sont présentés en minutes, heures ou jours ; aucun service réseau ni nouvelle donnée personnelle n’est ajouté.
@@ -50,7 +54,7 @@ Contrôles de structure et d’unicité des identifiants et énoncés, relecture
 
 - Le mobile est testé par émulation dans Chrome, pas sur un téléphone physique.
 - La banque est relue et les faits spécialisés sont vérifiés par échantillons ; elle n’a pas été certifiée par un comité pédagogique.
-- Certaines notions reviennent avec le même énoncé. Vingt et une disposent d’une formulation alternative.
+- Une question peut réapparaître lors de parties ultérieures ou en Révision. Vingt et une disposent d’une formulation alternative.
 - Le stockage local des adresses `file://` dépend du navigateur et de son profil. L’export est conseillé avant de déplacer le jeu ou d’effacer des données de navigation.
 - L’ouverture des liens de sources demande Internet ; jouer, lire les explications et sauvegarder n’en demandent pas.
 - Aucune publication distante ni action GitHub n’a été effectuée. Le nouveau projet est indépendant et les autres jeux ont seulement été consultés.

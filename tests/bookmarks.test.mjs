@@ -1,11 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {freshState,parseSave} from '../src/engine.mjs';
-import nature from '../dist/data/nature.js';
-import sciences from '../dist/data/sciences.js';
-import culture from '../dist/data/culture.js';
+import bank from '../src/bank.mjs';
 
-const bank=[...nature,...sciences,...culture];
 const first=bank[0].id,second=bank[1].id;
 const envelope=state=>({app:'curiona',version:1,state});
 

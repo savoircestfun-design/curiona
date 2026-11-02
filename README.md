@@ -1,6 +1,6 @@
 # Curiona — La curiosité se cultive
 
-Un jeu éducatif original en français : **336 questions**, **7 univers**, **21 sous-thèmes**, **4 difficultés** et **4 façons de jouer** combinables avec les thèmes choisis. Sans compte, sans abonnement, sans appel à une IA. Les explications et toutes les ressources nécessaires sont intégrées au dossier.
+Un jeu éducatif original en français : **1 800 questions**, **9 univers de 200 questions**, **36 sous-thèmes**, **4 difficultés** et **4 façons de jouer** combinables avec les thèmes choisis. Sans compte, sans abonnement, sans appel à une IA. Les explications et toutes les ressources nécessaires sont intégrées au dossier.
 
 ## Jouer
 
@@ -18,7 +18,21 @@ Cette option d’exécution ne s’applique qu’à ce processus et ne change pa
 
 ## Jouer à son rythme
 
-Choisir d’abord **les thèmes** : un univers complet, un sous-thème précis, tous les univers ou un mélange personnalisé. Les cartes de l’accueil donnent accès directement aux 21 sous-thèmes et à leur niveau. Le bouton **Modifier** dans les réglages permet de changer cette sélection.
+Choisir d’abord **les thèmes** : un univers complet, un sous-thème précis, tous les univers ou un mélange personnalisé. Les cartes de l’accueil donnent accès directement aux 36 sous-thèmes et à leur niveau. Le bouton **Modifier** dans les réglages permet de changer cette sélection.
+
+La version **2.0** conserve les 336 questions historiques et ajoute **1 464 questions**. Chaque univers contient quatre sous-thèmes de 50 questions et 50 questions de chaque difficulté. Les nouveaux univers **Langue française** et **Vie quotidienne** possèdent les mêmes modes, compétences, rappels et fiches que les autres.
+
+| Univers | Sous-thèmes (50 questions chacun) |
+| --- | --- |
+| Monde animal | Insectes · Faune · Biodiversité · Milieux et écosystèmes |
+| Nature & jardin | Plantes · Arbres · Jardinage · Sols et champignons |
+| Maths & logique | Calcul · Logique · Géométrie · Probabilités et données |
+| Esprit humain | Mémoire · Cognition · Vie sociale · Apprendre et raisonner |
+| Sciences & espace | Corps humain · Physique et chimie · Astronomie · Terre et univers |
+| Culture & monde | Histoire · Géographie · Arts et culture · Civilisations et patrimoine |
+| Informatique | Numérique · Programmation · Réseaux · Données et cybersécurité |
+| Langue française | Vocabulaire · Grammaire · Orthographe · Expression et littérature |
+| Vie quotidienne | Cuisine · Objets et matériaux · Mesures pratiques · Énergie au quotidien |
 
 La version **1.3** ajoute une recherche rapide dans les univers et sous-thèmes (accents facultatifs, raccourci **/**), une suggestion de découverte selon le carnet et le délai du prochain rappel. Les passages de niveau global et de compétence sont signalés doucement dans la correction, sans interrompre la partie.
 
@@ -49,7 +63,7 @@ Le petit bouton de **réglage à côté de la note de musique** ouvre son volume
 
 Une bonne réponse rapporte 100 / 125 / 150 / 175 points selon la difficulté, plus un bonus de série allant jusqu’à 50 points. Elle donne 30 / 35 / 40 / 45 XP. Une erreur donne 8 XP et ne retire rien. Le niveau joueur vaut `1 + floor(sqrt(XP / 100))`.
 
-Depuis la version **1.2**, chaque univers et chacun des **21 sous-thèmes** possède aussi son propre niveau de compétence, sa jauge d’expérience, sa précision et ses notions consolidées. Une réponse en Jardinage fait progresser Jardinage et Nature & jardin, sans ajouter d’XP à Plantes ou à Arbres. Le niveau de compétence utilise les mêmes seuils d’XP que le niveau global. Il reflète la progression dans le jeu ; la précision et la consolidation complètent cet indicateur.
+Chaque univers et chacun des **36 sous-thèmes** possède son propre niveau de compétence, sa jauge d’expérience, sa précision et ses notions consolidées. Une réponse en Jardinage fait progresser Jardinage et Nature & jardin, sans ajouter d’XP à Plantes ou à Arbres. Le niveau de compétence utilise les mêmes seuils d’XP que le niveau global. Il reflète la progression dans le jeu ; la précision et la consolidation complètent cet indicateur.
 
 La **difficulté conseillée** est distincte du niveau de compétence : l’adaptatif suit chaque sous-thème séparément, à partir du niveau débutant. Trois réussites consécutives le font monter d’un cran ; deux erreurs consécutives le font redescendre. Le tirage favorise le niveau ciblé sans exclure totalement les autres niveaux. Le choix explicite d’une difficulté constitue, lui, un filtre strict.
 
@@ -77,12 +91,14 @@ La structure reprend le fonctionnement HTML/JavaScript autonome de Roncerive : `
 npm run build     # valide et intègre la banque, le moteur et l’interface
 npm test          # tests de logique et de contenu
 npm run qa        # contrôles dans le véritable Chrome, profil temporaire isolé
+npm run audit:content # structure, répartition et candidats à la relecture éditoriale
 npm start         # serveur facultatif sur http://127.0.0.1:4186
 ```
 
 Le serveur est réservé au développement. Jouer sur son URL crée un espace de sauvegarde différent du lancement habituel par fichier. Le test Chrome utilise par défaut `C:/Program Files/Google/Chrome/Application/chrome.exe` ; la variable `CHROME_PATH` permet un autre emplacement. Ses captures et son rapport sont écrits dans `artifacts/` et exclus de Git. Les tests ne touchent pas au profil Chrome personnel.
 
 - `src/engine.mjs` : tirage, scores, répétition espacée, progression, validation des sauvegardes.
+- `src/bank.mjs` : liste commune des banques historiques et des trois lots de l’extension.
 - `src/app.js` : interface et audio synthétisé localement.
 - `src/theme-ui.js` : compétences, choix des thèmes et façons de jouer.
 - `src/discovery-ui.js` : suggestions et indications des prochains rappels.
@@ -93,6 +109,7 @@ Le serveur est réservé au développement. Jouer sur son URL crée un espace de
 - `dist/game.bundle.js` : fichier généré, à reconstruire après une modification du contenu ou du code.
 - `dist/style.css`, `dist/themes.css`, `dist/icon.svg` : présentation et illustrations vectorielles locales.
 - `docs/source-notes-*.md` : sources consultées et limites éditoriales.
+- `docs/expansion-*-sources.md`, `docs/editorial-review-v2.md` : références et relecture des ajouts 2.0.
 
 ## Ajouter des questions
 
@@ -115,7 +132,7 @@ export default [{
 }];
 ```
 
-Les catégories et sous-thèmes autorisés sont décrits par `CATEGORIES` dans le moteur. Le build refuse les identifiants et énoncés dupliqués, les thèmes inconnus, les options invalides et les corrections manquantes. Les tests de distribution décrivent la banque initiale ; les adapter si celle-ci s’enrichit.
+Les catégories et sous-thèmes autorisés sont décrits par `CATEGORIES` dans le moteur. Le build refuse les identifiants et énoncés dupliqués, les thèmes inconnus, les options invalides, les corrections manquantes et les univers comportant moins de 200 questions. Les tests de distribution décrivent la banque livrée de 1 800 questions ; les adapter si celle-ci s’enrichit. La détection de proximités lexicales de l’audit est une aide à la relecture, pas une validation automatique des faits.
 
 ## Vérification et limites
 
