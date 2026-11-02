@@ -1,6 +1,6 @@
 {
   "name": "curiona",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "private": true,
   "type": "module",
   "description": "Un quiz éducatif en français, avec progression personnelle et fiches PDF.",
@@ -9,6 +9,7 @@
     "test": "node --test tests/*.test.mjs",
     "qa": "node scripts/browser-qa.mjs",
     "qa:social": "node scripts/social-browser-qa.mjs",
+    "qa:fairplay": "node scripts/battle-attention-browser-qa.mjs",
     "qa:pdf": "node scripts/pdf-qa.mjs",
     "start": "node scripts/serve.mjs",
     "audit:content": "node scripts/audit-bank.mjs"

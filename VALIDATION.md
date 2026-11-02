@@ -1,4 +1,14 @@
-# Validation de Curiona 2.3
+# Validation de Curiona 2.4
+
+## Battles à huit, lancement manuel et équité — 2 novembre 2026
+
+Le serveur passe 46 tests d'intégration : 16 pour les salons et les battles, 14 pour le suivi des sorties et la rapidité, et 16 pour les amis et les messages. Les nouvelles vérifications couvrent sept arrivées concurrentes dans un salon à huit, le refus d'une neuvième personne, huit réponses concurrentes avec une seule attribution des points, les capacités entières de deux à huit et le démarrage réservé à l'hôte, y compris pour les duels trouvés automatiquement. Un départ dans un duel encore en attente rend de nouveau la recherche possible.
+
+Le bonus de rapidité et la grâce d'une seconde utilisent l'horloge serveur, après réception du corps JSON complet. Les tests contrôlent la perte de bonus à la première sortie, le total nul en cas de récidive, les répétitions d'événements, la persistance au rechargement, les retours après changement de question et les courses entre présence et réponse. Le barème des salons antérieurs est préservé. Aucune migration ni donnée du carnet solo n'a été modifiée.
+
+30 contrôles Chrome avec une API simulée passent et sont reproductibles avec `npm run qa:fairplay`. Le chat intégré ne provoque aucune sortie. Les huit joueurs, compteurs, avertissements, corrections et bilans restent dans la largeur des affichages testés à 390, 768, 1024 et 1440 px. Les captures ont été inspectées ; mobile et tablette sont des formats émulés dans Chrome, sans test sur appareil physique. Les 141 contrôles du solo et les 22 contrôles sociaux passent également.
+
+13 contrôles supplémentaires passent sur le serveur réellement publié avec huit clients HTTP distincts : salle d'attente à huit, lancement par l'hôte, même question, huit réponses sans doublon, contrôle du score serveur, première sanction sans bonus, récidive à zéro point et compteur partagé. Les huit participants de vérification ont quitté le salon après le contrôle.
 
 ## Amis et chat texte — 2 novembre 2026
 

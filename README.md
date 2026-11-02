@@ -24,11 +24,15 @@ Cette option d’exécution ne s’applique qu’à ce processus et ne change pa
 
 Ouvrir **Battles** dans la navigation, ou [accéder directement aux battles](https://savoircestfun-design.github.io/curiona/#battles). Un pseudo suffit pour jouer depuis des ordinateurs ou des maisons différents.
 
-- **Trouver un adversaire** recherche un autre joueur sur le même thème. Le duel de 8 questions démarre automatiquement lorsque deux joueurs sont réunis ; il faut qu'une autre personne recherche effectivement ce thème.
-- **Devenir hôte** crée un salon de 2, 4 ou 8 joueurs maximum. L'hôte choisit un univers ou un sous-thème, la difficulté et 8, 12 ou 20 questions, puis lance la battle quand au moins deux joueurs sont connectés.
+- **Trouver un adversaire** recherche un autre joueur sur le même thème. Le duel de 8 questions reste en attente après l'arrivée de l'adversaire : l'hôte le lance avec **Lancer la battle**. Il faut qu'une autre personne recherche effectivement ce thème.
+- **Devenir hôte** crée un salon de **2 à 8 joueurs simultanés**, avec 8 places proposées par défaut. L'hôte choisit un univers ou un sous-thème, la difficulté et 8, 12 ou 20 questions. Chaque arrivée reste dans la salle d'attente ; **seul l'hôte lance la battle**, lorsqu'au moins deux joueurs sont connectés. Il peut commencer avant que toutes les places soient occupées.
 - **Rejoindre mes amis** accepte le code du salon ou son lien d'invitation. Un mot de passe facultatif protège l'entrée. L'hôte peut aussi rendre le salon visible dans la liste, où on le retrouve par nom ou par code.
 
-Tous les joueurs reçoivent les mêmes questions et les mêmes propositions. Chaque question laisse **30 secondes** ; la correction apparaît quand tout le monde a répondu ou que le délai est écoulé. L'hôte continue après lecture. Les points sont calculés par le serveur selon la difficulté et la série de bonnes réponses, sans bonus de vitesse. Le classement final indique le gagnant ou les ex æquo, le total de points, les bonnes réponses et les points forts et notions à retravailler de chacun sur cette battle.
+Tous les joueurs reçoivent les mêmes questions et les mêmes propositions. Chaque question laisse **30 secondes** ; la correction apparaît quand tout le monde a répondu ou que le délai est écoulé. L'hôte continue après lecture. Les points sont calculés par le serveur selon la difficulté et la série de bonnes réponses. Dans les nouvelles battles de la version 2.4, une bonne réponse reçoit aussi jusqu'à **100 points de rapidité**, qui diminuent progressivement pendant les 30 secondes. La correction présente le détail des points. Le classement final indique le gagnant ou les ex æquo, le total de points, les bonnes réponses et les points forts et notions à retravailler de chacun sur cette battle.
+
+Pendant une question à laquelle on n'a pas encore répondu, quitter la page du jeu, changer d'onglet ou placer une autre fenêtre au premier plan peut être signalé. Une tolérance d'une seconde limite les alertes pour les interruptions très brèves. **Première sortie de la battle : avertissement et perte du bonus de rapidité de la question. À partir de la deuxième sortie : 0 point pour la question concernée**, même si la réponse est juste. Les corrections et les réponses déjà envoyées ne sont pas pénalisées. Le nombre de sorties et l'absence en cours apparaissent dans le classement et le bilan pour les autres participants. Les discussions intégrées au jeu restent utilisables.
+
+Cette détection indique seulement que le jeu a été quitté ou masqué : elle ne connaît pas le site ou l'application consultés et ne peut pas empêcher l'usage d'un autre appareil. Aucun historique de navigation ni adresse de page extérieure n'est recueilli. Le solo conserve son barème et son fonctionnement habituels. Les salons commencés avant cette mise à jour conservent leurs règles antérieures jusqu'à leur fin.
 
 Les battles demandent une connexion Internet. Le chronomètre continue lorsque l'onglet est masqué. Recharger le même onglet permet de retrouver son salon ; quitter volontairement la battle termine sa participation. Si l'hôte se déconnecte, un joueur encore présent reprend le rôle après environ 45 secondes. Les salons expirent après 24 heures.
 
@@ -136,6 +140,7 @@ npm run build     # valide et intègre la banque, le moteur et l’interface
 npm test          # tests de logique et de contenu
 npm run qa        # contrôles dans le véritable Chrome, profil temporaire isolé
 npm run qa:social # amis, messages, chat et échanges simultanés dans Chrome
+npm run qa:fairplay # salons à huit, lancement manuel, rapidité et sorties de page
 npm run qa:pdf    # téléchargements PDF réels, extraction et rendu
 npm run audit:content # structure, répartition et candidats à la relecture éditoriale
 npm start         # serveur facultatif sur http://127.0.0.1:4186
