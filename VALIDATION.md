@@ -2,6 +2,8 @@
 
 Vérifications initiales le **31 octobre 2026**, mises à jour le **2 novembre 2026**, sur cet ordinateur Windows. La version livrée est celle de `dist/`, issue de `npm run build`.
 
+Version publique vérifiée : **https://savoircestfun-design.github.io/curiona/**, dépôt **https://github.com/savoircestfun-design/curiona**. GitHub Pages annonce le déploiement terminé depuis la branche `gh-pages`. La page et les cinq ressources principales répondent en HTTP 200 ; leurs contenus correspondent aux fichiers locaux validés. Les 248 contrôles PDF ont également été exécutés avec succès depuis cette adresse HTTPS publique, avec quatre téléchargements réels.
+
 ## Résultats
 
 - **63 tests automatisés réussis**, zéro échec (`npm test`).
