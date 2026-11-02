@@ -135,6 +135,7 @@ Le jeu est un site HTML/CSS/JavaScript statique. Le dossier `dist/` contient la 
 npm run build     # valide et intègre la banque, le moteur et l’interface
 npm test          # tests de logique et de contenu
 npm run qa        # contrôles dans le véritable Chrome, profil temporaire isolé
+npm run qa:social # amis, messages, chat et échanges simultanés dans Chrome
 npm run qa:pdf    # téléchargements PDF réels, extraction et rendu
 npm run audit:content # structure, répartition et candidats à la relecture éditoriale
 npm start         # serveur facultatif sur http://127.0.0.1:4186

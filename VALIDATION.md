@@ -6,9 +6,11 @@ Le serveur a été étendu par une migration ajoutée après la migration exista
 
 Les 63 tests du jeu et 141 contrôles Chrome du solo passent également. Les messages sont rendus comme du texte échappé ; les profils amis et les carnets solo sont stockés séparément dans le navigateur.
 
-20 contrôles Chrome supplémentaires avec une API simulée couvrent l'interface Amis, les messages texte multiligne, le maintien de la saisie et du focus, les reprises après une panne, le blocage, l'import de profil et les discussions pendant les questions. Les captures ordinateur et mobile 390 px ont été inspectées. Les réponses et la barre Question suivante restent accessibles lorsque le panneau privé est ouvert.
+22 contrôles Chrome supplémentaires avec une API simulée couvrent l'interface Amis, les messages texte multiligne, le maintien de la saisie et du focus, les reprises après une panne, le blocage, l'import de profil et les discussions pendant les questions. Ils vérifient aussi la réception d'un message entrant juste avant l'envoi de notre propre message, pour les discussions privées et le chat du salon. Les captures ordinateur et mobile 390 px ont été inspectées. Les réponses et la barre Question suivante restent accessibles lorsque le panneau privé est ouvert. Cette série est reproductible avec `npm run qa:social`.
 
 9 contrôles ont réussi sur le serveur réellement publié : demandes acceptées avant messages, présence, non-lus, texte multiligne, idempotence, chat du salon avant et pendant une battle et refus des accès extérieurs. Un profil a été laissé sans requêtes pendant 95 secondes : il est passé hors ligne, puis a retrouvé à son retour le message envoyé pendant son absence. Le blocage a ensuite empêché les nouveaux messages et demandes. Ces contrôles utilisent uniquement des profils de vérification.
+
+12 contrôles supplémentaires ont réussi sur le site public dans deux profils Chrome isolés : création explicite, demande et acceptation, message privé reçu, profil et amis retrouvés après rechargement, chat de salon reçu avant et pendant une question, focus et brouillon préservés, affichage mobile et correction de la battle. Aucune erreur JavaScript, CORS ou réseau. Les deux participants ont quitté le salon de vérification.
 
 ## Battles en ligne — 2 novembre 2026
 
