@@ -1,4 +1,16 @@
-# Validation de Curiona 2.1
+# Validation de Curiona 2.2
+
+## Battles en ligne — 2 novembre 2026
+
+63 tests de logique et de contenu, 141 contrôles Chrome du jeu solo et 17 contrôles Chrome des nouveaux écrans Battles avec une API simulée ont réussi. Les captures Battles sur ordinateur et mobile 390 px ont été inspectées, sans débordement sur les écrans contrôlés. Les carnets solo restent séparés des résultats multijoueurs.
+
+Le serveur compagnon possède 12 tests d'intégration sur SQLite derrière un adaptateur D1 : mots de passe, autorisations, simultanéité des réponses et des entrées, capacité des salons, matchmaking à quatre clients, maintien d'une recherche active, délai serveur, déconnexion de l'hôte et forfait hors classement.
+
+Dix contrôles ont aussi réussi contre le serveur réellement publié : santé D1, CORS depuis GitHub Pages, salon protégé, rejet du mauvais mot de passe et d'un démarrage par un invité, partie complète à deux clients indépendants, score exact, gagnant, bilan par sous-thème, recherche automatique d'adversaire et annuaire. Les salons de vérification ont été quittés après les tests. Ce contrôle simule des clients distincts ; il n'a pas été effectué depuis deux logements physiques.
+
+Les nouvelles captures et scripts de contrôle ponctuels sont dans `artifacts/` (ignoré par Git). Le service distant est nécessaire aux battles ; les tests du mode solo continuent de passer hors réseau.
+
+## Vérifications antérieures — version 2.1
 
 Vérifications initiales le **31 octobre 2026**, mises à jour le **2 novembre 2026**, sur cet ordinateur Windows. La version livrée est celle de `dist/`, issue de `npm run build`.
 

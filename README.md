@@ -1,6 +1,6 @@
 # Curiona — La curiosité se cultive
 
-Un jeu éducatif en français : **1 800 questions**, **9 univers de 200 questions**, **36 sous-thèmes**, **4 difficultés** et **4 façons de jouer** combinables avec les thèmes choisis. Gratuit et sans compte. Les questions, les explications et les ressources du jeu sont intégrées aux fichiers ; les réponses sont corrigées directement dans le navigateur.
+Un jeu éducatif en français : **1 800 questions**, **9 univers de 200 questions**, **36 sous-thèmes**, **4 difficultés**, **4 façons de jouer en solo** et des **battles en ligne entre amis**. Gratuit et sans compte. En solo, les questions, les explications et les ressources du jeu sont intégrées aux fichiers ; les réponses sont corrigées directement dans le navigateur.
 
 ## Jouer
 
@@ -19,6 +19,22 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Installer-Raccourci.ps
 ```
 
 Cette option d’exécution ne s’applique qu’à ce processus et ne change pas la configuration permanente du système. Le script cherche Chrome, crée uniquement le raccourci Curiona et ne touche pas aux autres jeux.
+
+## Battles entre amis
+
+Ouvrir **Battles** dans la navigation, ou [accéder directement aux battles](https://savoircestfun-design.github.io/curiona/#battles). Un pseudo suffit pour jouer depuis des ordinateurs ou des maisons différents.
+
+- **Trouver un adversaire** recherche un autre joueur sur le même thème. Le duel de 8 questions démarre automatiquement lorsque deux joueurs sont réunis ; il faut qu'une autre personne recherche effectivement ce thème.
+- **Devenir hôte** crée un salon de 2, 4 ou 8 joueurs maximum. L'hôte choisit un univers ou un sous-thème, la difficulté et 8, 12 ou 20 questions, puis lance la battle quand au moins deux joueurs sont connectés.
+- **Rejoindre mes amis** accepte le code du salon ou son lien d'invitation. Un mot de passe facultatif protège l'entrée. L'hôte peut aussi rendre le salon visible dans la liste, où on le retrouve par nom ou par code.
+
+Tous les joueurs reçoivent les mêmes questions et les mêmes propositions. Chaque question laisse **30 secondes** ; la correction apparaît quand tout le monde a répondu ou que le délai est écoulé. L'hôte continue après lecture. Les points sont calculés par le serveur selon la difficulté et la série de bonnes réponses, sans bonus de vitesse. Le classement final indique le gagnant ou les ex æquo, le total de points, les bonnes réponses et les points forts et notions à retravailler de chacun sur cette battle.
+
+Les battles demandent une connexion Internet. Le chronomètre continue lorsque l'onglet est masqué. Recharger le même onglet permet de retrouver son salon ; quitter volontairement la battle termine sa participation. Si l'hôte se déconnecte, un joueur encore présent reprend le rôle après environ 45 secondes. Les salons expirent après 24 heures.
+
+Les pseudos et les réponses de battle sont partagés avec les participants et conservés temporairement sur le serveur des battles. Les mots de passe et jetons d'accès sont hachés ; ils ne figurent pas dans les liens d'invitation. Le carnet solo et ses PDF restent propres au navigateur. Les résultats de battle ne modifient pas l'XP ni les sauvegardes solo.
+
+Le site conserve son adresse GitHub Pages. Son serveur compagnon est hébergé avec Sites et Cloudflare D1 ; les sources sont dans le dossier voisin `curiona-battle-service/`. Aucun ordinateur personnel n'a besoin de rester allumé pour héberger une battle.
 
 ## Jouer à son rythme
 

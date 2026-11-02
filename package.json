@@ -1,6 +1,6 @@
 {
   "name": "curiona",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "private": true,
   "type": "module",
   "description": "Un quiz éducatif en français, avec progression personnelle et fiches PDF.",
