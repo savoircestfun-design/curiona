@@ -75,11 +75,12 @@ export function pickQuestion(bank,state,config,used=[],rng=Math.random,now=Date.
   let n=rng()*weights.reduce((a,b)=>a+b,0);for(let i=0;i<eligible.length;i++){n-=weights[i];if(n<=0)return eligible[i];}return eligible.at(-1);
 }
 export function reward(difficulty,correct,streak){return {points:correct?100+25*(difficulty-1)+Math.min(Math.max(0,streak-1),5)*10:0,xp:correct?25+difficulty*5:8};}
-export function recordAnswer(state,q,correct,streak,mode,now=Date.now()) {
+export function recordAnswer(state,q,correct,streak,mode,now=Date.now(),selected) {
   const r=reward(q.difficulty,correct,streak); state.xp+=r.xp;state.points+=r.points;state.total++;if(correct)state.correct++;
   state.bestStreak=Math.max(state.bestStreak,streak);
   const s=state.questions[q.id]||{seen:0,correct:0,box:0,lastSeen:0,nextDue:0};
   s.seen++;if(correct)s.correct++;s.box=correct?Math.min(5,s.box+1):0;s.lastSeen=now;
+  if(!correct){s.lastWrongAt=now;if(Number.isInteger(selected)&&selected>=-1&&selected<q.options.length&&selected!==q.correct)s.lastWrongSelected=selected;else delete s.lastWrongSelected;}
   s.nextDue=now+(correct?[0,1,3,7,14,30][s.box]*86400000:600000);state.questions[q.id]=s;
   state.topics ||= {};state.subtopics ||= {};
   for(const [collection,key] of [[state.topics,q.category],[state.subtopics,`${q.category}::${q.subtheme}`]]){
@@ -127,6 +128,13 @@ export function validateBank(bank) {
     if(q.source&&!/^https:\/\//.test(q.source))throw Error('Source invalide : '+q.id);
   }return true;
 }
+export function parseSavedAnswer(answer,question){
+  if(!answer||!question||answer.id!==question.id||typeof answer.correct!=='boolean')throw Error('Réponse invalide.');
+  const result={id:answer.id,correct:answer.correct};
+  if(answer.selected!==undefined){if(!Number.isInteger(answer.selected)||answer.selected< -1||answer.selected>=question.options.length||answer.correct!==(answer.selected===question.correct))throw Error('Choix sauvegardé invalide.');result.selected=answer.selected;}
+  if(answer.answeredAt!==undefined){if(typeof answer.answeredAt!=='number'||!Number.isFinite(answer.answeredAt)||answer.answeredAt<0||answer.answeredAt>1e14)throw Error('Date de réponse invalide.');result.answeredAt=answer.answeredAt;}
+  return result;
+}
 export function parseSave(input,bank) {
   if(!input||input.app!=='curiona'||input.version!==1||!input.state||typeof input.state!=='object')throw Error('Ce fichier n’est pas une sauvegarde Curiona compatible.');
   const raw=input.state,result=freshState();
@@ -145,6 +153,9 @@ export function parseSave(input,bank) {
   for(const [id,s] of Object.entries(raw.questions)){
     if(!ids.has(id))continue;if(!s||!['seen','correct','box','lastSeen','nextDue'].every(k=>number(s[k],k.includes('Seen')||k==='nextDue'?1e14:1e9))||s.correct>s.seen||s.box>5)throw Error('Progression invalide.');
     result.questions[id]={seen:Math.floor(s.seen),correct:Math.floor(s.correct),box:Math.floor(s.box),lastSeen:s.lastSeen,nextDue:s.nextDue};
+    const question=bankIndex(bank).byId.get(id);
+    if(s.lastWrongSelected!==undefined){if(s.seen<=s.correct||!Number.isInteger(s.lastWrongSelected)||s.lastWrongSelected< -1||s.lastWrongSelected>=question.options.length||s.lastWrongSelected===question.correct)throw Error('Dernière erreur invalide.');result.questions[id].lastWrongSelected=s.lastWrongSelected;}
+    if(s.lastWrongAt!==undefined){if(s.seen<=s.correct||!number(s.lastWrongAt,1e14)||s.lastWrongAt>s.lastSeen)throw Error('Date de dernière erreur invalide.');result.questions[id].lastWrongAt=s.lastWrongAt;}
   }
   for(const collection of ['topics','subtopics'])if(raw[collection]!==undefined&&(!raw[collection]||typeof raw[collection]!=='object'||Array.isArray(raw[collection])))throw Error('Compétences sauvegardées invalides.');
   const readProfile=(profile,theme)=>{
@@ -164,7 +175,7 @@ export function parseSave(input,bank) {
   if(!Array.isArray(raw.history)||raw.history.length>100)throw Error('Historique invalide.');
   result.history=raw.history.map(h=>{
     if(!h||!MODES.some(m=>m.id===h.mode)||!['score','correct','total','xp','date','target'].every(k=>number(h[k],k==='date'?1e14:1e9))||h.correct>h.total||!Array.isArray(h.answers)||h.answers.length>50)throw Error('Partie invalide.');
-    const answers=h.answers.map(a=>{if(!a||!ids.has(a.id)||typeof a.correct!=='boolean')throw Error('Réponse invalide.');return{id:a.id,correct:a.correct};});
+    const answers=h.answers.map(a=>parseSavedAnswer(a,bankIndex(bank).byId.get(a?.id)));
     if(answers.length!==h.total||answers.filter(a=>a.correct).length!==h.correct||new Set(answers.map(a=>a.id)).size!==answers.length)throw Error('Historique incohérent.');
     const entry={mode:h.mode,score:h.score,correct:h.correct,total:h.total,xp:h.xp,date:h.date,target:h.target,abandoned:!!h.abandoned,answers};
     const config=h.config,validThemes=new Set(CATEGORIES.flatMap(c=>[c.id,...c.subs.map(sub=>`${c.id}::${sub}`)]));

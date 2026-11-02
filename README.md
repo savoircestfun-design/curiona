@@ -1,12 +1,16 @@
 # Curiona — La curiosité se cultive
 
-Un jeu éducatif original en français : **1 800 questions**, **9 univers de 200 questions**, **36 sous-thèmes**, **4 difficultés** et **4 façons de jouer** combinables avec les thèmes choisis. Sans compte, sans abonnement, sans appel à une IA. Les explications et toutes les ressources nécessaires sont intégrées au dossier.
+Un jeu éducatif en français : **1 800 questions**, **9 univers de 200 questions**, **36 sous-thèmes**, **4 difficultés** et **4 façons de jouer** combinables avec les thèmes choisis. Gratuit et sans compte. Les questions, les explications et les ressources du jeu sont intégrées aux fichiers ; les réponses sont corrigées directement dans le navigateur.
 
 ## Jouer
 
-Double-cliquer sur **« Jouer à Curiona - Google Chrome »** sur le Bureau Windows. Ce raccourci ouvre directement `dist/index.html` dans Chrome, comme le jeu Roncerive déjà présent sur cet ordinateur. Il n’utilise aucun serveur et fonctionne sans réseau.
+Accès public : **[Jouer à Curiona](https://savoircestfun-design.github.io/curiona/)**. Le site ne demande aucun compte joueur. Le code est disponible dans [le dépôt GitHub](https://github.com/savoircestfun-design/curiona).
 
-On peut aussi ouvrir `dist/index.html` avec Google Chrome. Garder le dossier complet à son emplacement pour que le raccourci et la sauvegarde restent associés à la même adresse.
+**En ligne**, ouvrir le lien du jeu dans un navigateur. Aucune installation ni inscription n’est nécessaire. Le chargement du site demande une connexion Internet ; la version en ligne ne garantit pas un accès hors connexion.
+
+**Depuis les fichiers**, ouvrir `dist/index.html` dans Chrome en conservant le dossier complet. Cette version fonctionne sans réseau. Sur Windows, le raccourci **« Jouer à Curiona - Google Chrome »**, s’il est installé, ouvre ce même fichier. Garder le dossier à son emplacement pour conserver l’adresse associée à la sauvegarde locale.
+
+Chaque profil de navigateur conserve son propre carnet. Deux personnes qui utilisent le même profil partagent le même carnet ; les appareils et profils différents ont des progressions séparées. Il n’y a pas de synchronisation automatique entre appareils.
 
 Pour recréer le raccourci après avoir déplacé le projet : clic droit sur `Installer-Raccourci.ps1` → **Exécuter avec PowerShell**, ou depuis PowerShell dans ce dossier :
 
@@ -36,7 +40,7 @@ La version **2.0** conserve les 336 questions historiques et ajoute **1 464 ques
 
 La version **1.3** ajoute une recherche rapide dans les univers et sous-thèmes (accents facultatifs, raccourci **/**), une suggestion de découverte selon le carnet et le délai du prochain rappel. Les passages de niveau global et de compétence sont signalés doucement dans la correction, sans interrompre la partie.
 
-La version **1.4** ajoute **Mes fiches** : après une réponse, cliquer sur **Garder cette fiche** pour conserver son explication. L’onglet Mes fiches permet de relire, chercher, filtrer par univers et retirer ces fiches, sans chrono ni modification des scores ou de l’expérience. Elles restent sur l’appareil et sont incluses dans l’export/import. Les anciennes sauvegardes restent compatibles.
+La version **1.4** ajoute **Mes fiches** : après une réponse, cliquer sur **Garder cette fiche** pour conserver son explication. L’onglet Mes fiches permet de relire, chercher, filtrer par univers et retirer ces fiches, sans chrono ni modification des scores ou de l’expérience. Elles restent dans ce navigateur et sont incluses dans l’export/import. Les anciennes sauvegardes restent compatibles.
 
 Choisir ensuite **la façon de jouer**, qui conserve toujours les thèmes sélectionnés :
 
@@ -55,9 +59,17 @@ Depuis la version **1.4.1**, après chaque réponse, **Question suivante** reste
 
 Clavier : **1–4** ou **A–D** pour répondre ; **Entrée** après correction ; **Échap** pour mettre la partie de côté. Tabulation parcourt les commandes. Le bouton de haut-parleur active ou désactive les petits effets sonores. Les animations suivent la préférence système de réduction des mouvements.
 
-Depuis la version **1.1**, une **musique douce originale** accompagne les questions et la lecture des explications : accords lents et notes légères, à faible volume, sans percussion. Elle démarre au lancement volontaire d’une partie. Le bouton **♪**, en haut à droite, l’active ou la coupe indépendamment des effets sonores. Ce choix est sauvegardé. La musique se met en pause à l’accueil, en fin de partie et lorsque l’onglet est masqué ; elle reprend en revenant aux questions. Elle est synthétisée sur l’appareil et fonctionne entièrement hors ligne.
+Depuis la version **1.1**, une **musique douce originale** accompagne les questions et la lecture des explications : accords lents et notes légères, à faible volume, sans percussion. Elle démarre au lancement volontaire d’une partie. Le bouton **♪**, en haut à droite, l’active ou la coupe indépendamment des effets sonores. Ce choix est enregistré dans ce navigateur. La musique se met en pause à l’accueil, en fin de partie et lorsque l’onglet est masqué ; elle reprend en revenant aux questions. Elle est synthétisée sur l’appareil, sans téléchargement audio ni service de musique.
 
 Le petit bouton de **réglage à côté de la note de musique** ouvre son volume de 0 à 100 %. Le niveau initial de 35 % conserve l’ambiance douce de la version précédente. Les changements sont lissés, sans relancer la mélodie, et le réglage est sauvegardé. Échap ferme ce panneau sans quitter la partie. Les effets de réponse restent contrôlés séparément par le haut-parleur.
+
+## Fiches PDF pour réviser ou apprendre
+
+L’onglet **Fiches PDF** propose trois contenus : **Mes questions déjà manquées**, **Réviser les notions déjà vues** et **Apprendre de nouvelles notions**. Choisir tous les univers, un univers précis ou un sous-thème, puis éventuellement une difficulté. Les fiches couvrent 20 ou 50 notions par partie, ou toute la sélection sur demande. Un aperçu et les numéros des parties indiquent exactement ce qui sera téléchargé. Une fiche globale d’apprentissage présente les neuf univers dès la première partie.
+
+Chaque PDF contient les questions, les bonnes réponses, les explications et les sources lorsqu’elles sont disponibles. Les fiches d’erreurs ajoutent le dernier choix incorrect enregistré. Les anciens carnets n’ayant pas conservé ce choix restent utilisables : la fiche le signale sans inventer de réponse. Le temps écoulé est indiqué séparément. Après une partie, **Préparer mon PDF de révision** limite la fiche aux erreurs de cette partie.
+
+Les PDF sont générés dans le navigateur, sans transmettre le carnet à un serveur ni modifier l’expérience. jsPDF et les polices sont intégrés aux fichiers du jeu avec leurs licences dans `dist/vendor/`.
 
 ## Progression et mémoire
 
@@ -77,25 +89,32 @@ Les progrès, les huit badges, les statistiques par univers et les cent dernièr
 
 Chaque réponse est sauvegardée automatiquement dans `localStorage`, sous la clé propre au jeu `curiona.save.v1`. Une exploration mise de côté se reprend depuis l’accueil, même après fermeture du navigateur. Les sauvegardes des autres jeux restent intactes.
 
-Utiliser le même profil Chrome et la même adresse locale. Le stockage des fichiers `file://` dépend du navigateur : ne pas compter sur la navigation privée ou sur un déplacement du dossier pour conserver les données. Les boutons **Exporter ma sauvegarde** et **Importer** permettent de transférer le carnet en JSON. L’import est validé puis confirmé avant remplacement ; la progression est restaurée, mais la session en cours du fichier importé est abandonnée.
+Revenir avec le même navigateur, le même profil et la même adresse du jeu pour retrouver son carnet. La navigation privée et l’effacement des données du site peuvent faire disparaître la sauvegarde. Les boutons **Exporter ma sauvegarde** et **Importer** permettent de conserver une copie du carnet en JSON ou de le transférer sur un autre appareil. L’import est validé puis confirmé avant remplacement ; la progression est restaurée, mais la session en cours du fichier importé est abandonnée.
+
+La version locale et la version en ligne possèdent des espaces de sauvegarde distincts. Pour reprendre en ligne une progression commencée depuis les fichiers, l’exporter dans la version locale puis importer ce fichier dans la version en ligne. Un changement d’adresse du site peut aussi nécessiter ce transfert. Les sauvegardes personnelles ne sont pas envoyées au dépôt GitHub.
+
+Pour les fichiers ouverts avec une adresse `file://`, le comportement du stockage dépend du navigateur : conserver une copie exportée avant de déplacer le dossier.
 
 Les fichiers invalides ne remplacent pas la progression. Une sauvegarde locale illisible est conservée jusqu’à une action explicite et peut être exportée brute. Si le stockage est bloqué, un message recommande l’export.
 
 ## Développement
 
-La structure reprend le fonctionnement HTML/JavaScript autonome de Roncerive : `dist/`, `scripts/`, `tests/`, `docs/` et dépôt Git distinct. Le jeu est placé dans un nouveau sous-dossier. Aucun autre projet n’a été modifié. Le dépôt Git local n’a aucun remote et aucune publication GitHub ou Sites n’a été effectuée.
+Le jeu est un site HTML/CSS/JavaScript statique. Le dossier `dist/` contient la version à jouer ou à publier ; `src/`, `scripts/`, `tests/` et `docs/` contiennent le code, les outils et les notes éditoriales. Une publication GitHub Pages sert les fichiers du jeu et conserve les sauvegardes dans le navigateur des joueurs.
 
-**Node 22+**, aucune dépendance externe :
+**Node 22+** pour reconstruire le jeu et lancer les contrôles :
 
 ```text
 npm run build     # valide et intègre la banque, le moteur et l’interface
 npm test          # tests de logique et de contenu
 npm run qa        # contrôles dans le véritable Chrome, profil temporaire isolé
+npm run qa:pdf    # téléchargements PDF réels, extraction et rendu
 npm run audit:content # structure, répartition et candidats à la relecture éditoriale
 npm start         # serveur facultatif sur http://127.0.0.1:4186
 ```
 
 Le serveur est réservé au développement. Jouer sur son URL crée un espace de sauvegarde différent du lancement habituel par fichier. Le test Chrome utilise par défaut `C:/Program Files/Google/Chrome/Application/chrome.exe` ; la variable `CHROME_PATH` permet un autre emplacement. Ses captures et son rapport sont écrits dans `artifacts/` et exclus de Git. Les tests ne touchent pas au profil Chrome personnel.
+
+La QA des PDF utilise Python avec `pypdf`, `pypdfium2` et `Pillow`. Ces outils servent uniquement aux vérifications, pas aux joueurs. Installation isolée facultative : `python -m pip install --target artifacts/pdf-qa-python pypdf pypdfium2 Pillow`.
 
 - `src/engine.mjs` : tirage, scores, répétition espacée, progression, validation des sauvegardes.
 - `src/bank.mjs` : liste commune des banques historiques et des trois lots de l’extension.

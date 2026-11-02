@@ -1,11 +1,12 @@
-# Validation de Curiona 2.0
+# Validation de Curiona 2.1
 
 Vérifications initiales le **31 octobre 2026**, mises à jour le **2 novembre 2026**, sur cet ordinateur Windows. La version livrée est celle de `dist/`, issue de `npm run build`.
 
 ## Résultats
 
-- **52 tests automatisés réussis**, zéro échec (`npm test`).
+- **63 tests automatisés réussis**, zéro échec (`npm test`).
 - **141 contrôles d’intégration réussis dans Google Chrome**, zéro exception JavaScript (`npm run qa`).
+- **248 contrôles PDF réussis**, quatre téléchargements réels, extraction et rendu (`npm run qa:pdf`).
 - Banque intégrée : **1 800 questions**, dont **1 561 QCM et 239 vrais/faux**. Neuf univers de 200 questions, quatre sous-thèmes par univers et 50 questions par sous-thème. Chaque univers contient 50 questions de chaque difficulté ; chaque sous-thème en contient 12 ou 13 par difficulté.
 - **21 reformulations alternatives** présentes dans le jeu généré, une par sous-thème historique. Elles conservent les choix et leur bonne réponse et ne comptent pas comme des questions supplémentaires.
 - Raccourci du Bureau réellement créé, cible et fichier vérifiés, puis **ouvert avec succès**. La fenêtre obtenue s’intitule « Curiona — La curiosité se cultive - Google Chrome ».
@@ -40,6 +41,12 @@ Les captures et la liste détaillée des contrôles figurent dans `artifacts/`. 
 
 ## Contenu
 
+La version 2.1 ajoute les fiches PDF personnelles : erreurs déjà commises, révision des notions rencontrées et apprentissage sans partie préalable. Les filtres portent sur tous les univers, un univers ou un sous-thème, avec difficulté et lots de 20, 50 ou toutes les notions. Une entrée depuis le bilan limite le contenu aux erreurs de cette partie. Le dernier choix incorrect, sa date et les choix de l’historique sont désormais conservés et validés à l’import, sans modifier les carnets anciens. Une erreur ancienne sans choix connu est explicitement signalée ; le temps écoulé est distingué.
+
+Quatre PDF sont réellement téléchargés dans Chrome : erreurs personnelles (1 page), révision globale (2), Maths expert (12) et Astronomie débutant (3). Les 248 contrôles vérifient chaque question, réponse et explication, les accents et symboles mathématiques, l’absence de pages blanches et de caractères hors page, les anciens carnets, la reprise et l’export/import. Les rendus des pages représentatives ont été inspectés visuellement. Les PDF et leurs polices sont produits localement par jsPDF 4.2.1 et DejaVu Sans 2.37, avec licences intégrées.
+
+Les textes publics sont adaptés : aucune promesse de fonctionnement hors ligne pour le chargement du site, sauvegarde décrite comme propre au navigateur et à son profil, absence de synchronisation automatique, transfert par export/import. Les nouveaux réglages PDF et la navigation sont vérifiés en affichage mobile. Voir `docs/online-copy-review.md`.
+
 La version 2.0 ajoute **1 464 questions** et les univers **Langue française** et **Vie quotidienne**. Les empreintes des trois banques historiques garantissent que les 336 questions précédentes et leurs identifiants restent inchangés. Les tests couvrent les effectifs exacts, les filtres de tous les modes dans les nouveaux univers et la conservation d’un carnet antérieur. Chrome vérifie leurs cartes à 200 questions, puis joue une question de Vocabulaire et de Cuisine avec correction et progression de compétence.
 
 `npm run audit:content` contrôle la structure complète, les répartitions, les explications identiques et les proximités lexicales à relire. Aucun énoncé ni aucune explication identique n’est détecté. Les quatre paires proches restantes correspondent à des notions distinctes : fusion/vaporisation, IPv4/IPv6, homophones verbaux/adjectif et confidentialité/intégrité. Les révisions et références des nouveaux lots sont documentées dans `docs/expansion-*-sources.md` et `docs/editorial-review-v2.md`.
@@ -57,4 +64,4 @@ Contrôles de structure et d’unicité des identifiants et énoncés, relecture
 - Une question peut réapparaître lors de parties ultérieures ou en Révision. Vingt et une disposent d’une formulation alternative.
 - Le stockage local des adresses `file://` dépend du navigateur et de son profil. L’export est conseillé avant de déplacer le jeu ou d’effacer des données de navigation.
 - L’ouverture des liens de sources demande Internet ; jouer, lire les explications et sauvegarder n’en demandent pas.
-- Aucune publication distante ni action GitHub n’a été effectuée. Le nouveau projet est indépendant et les autres jeux ont seulement été consultés.
+- La version publique est hébergée sur GitHub Pages. Les sauvegardes et les PDF des joueurs sont créés dans leur navigateur ; le jeu ne possède pas de compte joueur ni de base de données de progression.
