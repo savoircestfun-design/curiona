@@ -10,6 +10,8 @@ Dix contrôles ont aussi réussi contre le serveur réellement publié : santé 
 
 Les nouvelles captures et scripts de contrôle ponctuels sont dans `artifacts/` (ignoré par Git). Le service distant est nécessaire aux battles ; les tests du mode solo continuent de passer hors réseau.
 
+Après publication, 11 contrôles supplémentaires ont réussi dans deux vrais onglets Chrome sur le site public, sans API simulée : création protégée, invitation, arrivée de l'invité, lancement, questions et corrections identiques, question suivante, reprise après rechargement, affichage mobile 390 px, carnet solo intact et sortie des deux joueurs. Aucune erreur JavaScript, CORS ou réseau n'a été relevée. `index.html`, `game.bundle.js` et `battle.css` publics répondent en HTTP 200 et correspondent aux fichiers locaux validés. Publication GitHub Pages : commit `40db241` ; serveur Sites : version publiée 2.
+
 ## Vérifications antérieures — version 2.1
 
 Vérifications initiales le **31 octobre 2026**, mises à jour le **2 novembre 2026**, sur cet ordinateur Windows. La version livrée est celle de `dist/`, issue de `npm run build`.
