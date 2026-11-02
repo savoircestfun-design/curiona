@@ -10,6 +10,10 @@ Le bonus de rapidité et la grâce d'une seconde utilisent l'horloge serveur, ap
 
 13 contrôles supplémentaires passent sur le serveur réellement publié avec huit clients HTTP distincts : salle d'attente à huit, lancement par l'hôte, même question, huit réponses sans doublon, contrôle du score serveur, première sanction sans bonus, récidive à zéro point et compteur partagé. Les huit participants de vérification ont quitté le salon après le contrôle.
 
+Après publication, 11 contrôles supplémentaires passent dans deux navigateurs Chrome isolés sur le site public. Un vrai changement d'onglet, avec événements natifs du navigateur, rend l'absence et le compteur visibles chez l'hôte ; le retour présente l'avertissement et une réponse juste conserve sa base de 100 points avec un bonus de rapidité nul. L'exécution instrumentée finale ne relève aucune erreur JavaScript, CORS ou réseau, y compris à la sortie par les boutons du jeu. Les participants de vérification ont quitté leurs salons ; aucun profil social n'a été créé.
+
+La publication GitHub Pages `40d7560` et le serveur Sites version4 sont en ligne. Les fichiers publics `index.html`, `game.bundle.js` et `battle.css` répondent en HTTP200 et correspondent aux fichiers locaux validés.
+
 ## Amis et chat texte — 2 novembre 2026
 
 Le serveur a été étendu par une migration ajoutée après la migration existante, sans modifier les tables de battles déjà publiées. Les 28 tests d'intégration passent : 12 pour les battles et 16 pour les profils, demandes d'amis, messages privés, statuts en ligne/hors ligne, non-lus, curseurs, rétention, limites et contrôle d'accès au chat des salons. Les tests couvrent les blocages et les arrivées concurrentes, l'absence de double message lors d'une relance et la séparation des clés de profils et de participants.
