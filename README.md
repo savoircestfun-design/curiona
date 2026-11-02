@@ -8,7 +8,7 @@ Accès public : **[Jouer à Curiona](https://savoircestfun-design.github.io/curi
 
 **En ligne**, ouvrir le lien du jeu dans un navigateur. Aucune installation ni inscription n’est nécessaire. Le chargement du site demande une connexion Internet ; la version en ligne ne garantit pas un accès hors connexion.
 
-**Depuis les fichiers**, ouvrir `dist/index.html` dans Chrome en conservant le dossier complet. Cette version fonctionne sans réseau. Sur Windows, le raccourci **« Jouer à Curiona - Google Chrome »**, s’il est installé, ouvre ce même fichier. Garder le dossier à son emplacement pour conserver l’adresse associée à la sauvegarde locale.
+**Depuis les fichiers**, ouvrir `dist/index.html` dans Chrome en conservant le dossier complet. Le mode solo fonctionne sans réseau ; les battles demandent Internet. Sur Windows, le raccourci **« Jouer à Curiona - Google Chrome »**, s’il est installé, ouvre ce même fichier. Garder le dossier à son emplacement pour conserver l’adresse associée à la sauvegarde locale.
 
 Chaque profil de navigateur conserve son propre carnet. Deux personnes qui utilisent le même profil partagent le même carnet ; les appareils et profils différents ont des progressions séparées. Il n’y a pas de synchronisation automatique entre appareils.
 
