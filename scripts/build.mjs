@@ -10,6 +10,7 @@ validateBank(bank);for(const c of CATEGORIES){const count=bank.filter(q=>q.categ
 const engine=(await readFile(path.join(root,'src/engine.mjs'),'utf8')).replace(/^export /gm,'');
 const battleConfig=await readFile(path.join(root,'src/battle-config.js'),'utf8');
 const battleUi=await readFile(path.join(root,'src/battle-ui.js'),'utf8');
+const socialUi=await readFile(path.join(root,'src/social-ui.js'),'utf8');
 const app=await readFile(path.join(root,'src/app.js'),'utf8');
 const music=await readFile(path.join(root,'src/music.js'),'utf8');
 const themeUi=await readFile(path.join(root,'src/theme-ui.js'),'utf8');
@@ -20,5 +21,5 @@ const study=(await readFile(path.join(root,'src/study.mjs'),'utf8')).replace(/^i
 const studyUi=await readFile(path.join(root,'src/study-ui.js'),'utf8');
 await mkdir(path.join(root,'dist'),{recursive:true});
 await writeFile(path.join(root,'dist/.nojekyll'),'');
-await writeFile(path.join(root,'dist/game.bundle.js'),`/* Curiona 2.2 — généré par npm run build. */\n(()=>{\n'use strict';\n${engine}\nconst QUESTIONS=${JSON.stringify(bank)};\n${music}\n${themeUi}\n${discovery}\n${notebook}\n${comfort}\n${study}\n${studyUi}\n${battleConfig}\n${battleUi}\n${app}\n})();\n`);
+await writeFile(path.join(root,'dist/game.bundle.js'),`/* Curiona 2.3 — généré par npm run build. */\n(()=>{\n'use strict';\n${engine}\nconst QUESTIONS=${JSON.stringify(bank)};\n${music}\n${themeUi}\n${discovery}\n${notebook}\n${comfort}\n${study}\n${studyUi}\n${battleConfig}\n${battleUi}\n${socialUi}\n${app}\n})();\n`);
 console.log(`${bank.length} questions intégrées. Distribution : ${CATEGORIES.map(c=>c.name+' '+bank.filter(q=>q.category===c.id).length).join(' · ')}`);

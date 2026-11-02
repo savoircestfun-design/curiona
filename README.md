@@ -36,6 +36,18 @@ Les pseudos et les réponses de battle sont partagés avec les participants et c
 
 Le site conserve son adresse GitHub Pages. Son serveur compagnon est hébergé avec Sites et Cloudflare D1 ; les sources sont dans le dossier voisin `curiona-battle-service/`. Aucun ordinateur personnel n'a besoin de rester allumé pour héberger une battle.
 
+## Amis et discussions texte
+
+Le **chat du salon** permet de discuter avant le lancement et pendant les questions, avec les participants de la battle. Aucun profil amis n'est nécessaire pour ce chat. Les messages sont uniquement du texte, sans image, pièce jointe, microphone ni caméra.
+
+L'onglet **Amis** propose un profil facultatif avec un pseudo et un **code ami** à partager. Pour ajouter quelqu'un, saisir son code puis lui envoyer une demande ; il doit l'accepter avant que les messages privés deviennent disponibles. Les amis apparaissent en ligne ou hors ligne. Un message privé envoyé à un ami hors ligne lui sera présenté lorsqu'il reviendra.
+
+Le panneau de conversation reste accessible pendant le jeu. Les messages privés sont conservés pendant 30 jours ; les messages du salon suivent sa durée de 24 heures. Le statut en ligne est actualisé automatiquement, avec un délai possible d'environ 90 secondes après une déconnexion.
+
+Le profil amis est retrouvé automatiquement dans le même navigateur. **Exporter mon profil amis** permet d'en conserver une copie privée pour le restaurer avec **Importer** dans un autre navigateur. Ce fichier contient la clé d'accès au profil : le conserver pour soi. Le code ami public, lui, peut être partagé avec ses amis. Le carnet solo se sauvegarde et se transfère séparément.
+
+On peut refuser une demande, retirer un ami ou bloquer une personne depuis Amis. Le blocage empêche les messages privés et les nouvelles demandes entre ces profils.
+
 ## Jouer à son rythme
 
 Choisir d’abord **les thèmes** : un univers complet, un sous-thème précis, tous les univers ou un mélange personnalisé. Les cartes de l’accueil donnent accès directement aux 36 sous-thèmes et à leur niveau. Le bouton **Modifier** dans les réglages permet de changer cette sélection.

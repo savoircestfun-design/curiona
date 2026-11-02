@@ -1,4 +1,14 @@
-# Validation de Curiona 2.2
+# Validation de Curiona 2.3
+
+## Amis et chat texte — 2 novembre 2026
+
+Le serveur a été étendu par une migration ajoutée après la migration existante, sans modifier les tables de battles déjà publiées. Les 28 tests d'intégration passent : 12 pour les battles et 16 pour les profils, demandes d'amis, messages privés, statuts en ligne/hors ligne, non-lus, curseurs, rétention, limites et contrôle d'accès au chat des salons. Les tests couvrent les blocages et les arrivées concurrentes, l'absence de double message lors d'une relance et la séparation des clés de profils et de participants.
+
+Les 63 tests du jeu et 141 contrôles Chrome du solo passent également. Les messages sont rendus comme du texte échappé ; les profils amis et les carnets solo sont stockés séparément dans le navigateur.
+
+20 contrôles Chrome supplémentaires avec une API simulée couvrent l'interface Amis, les messages texte multiligne, le maintien de la saisie et du focus, les reprises après une panne, le blocage, l'import de profil et les discussions pendant les questions. Les captures ordinateur et mobile 390 px ont été inspectées. Les réponses et la barre Question suivante restent accessibles lorsque le panneau privé est ouvert.
+
+9 contrôles ont réussi sur le serveur réellement publié : demandes acceptées avant messages, présence, non-lus, texte multiligne, idempotence, chat du salon avant et pendant une battle et refus des accès extérieurs. Un profil a été laissé sans requêtes pendant 95 secondes : il est passé hors ligne, puis a retrouvé à son retour le message envoyé pendant son absence. Le blocage a ensuite empêché les nouveaux messages et demandes. Ces contrôles utilisent uniquement des profils de vérification.
 
 ## Battles en ligne — 2 novembre 2026
 
