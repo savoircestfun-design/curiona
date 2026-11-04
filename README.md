@@ -1,6 +1,6 @@
 # Curiona — La curiosité se cultive
 
-Un jeu éducatif en français : **4 400 questions**, **11 univers de 400 questions**, **46 sous-thèmes et continents**, **4 difficultés**, **4 façons de jouer en solo** et des **battles en ligne entre amis**. Gratuit et sans compte obligatoire. En solo, les questions, les explications et les ressources du jeu sont intégrées aux fichiers ; les réponses sont corrigées directement dans le navigateur.
+Un jeu éducatif en français : **4 500 questions**, **11 univers** — dix de 400 questions et **Addictions et prévention de 500 questions** —, **47 sous-thèmes et continents**, **4 difficultés**, **4 façons de jouer en solo** et des **battles en ligne entre amis**. Gratuit et sans compte obligatoire. En solo, les questions, les explications et les ressources du jeu sont intégrées aux fichiers ; les réponses sont corrigées directement dans le navigateur.
 
 ## Jouer
 
@@ -64,9 +64,9 @@ On peut refuser une demande, retirer un ami ou bloquer une personne depuis Amis.
 
 ## Jouer à son rythme
 
-Choisir d’abord **les thèmes** : un univers complet, un sous-thème précis, tous les univers ou un mélange personnalisé. Les cartes de l’accueil donnent accès directement aux 46 sous-thèmes et continents et à leur niveau. Le bouton **Modifier** dans les réglages permet de changer cette sélection.
+Choisir d’abord **les thèmes** : un univers complet, un sous-thème précis, tous les univers ou un mélange personnalisé. Les cartes de l’accueil donnent accès directement aux 47 sous-thèmes et continents et à leur niveau. Le bouton **Modifier** dans les réglages permet de changer cette sélection.
 
-La version **3.0** conserve les **1 800 questions précédentes** et ajoute **2 600 questions** : 200 dans chacun des neuf univers existants, 400 dans **Drogues et prévention** et 400 dans **Politique**. Chaque univers contient 100 questions de chaque difficulté. Les anciens niveaux 1/2 sont regroupés au niveau Intermédiaire, les anciens niveaux 3/4 au niveau Avancé ; les nouveaux Débutant et Expert proposent respectivement des repères plus accessibles et des raisonnements ou connaissances plus poussés. Les textes, réponses et identifiants précédents restent stables pour conserver les carnets. Les sources originales ne sont pas réécrites : le recalibrage est appliqué dans la banque commune.
+La version **3.1** conserve les **1 800 questions historiques** et ajoute **2 700 questions** : 200 dans chacun des neuf univers d’origine, 500 dans **Addictions et prévention** et 400 dans **Politique**. Les dix univers de 400 questions contiennent chacun 100 questions de chaque difficulté ; Addictions et prévention en contient 125 par difficulté. Les anciens niveaux 1/2 sont regroupés au niveau Intermédiaire, les anciens niveaux 3/4 au niveau Avancé ; les nouveaux Débutant et Expert proposent respectivement des repères plus accessibles et des raisonnements ou connaissances plus poussés. Les textes, réponses et identifiants précédents restent stables pour conserver les carnets. Les sources originales ne sont pas réécrites : le recalibrage est appliqué dans la banque commune.
 
 | Univers | Sous-thèmes ou continents |
 | --- | --- |
@@ -79,10 +79,12 @@ La version **3.0** conserve les **1 800 questions précédentes** et ajoute **2 
 | Informatique | Numérique · Programmation · Réseaux · Données et cybersécurité |
 | Langue française | Vocabulaire · Grammaire · Orthographe · Expression et littérature |
 | Vie quotidienne | Cuisine · Objets et matériaux · Mesures pratiques · Énergie au quotidien |
-| Drogues et prévention | Substances et effets · Risques et dépendance · Prévention et entraide · Idées reçues et repères |
+| Addictions et prévention | Substances et effets · Risques et dépendance · Prévention et entraide · Idées reçues et repères · Habitudes, jeux et alimentation |
 | Politique | Afrique · Amérique du Nord · Amérique du Sud · Asie · Europe · Océanie |
 
-Les dix univers à quatre sous-thèmes contiennent 100 questions par sous-thème. Politique propose **Général · tous les continents** ou un filtre continental : Afrique, Asie et Europe 80 questions chacune ; Amérique du Nord et Amérique du Sud 60 chacune ; Océanie 40. Les niveaux sont répartis également dans chaque continent. Le filtre est disponible en solo, en battle et dans les fiches PDF. Les questions politiques portent sur les institutions et l'histoire, sans prise de position partisane. L'univers Drogues et prévention vise la sensibilisation, les effets et risques, les idées reçues et l'entraide, sans doses, recettes ni conseils de consommation.
+Les neuf univers d’origine comptent quatre sous-thèmes de 100 questions. **Addictions et prévention** en propose cinq de 100 questions : les quatre premiers sont conservés, et **Habitudes, jeux et alimentation** ajoute 100 questions réparties en 25 questions de chaque niveau. Politique propose **Général · tous les continents** ou un filtre continental : Afrique, Asie et Europe 80 questions chacune ; Amérique du Nord et Amérique du Sud 60 chacune ; Océanie 40. Les niveaux sont répartis également dans chaque continent. Le filtre est disponible en solo, en battle et dans les fiches PDF. Les questions politiques portent sur les institutions et l'histoire, sans prise de position partisane.
+
+L’univers **Addictions et prévention** aborde l’alcool, le tabac et les autres drogues, les jeux d’argent, les jeux vidéo, les écrans et les habitudes alimentaires. Les questions visent la sensibilisation, les risques et l’entraide ; elles distinguent habitudes, usages et troubles reconnus, sans étiqueter une personne ni poser un diagnostic. Pour l’alimentation, elles abordent aussi les troubles du comportement alimentaire avec ces mêmes précautions. Les questions ne donnent ni doses, ni recettes, ni conseils de consommation. Le nom et le nouveau sous-thème conservent l’identifiant technique `prevention` et tous les identifiants de questions déjà présents pour retrouver les acquis des carnets.
 
 La version **1.3** ajoute une recherche rapide dans les univers et sous-thèmes (accents facultatifs, raccourci **/**), une suggestion de découverte selon le carnet et le délai du prochain rappel. Les passages de niveau global et de compétence sont signalés doucement dans la correction, sans interrompre la partie.
 
@@ -121,7 +123,7 @@ Les PDF sont générés dans le navigateur, sans transmettre le carnet à un ser
 
 Une bonne réponse rapporte 100 / 125 / 150 / 175 points selon la difficulté, plus un bonus de série allant jusqu’à 50 points. Elle donne 30 / 35 / 40 / 45 XP. Une erreur donne 8 XP et ne retire rien. Le niveau joueur vaut `1 + floor(sqrt(XP / 100))`.
 
-Chaque univers et chacun des **46 sous-thèmes et continents** possède son propre niveau de compétence, sa jauge d’expérience, sa précision et ses notions consolidées. Une réponse en Jardinage fait progresser Jardinage et Nature & jardin, sans ajouter d’XP à Plantes ou à Arbres. Le niveau de compétence utilise les mêmes seuils d’XP que le niveau global. Il reflète la progression dans le jeu ; la précision et la consolidation complètent cet indicateur.
+Chaque univers et chacun des **47 sous-thèmes et continents** possède son propre niveau de compétence, sa jauge d’expérience, sa précision et ses notions consolidées. Une réponse en Jardinage fait progresser Jardinage et Nature & jardin, sans ajouter d’XP à Plantes ou à Arbres. Le niveau de compétence utilise les mêmes seuils d’XP que le niveau global. Il reflète la progression dans le jeu ; la précision et la consolidation complètent cet indicateur.
 
 La **difficulté conseillée** est distincte du niveau de compétence : l’adaptatif suit chaque sous-thème séparément, à partir du niveau débutant. Trois réussites consécutives le font monter d’un cran ; deux erreurs consécutives le font redescendre. Le tirage favorise le niveau ciblé sans exclure totalement les autres niveaux. Le choix explicite d’une difficulté constitue, lui, un filtre strict.
 
@@ -167,7 +169,7 @@ La QA des PDF utilise Python avec `pypdf`, `pypdfium2` et `Pillow`. Ces outils s
 
 - `src/engine.mjs` : tirage, scores, répétition espacée, progression, validation des sauvegardes.
 - `src/bank.mjs` : banque commune et recalibrage des niveaux historiques.
-- `src/content-v3/` : 2 600 questions supplémentaires et nouveaux univers.
+- `src/content-v3/` : 2 700 questions supplémentaires et nouveaux univers.
 - `scripts/export-battle-bank.mjs` : export autonome de la même banque vers `worker/questions.mjs` du service voisin ; les niveaux antérieurs restent disponibles pour les manches déjà commencées.
 - `src/app.js` : interface et audio synthétisé localement.
 - `src/theme-ui.js` : compétences, choix des thèmes et façons de jouer.
@@ -181,10 +183,11 @@ La QA des PDF utilise Python avec `pypdf`, `pypdfium2` et `Pillow`. Ces outils s
 - `docs/source-notes-*.md` : sources consultées et limites éditoriales.
 - `docs/expansion-*-sources.md`, `docs/editorial-review-v2.md` : références et relecture des ajouts 2.0.
 - `docs/content-v3-*-sources.md` : références et limites de la relecture des ajouts 3.0.
+- `docs/content-addictions-sources.md` : sources et nuances des 100 questions supplémentaires sur les comportements et l'alimentation.
 
 ## Ajouter des questions
 
-Ajouter les nouveaux lots dans **`src/content-v3/`** et les référencer dans son `index.mjs`, puis exécuter `npm run build`. Adapter les contrôles de distribution pour un enrichissement au-delà de 400 questions par univers. Conserver tous les identifiants existants pour préserver la progression. Les fichiers de `dist/data/` sont des banques historiques : leur contenu et leurs identifiants restent stables, et leur difficulté est recalibrée lors de l'assemblage.
+Ajouter les nouveaux lots dans **`src/content-v3/`** et les référencer dans son `index.mjs`, puis exécuter `npm run build`. Adapter les contrôles de distribution lors d’un enrichissement : la banque actuelle compte 400 questions par univers, sauf Addictions et prévention qui en compte 500. Conserver tous les identifiants existants pour préserver la progression. Les fichiers de `dist/data/` sont des banques historiques : leur contenu et leurs identifiants restent stables, et leur difficulté est recalibrée lors de l'assemblage.
 
 ```javascript
 export default [{
@@ -203,7 +206,7 @@ export default [{
 }];
 ```
 
-Les catégories et sous-thèmes autorisés sont décrits par `CATEGORIES` dans le moteur. Le build refuse les identifiants et énoncés dupliqués, les thèmes inconnus, les options invalides, les corrections manquantes et une distribution différente de 400 questions par univers. Les tests de distribution décrivent la banque livrée de 4 400 questions ; les adapter si celle-ci s’enrichit. La détection de proximités lexicales de l’audit est une aide à la relecture, pas une validation automatique des faits.
+Les catégories et sous-thèmes autorisés sont décrits par `CATEGORIES` dans le moteur. Le build refuse les identifiants et énoncés dupliqués, les thèmes inconnus, les options invalides, les corrections manquantes et une distribution différente des effectifs attendus : dix univers de 400 questions et Addictions et prévention de 500 questions. Les tests de distribution décrivent la banque livrée de 4 500 questions ; les adapter si celle-ci s’enrichit. La détection de proximités lexicales de l’audit est une aide à la relecture, pas une validation automatique des faits.
 
 ## Vérification et limites
 

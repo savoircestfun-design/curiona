@@ -1,4 +1,4 @@
-// Smoke test de production : exécuter seulement après publication de Curiona 3.0.
+// Smoke test de production : exécuter seulement après publication de Curiona 3.1.
 // Deux profils Chrome jetables ; aucune interception réseau ni profil personnel.
 import {spawn} from 'node:child_process';
 import {mkdtemp,readFile,writeFile,mkdir,rm} from 'node:fs/promises';
@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 const site='https://savoircestfun-design.github.io/curiona/';
 const endpoint='https://curiona-battles.biensur68.chatgpt.site/api';
 const root=process.cwd(),clients=[],checks=[],errors=[],cleanupErrors=[];
-const stamp=Date.now().toString(36),title='QA Mondial Nature Politique '+stamp;
+const stamp=Date.now().toString(36),title='QA Mondial Addictions Politique '+stamp;
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 await mkdir(path.join(root,'artifacts'),{recursive:true});
 const record=label=>{checks.push(label);console.log('✓ '+label);};
@@ -86,22 +86,23 @@ try{
   for(const c of [host,guest]){
     await c.send('Page.navigate',{url:site+'?qa_world='+stamp+'#battles'});
     await until(c,'!!window.Curiona&&!!document.querySelector("#battle-world-groups")','version mondiale publiée');
-    await check(c,'Curiona.info().questions===4400','La version publiée charge 4 400 questions ('+c.role+')');
+    await check(c,'Curiona.info().categories.find(c=>c.id==="prevention").count===500&&Curiona.study({kind:"learn",theme:"prevention::Habitudes, jeux et alimentation",batchSize:"all"}).total===100','Les 500 questions Addictions et les 100 nouveaux repères sont publiés ('+c.role+')');
+    await check(c,'Curiona.info().questions===4500','La version publiée charge 4 500 questions ('+c.role+')');
     await check(c,'!sessionStorage.getItem("curiona.battle.session.v1")&&!localStorage.getItem("curiona.social.profile.v1")','Session isolée sans profil ni groupe préexistant ('+c.role+')');
   }
   await input(host,'#battle-name','QA Mondial hôte');await input(host,'#battle-title',title);
-  await click(host,'[data-battle-theme-scope=create][data-battle-theme-choice=nature]');
+  await click(host,'[data-battle-theme-scope=create][data-battle-theme-choice=prevention]');
   await click(host,'[data-battle-theme-scope=create][data-battle-theme-choice=politics]');
   await input(host,'#battle-count','8');await input(host,'#battle-difficulty','1');await input(host,'#battle-maxPlayers','2');
   await click(host,'[data-battle-field=visibility][value=public]');
   await ev(host,'document.querySelector("[data-battle-form=create]").requestSubmit()');
   await until(host,'!!document.querySelector(".battle-lobby")','création mondiale');await remember(host);
-  await check(host,'document.querySelector(".battle-lobby-head").textContent.includes("Nature")&&document.querySelector(".battle-lobby-head").textContent.includes("Politique")&&document.querySelector(".battle-lobby-head").textContent.includes("Groupe mondial ouvert")','L’hôte crée un groupe mondial Nature + Politique');
+  await check(host,'document.querySelector(".battle-lobby-head").textContent.includes("Addictions")&&document.querySelector(".battle-lobby-head").textContent.includes("Politique")&&document.querySelector(".battle-lobby-head").textContent.includes("Groupe mondial ouvert")','L’hôte crée un groupe mondial Addictions + Politique');
   await check(host,'document.querySelector("[data-battle-action=start]").disabled','Un hôte seul ne démarre pas la partie');
   await input(guest,'#battle-name','QA Mondial invité');await input(guest,'#battle-search',title);
   await click(guest,'[data-battle-action=refresh]');
   await until(guest,`[...document.querySelectorAll('.battle-world-card')].some(card=>card.querySelector('h3').textContent===${JSON.stringify(title)})`,'carte publique réelle');
-  await check(guest,'document.querySelector(".battle-world-card").textContent.includes("Nature")&&document.querySelector(".battle-world-card").textContent.includes("Politique")&&document.querySelector(".battle-world-card").textContent.includes("Débutant")&&document.querySelector(".battle-world-card").textContent.includes("1 / 2 joueurs")','L’invité retrouve les univers, le niveau et les places dans l’annuaire public');
+  await check(guest,'document.querySelector(".battle-world-card").textContent.includes("Addictions")&&document.querySelector(".battle-world-card").textContent.includes("Politique")&&document.querySelector(".battle-world-card").textContent.includes("Débutant")&&document.querySelector(".battle-world-card").textContent.includes("1 / 2 joueurs")','L’invité retrouve les univers, le niveau et les places dans l’annuaire public');
   await check(guest,'document.querySelector("#battle-code").value===""&&document.documentElement.scrollWidth<=innerWidth','Le mobile affiche le groupe sans débordement et sans code saisi');
   await capture(guest,'live-world-01-directory-mobile');
   await click(guest,'.battle-world-card [data-battle-action=join-open]');

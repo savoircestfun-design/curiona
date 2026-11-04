@@ -9,5 +9,5 @@ if(!destination||!path.isAbsolute(destination))throw Error('Indiquer le chemin a
 validateBank(bank);
 const previous=new Map(LEGACY_QUESTIONS.map(q=>[q.id,q.difficulty]));
 const snapshot=bank.map(q=>({...q,...(previous.has(q.id)?{legacyDifficulty:previous.get(q.id)}:{})}));
-await writeFile(destination,'// Banque Curiona 3.0 ; les anciennes manches conservent legacyDifficulty.\nexport default '+JSON.stringify(snapshot)+';\n');
+await writeFile(destination,'// Banque Curiona 3.1 ; les anciennes manches conservent legacyDifficulty.\nexport default '+JSON.stringify(snapshot)+';\n');
 console.log(snapshot.length+' questions exportées dans le service de battles.');

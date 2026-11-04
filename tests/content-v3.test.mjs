@@ -6,7 +6,7 @@ import {CATEGORIES,filterQuestions,freshState,parseSave,recordAnswer} from '../s
 
 test('les nouveaux niveaux extrêmes remplacent le calibrage précédent sans retirer de notion',()=>{
   assert.equal(LEGACY_QUESTIONS.length,1800);
-  assert.equal(additions.length,2600);
+  assert.equal(additions.length,2700);
   const historicalIds=new Set(LEGACY_QUESTIONS.map(q=>q.id));
   assert.ok(additions.every(q=>!historicalIds.has(q.id)));
   for(const category of CATEGORIES.filter(c=>!['prevention','politics'].includes(c.id))){
@@ -46,7 +46,7 @@ test('un ancien carnet couvrant les 1 800 notions conserve ses acquis et accepte
   const restored=parseSave({app:'curiona',version:1,state:previous},bank);
   for(const key of ['xp','points','total','correct','expertCorrect','questions','topics','subtopics','badges','bookmarks'])assert.deepEqual(restored[key],previous[key],key);
   assert.deepEqual(previous,untouched);
-  assert.equal(restored.bookmarks.length,4400);
+  assert.equal(restored.bookmarks.length,4500);
 });
 
 test('les cas chiffrés Expert tiennent compte des étapes, pertes et unités indiquées',()=>{

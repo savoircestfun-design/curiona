@@ -1,4 +1,14 @@
-# Validation de Curiona 3.0
+# Validation de Curiona 3.1
+
+## Addictions et prévention — 4 novembre 2026
+
+L'univers conserve ses 400 questions précédentes, son identifiant `prevention` et ses quatre premiers sous-thèmes. Il s'appelle désormais **Addictions et prévention** et reçoit 100 questions supplémentaires dans **Habitudes, jeux et alimentation**, identifiants 401 à 500, avec 25 questions par difficulté. Les quatre ensembles de 25 abordent jeux d'argent, jeux vidéo et écrans, aide et autres comportements, puis alimentation et sucre. La banque contient 4 500 questions et 47 sous-thèmes/continents ; cet univers compte 500 questions, les dix autres 400.
+
+Les sources et limites de la relecture sont décrites dans `docs/content-addictions-sources.md`. Les questions distinguent préférence, habitude, perte de contrôle et retentissement ; elles n'assimilent pas automatiquement sucre, écrans ou achats à un diagnostic d'addiction. Les troubles alimentaires sont abordés comme des troubles multifactoriels. Une deuxième lecture a corrigé trois répétitions de notion. Les 100 ajouts ont des explications d'au moins 70 caractères et des références HTTPS ; la validation structurelle ne remplace pas une évaluation médicale exhaustive.
+
+67 tests du jeu et 66 tests d'intégration du serveur passent sur la banque finale. Les 206 contrôles Chrome du solo incluent l'accès aux 100 nouvelles questions, la répartition 125 par niveau dans l'univers et 25 dans le nouveau sous-thème, le démarrage et la correction d'une vraie question ainsi que la progression associée. Les 43 contrôles des groupes et des invitations passent également. 524 contrôles passent sur six vrais PDF téléchargés, dont une fiche de 20 questions du nouveau sous-thème ; ses pages ont été rendues et inspectées, sans débordement ni perte de texte. Mobile et tablette restent des formats émulés, sans appareil physique.
+
+La vérification distante de cette version est consignée après publication.
 
 ## Groupes mondiaux, mélanges et contenu — 4 novembre 2026
 

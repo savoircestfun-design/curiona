@@ -38,7 +38,7 @@ function scopeDescription(config){
   if(scope==='custom')return config.themes.length?config.themes.map(themeName).join(' · '):'Choisis les thèmes que tu veux réunir.';
   const [id,sub]=(config.themes[0]||'animals').split('::'),c=CATEGORIES.find(c=>c.id===id);
   if(c.id==='politics')return sub?`Politique · ${sub}`:'Général : institutions et histoire politique de tous les continents.';
-  if(c.id==='prevention')return sub?`Drogues et prévention · ${sub}`:'Sensibilisation : effets, risques, dépendance et entraide.';
+  if(c.id==='prevention')return sub?`Addictions et prévention · ${sub}`:'Alcool, tabac, autres drogues, jeux, écrans et alimentation : des repères de prévention, sans diagnostic.';
   return sub?c.name:`${c.subs.join(' · ')} · tous les sous-thèmes`;
 }
 function sessionDescription(config){return `${scopeTitle(config)} · ${PLAY_STYLES.find(s=>s.id===styleOf(config))?.label||'Apprendre'}`;}

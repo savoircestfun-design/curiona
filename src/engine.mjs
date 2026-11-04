@@ -8,7 +8,7 @@ export const CATEGORIES = [
   {id:'tech',name:'Informatique',icon:'chip',color:'#58628a',bg:'#e8e9f3',description:'Comprendre les outils qui relient nos idées.',subs:['Numérique','Programmation','Réseaux','Données et cybersécurité']},
   {id:'language',name:'Langue française',icon:'book',color:'#8c6343',bg:'#f1e8da',description:'Le plaisir des mots, des phrases et des histoires.',subs:['Vocabulaire','Grammaire','Orthographe','Expression et littérature']},
   {id:'daily',name:'Vie quotidienne',icon:'cup',color:'#527a78',bg:'#e2eeeb',description:'Des petits gestes aux grandes idées du quotidien.',subs:['Cuisine','Objets et matériaux','Mesures pratiques','Énergie au quotidien']},
-  {id:'prevention',name:'Drogues et prévention',icon:'mind',color:'#7b627d',bg:'#eee5f0',description:'Comprendre les effets, les risques et les façons de trouver de l’aide.',subs:['Substances et effets','Risques et dépendance','Prévention et entraide','Idées reçues et repères']},
+  {id:'prevention',name:'Addictions et prévention',icon:'mind',color:'#7b627d',bg:'#eee5f0',description:'Alcool, tabac, autres drogues, jeux, écrans et alimentation : comprendre les risques et trouver de l’aide.',subs:['Substances et effets','Risques et dépendance','Prévention et entraide','Idées reçues et repères','Habitudes, jeux et alimentation']},
   {id:'politics',name:'Politique',icon:'globe',color:'#496b88',bg:'#e4edf5',description:'Institutions et histoire politique, en général ou par continent.',subs:['Afrique','Amérique du Nord','Amérique du Sud','Asie','Europe','Océanie']}
 ];
 export const DIFFICULTIES = ['','Débutant','Intermédiaire','Avancé','Expert'];

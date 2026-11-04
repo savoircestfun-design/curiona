@@ -144,12 +144,12 @@ try{
   check(astronomy.items.length>0&&astronomy.items.every(item=>item.question.subtheme==='Astronomie'),'La fiche précise reste dans le sous-thème sélectionné');
   const politics=await download({kind:'learn',theme:'politics::Océanie',difficulty:4,batchSize:'all'},'05-politique-oceanie');
   check(politics.items.length===10&&politics.items.every(item=>item.question.subtheme==='Océanie'&&item.question.category==='politics'),'Le PDF Politique respecte le continent et le niveau');
-  const prevention=await download({kind:'learn',theme:'prevention',difficulty:1,batchSize:20},'06-drogues-prevention');
-  check(prevention.items.length===20&&prevention.items.every(item=>item.question.category==='prevention'),'Le PDF de sensibilisation utilise le nouvel univers');
+  const prevention=await download({kind:'learn',theme:'prevention::Habitudes, jeux et alimentation',difficulty:1,batchSize:20},'06-addictions-prevention');
+  check(prevention.items.length===20&&prevention.items.every(item=>item.question.category==='prevention'&&item.question.subtheme==='Habitudes, jeux et alimentation'),'Le PDF de sensibilisation utilise le nouvel univers');
   const xpAfter=JSON.stringify((await snapshot()).state);
   check(xpAfter===stateBefore,'Créer et télécharger les six fiches ne modifie pas la progression');
   const global=await selection({kind:'learn',theme:'all',batchSize:20});
-  check(global.total===4400&&global.parts===220,'L’apprentissage global donne accès à toute la banque par parties');
+  check(global.total===4500&&global.parts===225,'L’apprentissage global donne accès à toute la banque par parties');
   const next=await selection({kind:'learn',theme:'all',batchSize:20,part:2});
   check(!global.items.some(first=>next.items.some(second=>first.id===second.id)),'Deux parties successives ne répètent aucune question');
 

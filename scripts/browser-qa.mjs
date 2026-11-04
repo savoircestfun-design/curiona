@@ -28,13 +28,13 @@ try{
   await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:-1,uploadThroughput:-1});
   const url=pathToFileURL(path.join(root,'dist/index.html')).href;await send('Page.navigate',{url});
   for(let i=0;i<80;i++){if(await evaluate('!!window.Curiona'))break;await delay(100);}
-  check((await evaluate('Curiona.info().questions'))===4400,'Chrome ouvre 4 400 questions en file:// avec réseau coupé');
+  check((await evaluate('Curiona.info().questions'))===4500,'Chrome ouvre 4 500 questions en file:// avec réseau coupé');
   const expertCount=await evaluate('Curiona.bank().filter(q=>q.category==="animals"&&q.subtheme==="Insectes"&&q.difficulty===4).length');
   const programmingCount=await evaluate('Curiona.bank().filter(q=>q.category==="tech"&&q.subtheme==="Programmation"&&q.difficulty===3).length');
-  check(await evaluate('Curiona.info().categories.length===11&&Curiona.info().categories.every(c=>c.count===400)'), 'Chaque univers contient exactement 400 questions');
+  check(await evaluate('Curiona.info().categories.length===11&&Curiona.info().categories.every(c=>c.count===(c.id==="prevention"?500:400))'), 'Dix univers contiennent 400 questions, Addictions et prévention en contient 500');
   check((await evaluate('Curiona.bank().filter(q=>q.variant).length'))===21,'Les 21 reformulations sont intégrées au jeu livré');
   check(await evaluate('document.querySelectorAll(".world-card").length===12'),'Accueil complet et onze univers');
-  check(await evaluate('document.querySelectorAll(".subtheme-links button").length===46&&!document.querySelector("button button")'),'Les 46 sous-thèmes et continents sont accessibles directement avec un niveau, sans boutons imbriqués');
+  check(await evaluate('document.querySelectorAll(".subtheme-links button").length===47&&!document.querySelector("button button")'),'Les 47 sous-thèmes et continents sont accessibles directement avec un niveau, sans boutons imbriqués');
   check(await evaluate('!!document.querySelector(".discovery-card")'),'Une suggestion de découverte accueille le joueur');
   await click('[data-action="notebook"]');check(await evaluate('document.querySelector("#notebook-empty").textContent.includes("Garder cette fiche")'),'Le carnet vide explique comment garder une fiche');await click('[data-action="home"]');
   await evaluate('(()=>{const input=document.querySelector("#theme-search");input.value="geometrie";input.dispatchEvent(new Event("input",{bubbles:true}));})()');
@@ -52,7 +52,10 @@ try{
   await click('[data-action="sound"]');check((await snapshot()).state.sound===true,'Activation des sons discrets');await click('[data-action="sound"]');check((await snapshot()).state.sound===false,'Désactivation des sons persistée');
   await screenshot('01-accueil-desktop');
   check(await evaluate('document.documentElement.scrollWidth<=innerWidth'),'Accueil ordinateur sans débordement');
-  for(const category of ['language','daily','prevention','politics']){await click(`[data-category="${category}"]`);check(await evaluate('document.querySelector("#availability").textContent.includes("400 questions disponibles")'),'Nouvel univers accessible avec sa banque complète : '+category);await click('[data-action="close-setup"]');}
+  for(const category of ['language','daily','prevention','politics']){await click(`[data-category="${category}"]`);const count=await evaluate(`Curiona.info().categories.find(c=>c.id===${JSON.stringify(category)}).count`);check(await evaluate(`document.querySelector("#availability").textContent.includes("${count} questions disponibles")`),'Nouvel univers accessible avec sa banque complète : '+category);await click('[data-action="close-setup"]');}
+  await click('[data-action="subtheme"][data-theme-key="prevention::Habitudes, jeux et alimentation"]');await select('#difficulty','adaptive');
+  check(await evaluate('document.querySelector("#setup-title").textContent==="Habitudes, jeux et alimentation"&&document.querySelector("#availability").textContent.includes("100 questions disponibles")'),'Le nouveau sous-thème Habitudes, jeux et alimentation ouvre ses 100 questions');
+  check(await evaluate('[1,2,3,4].every(level=>Curiona.bank().filter(q=>q.category==="prevention"&&q.difficulty===level).length===125&&Curiona.bank().filter(q=>q.category==="prevention"&&q.subtheme==="Habitudes, jeux et alimentation"&&q.difficulty===level).length===25)'),'Addictions et prévention propose 125 questions par niveau, dont 25 dans le nouveau sous-thème');await click('[data-action="close-setup"]');
   await click('[data-category="politics"]');check(await evaluate('document.querySelector("[data-theme-key=politics]").textContent.includes("Général")'),'Politique propose explicitement le mélange général');
   await click('[data-action="choose-subtheme"][data-theme-key="politics::Océanie"]');await select('#difficulty',4);await select('#question-count',50);check(await evaluate('document.querySelector("#availability").textContent.includes("10 questions disponibles")&&document.querySelector("#availability").textContent.includes("plus courte")'),'Le continent et le niveau limitent la partie aux questions disponibles');await screenshot('16-politique-desktop');
   await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});check(await evaluate('document.documentElement.scrollWidth<=innerWidth&&document.querySelectorAll(".subtheme-tabs button").length===7'),'Politique garde le choix général et les six continents sur mobile');await screenshot('17-politique-mobile');await send('Emulation.setDeviceMetricsOverride',{width:1440,height:1080,deviceScaleFactor:1,mobile:false});await click('[data-action="close-setup"]');
@@ -156,7 +159,7 @@ try{
   s=await snapshot();check(s.session.current.answered&&s.session.current.selected===-1&&s.session.answers.at(-1).correct===false,'Expiration réelle du chrono Chrome : correction ouverte, réponse incorrecte unique');
   await send('Emulation.setVirtualTimePolicy',{policy:'pause'});
   await send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
-  for(const [category,subtheme] of [['language','Vocabulaire'],['daily','Cuisine'],['prevention','Substances et effets'],['politics','Europe']]){
+  for(const [category,subtheme] of [['language','Vocabulaire'],['daily','Cuisine'],['prevention','Substances et effets'],['politics','Europe'],['prevention','Habitudes, jeux et alimentation']]){
     await click('[data-action="home"]');await click(`[data-action="subtheme"][data-theme-key="${category}::${subtheme}"]`);await select('#difficulty',1);await click('[data-action="start"]');await click('#accept-confirm');
     s=await snapshot();const q=bank.find(q=>q.id===s.session.current.id);check(q.category===category&&q.subtheme===subtheme,'Une partie réelle utilise le nouvel univers : '+category);await click(`[data-answer="${q.correct}"]`);s=await snapshot();check(s.session.answers.at(-1).correct&&s.state.subtopics[category+'::'+subtheme].xp>0,'La correction et la compétence fonctionnent dans '+category);
   }
