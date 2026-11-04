@@ -8,7 +8,11 @@ Les sources et limites de la relecture sont décrites dans `docs/content-addicti
 
 67 tests du jeu et 66 tests d'intégration du serveur passent sur la banque finale. Les 206 contrôles Chrome du solo incluent l'accès aux 100 nouvelles questions, la répartition 125 par niveau dans l'univers et 25 dans le nouveau sous-thème, le démarrage et la correction d'une vraie question ainsi que la progression associée. Les 43 contrôles des groupes et des invitations passent également. 524 contrôles passent sur six vrais PDF téléchargés, dont une fiche de 20 questions du nouveau sous-thème ; ses pages ont été rendues et inspectées, sans débordement ni perte de texte. Mobile et tablette restent des formats émulés, sans appareil physique.
 
-La vérification distante de cette version est consignée après publication.
+Après publication du serveur Sites version 6 (`e860274a40cd069b594cbd47e6c4556c587cfce9`), six contrôles API réels passent sur le nouveau sous-thème en Expert : création, attente à deux, lancement manuel, question issue des ajouts 401 à 500, choix identiques, correction juste et points positifs. Les deux participants ont quitté le salon.
+
+19 contrôles supplémentaires passent dans deux sessions Chrome réelles sur le site public : 4 500 questions, Addictions 500, nouveau sous-thème 100, découverte et entrée sans code dans un salon mondial Addictions + Politique, absence de démarrage automatique, lancement par l'hôte, questions et choix identiques, CORS valides et largeur mobile 390 px. Les captures ordinateur et mobile ont été inspectées. Aucune erreur JavaScript ou réseau significative ; les deux participants ont quitté et les profils temporaires ont été supprimés.
+
+Le workflow GitHub Pages du commit `315f486a9bae9eb2edd630caeb2afbed3fc9d9b9` a réussi. Les quatre fichiers publics `index.html`, `game.bundle.js`, `battle.css` et `social.css` répondent en HTTP200, avec les mêmes SHA-256 que les blobs Git publiés.
 
 ## Groupes mondiaux, mélanges et contenu — 4 novembre 2026
 
