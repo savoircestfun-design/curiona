@@ -39,7 +39,7 @@ test('les fiches étrangères à la banque sont ignorées pour la compatibilité
 });
 
 test('une structure de fiches invalide est refusée sans modifier la sauvegarde source',()=>{
-  for(const bookmarks of [null,{},first,[null],[42],[{id:first}],new Array(2001).fill(first)]){
+  for(const bookmarks of [null,{},first,[null],[42],[{id:first}],new Array(Math.max(2000,bank.length)+1).fill(first)]){
     const state=freshState();state.bookmarks=bookmarks;
     const before=structuredClone(state);
     assert.throws(()=>parseSave(envelope(state),bank),/Fiches sauvegardées invalides/);

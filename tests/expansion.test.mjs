@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
-import bank,{BASE_QUESTIONS} from '../src/bank.mjs';
+import bank,{BASE_QUESTIONS,LEGACY_QUESTIONS} from '../src/bank.mjs';
 import {CATEGORIES,parseSave,freshState,recordAnswer,filterQuestions,validateBank} from '../src/engine.mjs';
 
 test('toutes les questions historiques conservent exactement leur identifiant et leur contenu',()=>{
@@ -12,14 +12,17 @@ test('toutes les questions historiques conservent exactement leur identifiant et
     assert.equal(createHash('sha256').update(current.replace(/\r\n/g,'\n')).digest('hex'),hashes[file]);
   }
   assert.equal(BASE_QUESTIONS.length,336);
-  assert.ok(BASE_QUESTIONS.every(q=>bank.find(item=>item.id===q.id)===q));
+  for(const q of LEGACY_QUESTIONS){
+    const updated=bank.find(item=>item.id===q.id);
+    assert.deepEqual(updated,{...q,difficulty:q.difficulty<=2?2:3},q.id);
+  }
 });
 test('la banque est équilibrée et les nouveaux univers fonctionnent dans tous les modes',()=>{
-  assert.equal(bank.length,1800);assert.equal(CATEGORIES.length,9);assert.equal(validateBank(bank),true);
-  for(const category of ['language','daily'])for(const mode of ['general','specific','custom','challenge','relax','review']){
+  assert.equal(bank.length,4400);assert.equal(CATEGORIES.length,11);assert.equal(validateBank(bank),true);
+  for(const category of ['language','daily','prevention','politics'])for(const mode of ['general','specific','custom','challenge','relax','review']){
     const state=freshState();if(mode==='review')for(const q of bank)state.questions[q.id]={nextDue:0};
     const selected=filterQuestions(bank,{scope:'single',mode,themes:[category],difficulty:'adaptive'},state,1);
-    assert.equal(selected.length,200);assert.ok(selected.every(q=>q.category===category));
+    assert.equal(selected.length,400);assert.ok(selected.every(q=>q.category===category));
   }
 });
 test('la sauvegarde précédente se charge avec les nouveaux univers sans changer les acquis',()=>{

@@ -1,6 +1,6 @@
 # Curiona — La curiosité se cultive
 
-Un jeu éducatif en français : **1 800 questions**, **9 univers de 200 questions**, **36 sous-thèmes**, **4 difficultés**, **4 façons de jouer en solo** et des **battles en ligne entre amis**. Gratuit et sans compte. En solo, les questions, les explications et les ressources du jeu sont intégrées aux fichiers ; les réponses sont corrigées directement dans le navigateur.
+Un jeu éducatif en français : **4 400 questions**, **11 univers de 400 questions**, **46 sous-thèmes et continents**, **4 difficultés**, **4 façons de jouer en solo** et des **battles en ligne entre amis**. Gratuit et sans compte obligatoire. En solo, les questions, les explications et les ressources du jeu sont intégrées aux fichiers ; les réponses sont corrigées directement dans le navigateur.
 
 ## Jouer
 
@@ -25,8 +25,16 @@ Cette option d’exécution ne s’applique qu’à ce processus et ne change pa
 Ouvrir **Battles** dans la navigation, ou [accéder directement aux battles](https://savoircestfun-design.github.io/curiona/#battles). Un pseudo suffit pour jouer depuis des ordinateurs ou des maisons différents.
 
 - **Trouver un adversaire** recherche un autre joueur sur le même thème. Le duel de 8 questions reste en attente après l'arrivée de l'adversaire : l'hôte le lance avec **Lancer la battle**. Il faut qu'une autre personne recherche effectivement ce thème.
-- **Devenir hôte** crée un salon de **2 à 8 joueurs simultanés**, avec 8 places proposées par défaut. L'hôte choisit un univers ou un sous-thème, la difficulté et 8, 12 ou 20 questions. Chaque arrivée reste dans la salle d'attente ; **seul l'hôte lance la battle**, lorsqu'au moins deux joueurs sont connectés. Il peut commencer avant que toutes les places soient occupées.
-- **Rejoindre mes amis** accepte le code du salon ou son lien d'invitation. Un mot de passe facultatif protège l'entrée. L'hôte peut aussi rendre le salon visible dans la liste, où on le retrouve par nom ou par code.
+- **Devenir hôte** crée un salon de **2 à 8 joueurs simultanés**, avec 8 places proposées par défaut. L'hôte choisit un univers, un sous-thème ou un continent, la difficulté et 8, 12, 20 ou 50 questions. Chaque arrivée reste dans la salle d'attente ; **seul l'hôte lance la battle**, lorsqu'au moins deux joueurs sont connectés. Il peut commencer avant que toutes les places soient occupées. Si le filtre contient moins de questions, la manche est raccourcie sans répétition.
+- **Rejoindre mes amis** accepte le code du salon ou son lien d'invitation. Un mot de passe facultatif protège un groupe privé, qui reste masqué dans la liste mondiale.
+
+L'écran en ligne présente d'abord les **groupes mondiaux ouverts**. Chaque carte montre l'hôte, les univers sélectionnés, la difficulté, le nombre réel de questions et les places disponibles. **Rejoindre ce groupe** entre directement, avec un pseudo, sans saisir de code. Les recherches par nom, hôte ou univers et le filtre d'univers aident à choisir. Les salons pleins, commencés, expirés ou sans joueur connecté ne sont pas proposés comme ouverts.
+
+À la création, choisir **Mondial · ouvert** pour figurer dans cette liste, ou **Privé · entre amis** pour un accès par code ou invitation. Un groupe mondial n'a pas de mot de passe. Ouvrir au monde un ancien salon protégé retire explicitement sa protection ; l'interface l'indique avant l'application des options.
+
+Cocher **plusieurs univers** compose un mélange, par exemple Nature + Politique. Le serveur répartit les questions entre les univers sélectionnés et respecte le niveau choisi, sans doublon. Un sous-thème ou continent précis reste sélectionnable. Le mélange peut être changé dans le salon d'attente ou à **Partie suivante**.
+
+Après le bilan, **Partie suivante** prépare une nouvelle manche dans **le même groupe**, avec le même code, les mêmes accès et le même chat. L'hôte peut changer les thèmes, la difficulté, la longueur, la capacité et la visibilité, puis lancer la manche séparément. Les membres hors ligne gardent leur place. Scores, séries, sorties de page et pénalités repartent à zéro pour chaque manche ; les requêtes tardives d'une ancienne manche sont refusées.
 
 Tous les joueurs reçoivent les mêmes questions et les mêmes propositions. Chaque question laisse **30 secondes** ; la correction apparaît quand tout le monde a répondu ou que le délai est écoulé. L'hôte continue après lecture. Les points sont calculés par le serveur selon la difficulté et la série de bonnes réponses. Dans les nouvelles battles de la version 2.4, une bonne réponse reçoit aussi jusqu'à **100 points de rapidité**, qui diminuent progressivement pendant les 30 secondes. La correction présente le détail des points. Le classement final indique le gagnant ou les ex æquo, le total de points, les bonnes réponses et les points forts et notions à retravailler de chacun sur cette battle.
 
@@ -46,6 +54,8 @@ Le **chat du salon** permet de discuter avant le lancement et pendant les questi
 
 L'onglet **Amis** propose un profil facultatif avec un pseudo et un **code ami** à partager. Pour ajouter quelqu'un, saisir son code puis lui envoyer une demande ; il doit l'accepter avant que les messages privés deviennent disponibles. Les amis apparaissent en ligne ou hors ligne. Un message privé envoyé à un ami hors ligne lui sera présenté lorsqu'il reviendra.
 
+L'hôte peut utiliser **Inviter mes amis** dans le groupe ou le bouton **Inviter** auprès d'un ami accepté. L'ami reçoit une invitation privée, également visible à son retour s'il est hors ligne. **Rejoindre** donne accès sans recopier le code ni le mot de passe : l'invitation constitue l'autorisation de l'hôte. Elle expire après 30 minutes, ne réserve pas de place et permet l'entrée lorsque le groupe attend. Une invitation reçue pendant une manche reste utilisable au salon d'attente suivant. Refuser, retirer l'amitié, bloquer ou quitter en tant qu'hôte révoque les invitations correspondantes.
+
 Le panneau de conversation reste accessible pendant le jeu. Les messages privés sont conservés pendant 30 jours ; les messages du salon suivent sa durée de 24 heures. Le statut en ligne est actualisé automatiquement, avec un délai possible d'environ 90 secondes après une déconnexion.
 
 Le profil amis est retrouvé automatiquement dans le même navigateur. **Exporter mon profil amis** permet d'en conserver une copie privée pour le restaurer avec **Importer** dans un autre navigateur. Ce fichier contient la clé d'accès au profil : le conserver pour soi. Le code ami public, lui, peut être partagé avec ses amis. Le carnet solo se sauvegarde et se transfère séparément.
@@ -54,11 +64,11 @@ On peut refuser une demande, retirer un ami ou bloquer une personne depuis Amis.
 
 ## Jouer à son rythme
 
-Choisir d’abord **les thèmes** : un univers complet, un sous-thème précis, tous les univers ou un mélange personnalisé. Les cartes de l’accueil donnent accès directement aux 36 sous-thèmes et à leur niveau. Le bouton **Modifier** dans les réglages permet de changer cette sélection.
+Choisir d’abord **les thèmes** : un univers complet, un sous-thème précis, tous les univers ou un mélange personnalisé. Les cartes de l’accueil donnent accès directement aux 46 sous-thèmes et continents et à leur niveau. Le bouton **Modifier** dans les réglages permet de changer cette sélection.
 
-La version **2.0** conserve les 336 questions historiques et ajoute **1 464 questions**. Chaque univers contient quatre sous-thèmes de 50 questions et 50 questions de chaque difficulté. Les nouveaux univers **Langue française** et **Vie quotidienne** possèdent les mêmes modes, compétences, rappels et fiches que les autres.
+La version **3.0** conserve les **1 800 questions précédentes** et ajoute **2 600 questions** : 200 dans chacun des neuf univers existants, 400 dans **Drogues et prévention** et 400 dans **Politique**. Chaque univers contient 100 questions de chaque difficulté. Les anciens niveaux 1/2 sont regroupés au niveau Intermédiaire, les anciens niveaux 3/4 au niveau Avancé ; les nouveaux Débutant et Expert proposent respectivement des repères plus accessibles et des raisonnements ou connaissances plus poussés. Les textes, réponses et identifiants précédents restent stables pour conserver les carnets. Les sources originales ne sont pas réécrites : le recalibrage est appliqué dans la banque commune.
 
-| Univers | Sous-thèmes (50 questions chacun) |
+| Univers | Sous-thèmes ou continents |
 | --- | --- |
 | Monde animal | Insectes · Faune · Biodiversité · Milieux et écosystèmes |
 | Nature & jardin | Plantes · Arbres · Jardinage · Sols et champignons |
@@ -69,6 +79,10 @@ La version **2.0** conserve les 336 questions historiques et ajoute **1 464 ques
 | Informatique | Numérique · Programmation · Réseaux · Données et cybersécurité |
 | Langue française | Vocabulaire · Grammaire · Orthographe · Expression et littérature |
 | Vie quotidienne | Cuisine · Objets et matériaux · Mesures pratiques · Énergie au quotidien |
+| Drogues et prévention | Substances et effets · Risques et dépendance · Prévention et entraide · Idées reçues et repères |
+| Politique | Afrique · Amérique du Nord · Amérique du Sud · Asie · Europe · Océanie |
+
+Les dix univers à quatre sous-thèmes contiennent 100 questions par sous-thème. Politique propose **Général · tous les continents** ou un filtre continental : Afrique, Asie et Europe 80 questions chacune ; Amérique du Nord et Amérique du Sud 60 chacune ; Océanie 40. Les niveaux sont répartis également dans chaque continent. Le filtre est disponible en solo, en battle et dans les fiches PDF. Les questions politiques portent sur les institutions et l'histoire, sans prise de position partisane. L'univers Drogues et prévention vise la sensibilisation, les effets et risques, les idées reçues et l'entraide, sans doses, recettes ni conseils de consommation.
 
 La version **1.3** ajoute une recherche rapide dans les univers et sous-thèmes (accents facultatifs, raccourci **/**), une suggestion de découverte selon le carnet et le délai du prochain rappel. Les passages de niveau global et de compétence sont signalés doucement dans la correction, sans interrompre la partie.
 
@@ -97,7 +111,7 @@ Le petit bouton de **réglage à côté de la note de musique** ouvre son volume
 
 ## Fiches PDF pour réviser ou apprendre
 
-L’onglet **Fiches PDF** propose trois contenus : **Mes questions déjà manquées**, **Réviser les notions déjà vues** et **Apprendre de nouvelles notions**. Choisir tous les univers, un univers précis ou un sous-thème, puis éventuellement une difficulté. Les fiches couvrent 20 ou 50 notions par partie, ou toute la sélection sur demande. Un aperçu et les numéros des parties indiquent exactement ce qui sera téléchargé. Une fiche globale d’apprentissage présente les neuf univers dès la première partie.
+L’onglet **Fiches PDF** propose trois contenus : **Mes questions déjà manquées**, **Réviser les notions déjà vues** et **Apprendre de nouvelles notions**. Choisir tous les univers, un univers précis ou un sous-thème, puis éventuellement une difficulté. Les fiches couvrent 20 ou 50 notions par partie, ou toute la sélection sur demande. Un aperçu et les numéros des parties indiquent exactement ce qui sera téléchargé. Une fiche globale d’apprentissage présente les onze univers dès la première partie.
 
 Chaque PDF contient les questions, les bonnes réponses, les explications et les sources lorsqu’elles sont disponibles. Les fiches d’erreurs ajoutent le dernier choix incorrect enregistré. Les anciens carnets n’ayant pas conservé ce choix restent utilisables : la fiche le signale sans inventer de réponse. Le temps écoulé est indiqué séparément. Après une partie, **Préparer mon PDF de révision** limite la fiche aux erreurs de cette partie.
 
@@ -107,7 +121,7 @@ Les PDF sont générés dans le navigateur, sans transmettre le carnet à un ser
 
 Une bonne réponse rapporte 100 / 125 / 150 / 175 points selon la difficulté, plus un bonus de série allant jusqu’à 50 points. Elle donne 30 / 35 / 40 / 45 XP. Une erreur donne 8 XP et ne retire rien. Le niveau joueur vaut `1 + floor(sqrt(XP / 100))`.
 
-Chaque univers et chacun des **36 sous-thèmes** possède son propre niveau de compétence, sa jauge d’expérience, sa précision et ses notions consolidées. Une réponse en Jardinage fait progresser Jardinage et Nature & jardin, sans ajouter d’XP à Plantes ou à Arbres. Le niveau de compétence utilise les mêmes seuils d’XP que le niveau global. Il reflète la progression dans le jeu ; la précision et la consolidation complètent cet indicateur.
+Chaque univers et chacun des **46 sous-thèmes et continents** possède son propre niveau de compétence, sa jauge d’expérience, sa précision et ses notions consolidées. Une réponse en Jardinage fait progresser Jardinage et Nature & jardin, sans ajouter d’XP à Plantes ou à Arbres. Le niveau de compétence utilise les mêmes seuils d’XP que le niveau global. Il reflète la progression dans le jeu ; la précision et la consolidation complètent cet indicateur.
 
 La **difficulté conseillée** est distincte du niveau de compétence : l’adaptatif suit chaque sous-thème séparément, à partir du niveau débutant. Trois réussites consécutives le font monter d’un cran ; deux erreurs consécutives le font redescendre. Le tirage favorise le niveau ciblé sans exclure totalement les autres niveaux. Le choix explicite d’une difficulté constitue, lui, un filtre strict.
 
@@ -141,6 +155,7 @@ npm test          # tests de logique et de contenu
 npm run qa        # contrôles dans le véritable Chrome, profil temporaire isolé
 npm run qa:social # amis, messages, chat et échanges simultanés dans Chrome
 npm run qa:fairplay # salons à huit, lancement manuel, rapidité et sorties de page
+npm run qa:groups # même groupe entre les manches, options et invitations
 npm run qa:pdf    # téléchargements PDF réels, extraction et rendu
 npm run audit:content # structure, répartition et candidats à la relecture éditoriale
 npm start         # serveur facultatif sur http://127.0.0.1:4186
@@ -151,7 +166,9 @@ Le serveur est réservé au développement. Jouer sur son URL crée un espace de
 La QA des PDF utilise Python avec `pypdf`, `pypdfium2` et `Pillow`. Ces outils servent uniquement aux vérifications, pas aux joueurs. Installation isolée facultative : `python -m pip install --target artifacts/pdf-qa-python pypdf pypdfium2 Pillow`.
 
 - `src/engine.mjs` : tirage, scores, répétition espacée, progression, validation des sauvegardes.
-- `src/bank.mjs` : liste commune des banques historiques et des trois lots de l’extension.
+- `src/bank.mjs` : banque commune et recalibrage des niveaux historiques.
+- `src/content-v3/` : 2 600 questions supplémentaires et nouveaux univers.
+- `scripts/export-battle-bank.mjs` : export autonome de la même banque vers `worker/questions.mjs` du service voisin ; les niveaux antérieurs restent disponibles pour les manches déjà commencées.
 - `src/app.js` : interface et audio synthétisé localement.
 - `src/theme-ui.js` : compétences, choix des thèmes et façons de jouer.
 - `src/discovery-ui.js` : suggestions et indications des prochains rappels.
@@ -163,10 +180,11 @@ La QA des PDF utilise Python avec `pypdf`, `pypdfium2` et `Pillow`. Ces outils s
 - `dist/style.css`, `dist/themes.css`, `dist/icon.svg` : présentation et illustrations vectorielles locales.
 - `docs/source-notes-*.md` : sources consultées et limites éditoriales.
 - `docs/expansion-*-sources.md`, `docs/editorial-review-v2.md` : références et relecture des ajouts 2.0.
+- `docs/content-v3-*-sources.md` : références et limites de la relecture des ajouts 3.0.
 
 ## Ajouter des questions
 
-Ajouter les objets dans **`dist/data/extras.js`**, puis exécuter `npm run build`. Conserver tous les identifiants existants pour préserver la progression. Les trois banques initiales utilisent des générateurs : insérer au milieu peut déplacer leurs identifiants ; préférer le fichier `extras.js`.
+Ajouter les nouveaux lots dans **`src/content-v3/`** et les référencer dans son `index.mjs`, puis exécuter `npm run build`. Adapter les contrôles de distribution pour un enrichissement au-delà de 400 questions par univers. Conserver tous les identifiants existants pour préserver la progression. Les fichiers de `dist/data/` sont des banques historiques : leur contenu et leurs identifiants restent stables, et leur difficulté est recalibrée lors de l'assemblage.
 
 ```javascript
 export default [{
@@ -185,7 +203,7 @@ export default [{
 }];
 ```
 
-Les catégories et sous-thèmes autorisés sont décrits par `CATEGORIES` dans le moteur. Le build refuse les identifiants et énoncés dupliqués, les thèmes inconnus, les options invalides, les corrections manquantes et les univers comportant moins de 200 questions. Les tests de distribution décrivent la banque livrée de 1 800 questions ; les adapter si celle-ci s’enrichit. La détection de proximités lexicales de l’audit est une aide à la relecture, pas une validation automatique des faits.
+Les catégories et sous-thèmes autorisés sont décrits par `CATEGORIES` dans le moteur. Le build refuse les identifiants et énoncés dupliqués, les thèmes inconnus, les options invalides, les corrections manquantes et une distribution différente de 400 questions par univers. Les tests de distribution décrivent la banque livrée de 4 400 questions ; les adapter si celle-ci s’enrichit. La détection de proximités lexicales de l’audit est une aide à la relecture, pas une validation automatique des faits.
 
 ## Vérification et limites
 

@@ -33,23 +33,25 @@ test('la préférence musicale est indépendante des effets et compatible avec l
   assert.equal(parseSave(legacy, bank).music, true);
 });
 
-test('la banque complète contient 1 800 questions, neuf catégories équilibrées et quatre difficultés', () => {
-  assert.equal(bank.length, 1800);
+test('la banque complète contient 4 400 questions, onze catégories équilibrées et quatre difficultés', () => {
+  assert.equal(bank.length, 4400);
+  assert.equal(CATEGORIES.length,11);
   assert.equal(validateBank(bank), true);
   assert.equal(new Set(bank.map(q => q.id)).size, bank.length);
   assert.ok(bank.some(q => q.type === 'boolean'));
   assert.ok(bank.filter(q => q.options.length === 4).length > 250);
   for (const category of CATEGORIES) {
-    assert.equal(bank.filter(q => q.category === category.id).length, 200, category.id);
-    assert.equal(category.subs.length,4);
+    assert.equal(bank.filter(q => q.category === category.id).length, 400, category.id);
+    assert.equal(category.subs.length,category.id==='politics'?6:4);
     for (const [subIndex,subtheme] of category.subs.entries()) {
-      assert.equal(bank.filter(q=>q.category===category.id&&q.subtheme===subtheme).length,50);
-      const target=[[13,13,12,12],[12,13,13,12],[12,12,13,13],[13,12,12,13]][subIndex];
+      const total=category.id==='politics'?[80,60,60,80,80,40][subIndex]:100;
+      assert.equal(bank.filter(q=>q.category===category.id&&q.subtheme===subtheme).length,total);
+      const target=category.id==='politics'||category.id==='prevention'?Array(4).fill(total/4):[[25,26,24,25],[25,25,25,25],[25,24,26,25],[25,25,25,25]][subIndex];
       for (let difficulty = 1; difficulty <= 4; difficulty++) {
         assert.equal(bank.filter(q => q.category === category.id && q.subtheme === subtheme && q.difficulty === difficulty).length, target[difficulty-1], `${category.id}/${subtheme}/${difficulty}`);
       }
     }
-    for(let d=1;d<=4;d++)assert.equal(bank.filter(q=>q.category===category.id&&q.difficulty===d).length,50);
+    for(let d=1;d<=4;d++)assert.equal(bank.filter(q=>q.category===category.id&&q.difficulty===d).length,100);
   }
 });
 
@@ -174,9 +176,9 @@ test('la compétence indique le niveau XP et la consolidation du thème demandé
   assert.equal(detail.accuracy, 100);
   assert.equal(detail.seen, 1);
   assert.equal(detail.mastered, 1);
-  assert.equal(detail.total, 50);
+  assert.equal(detail.total, 100);
   assert.equal(detail.adaptiveLevel, 2);
-  assert.equal(skillProgress(bank, state, 'math').total, 200);
+  assert.equal(skillProgress(bank, state, 'math').total, 400);
   assert.equal(skillProgress(bank, state, 'math').xp, 120);
   const untouched = skillProgress(bank, state, 'math::Logique');
   assert.equal(untouched.level, 1);
@@ -214,10 +216,10 @@ test('les filtres de difficulté restent stricts, y compris en révision', () =>
   for (const q of bank) state.questions[q.id] = { nextDue: 0 };
   for (let difficulty = 1; difficulty <= 4; difficulty++) {
     const selected = filterQuestions(bank, config({ difficulty }), state, 1);
-    assert.equal(selected.length, 450);
+    assert.equal(selected.length, 1100);
     assert.ok(selected.every(q => q.difficulty === difficulty));
     const reviewed = filterQuestions(bank, config({ mode: 'review', difficulty }), state, 1);
-    assert.equal(reviewed.length, 450);
+    assert.equal(reviewed.length, 1100);
     assert.ok(reviewed.every(q => q.difficulty === difficulty));
   }
   assert.equal(filterQuestions(bank, config({ difficulty: 9 }), state).length, 0);
@@ -226,19 +228,19 @@ test('les filtres de difficulté restent stricts, y compris en révision', () =>
 test('un univers complet et un sous-thème précis donnent les ensembles attendus', () => {
   const state = freshState();
   const allNature = filterQuestions(bank, config({ mode: 'specific', themes: ['nature'] }), state);
-  assert.equal(allNature.length, 200);
+  assert.equal(allNature.length, 400);
   assert.ok(allNature.every(q => q.category === 'nature'));
   const insects = filterQuestions(bank, config({ mode: 'specific', themes: ['animals::Insectes'] }), state);
-  assert.equal(insects.length, 50);
+  assert.equal(insects.length, 100);
   assert.ok(insects.every(q => q.category === 'animals' && q.subtheme === 'Insectes'));
   const insectsExpert = filterQuestions(bank, config({ mode: 'specific', themes: ['animals::Insectes'], difficulty: 4 }), state);
-  assert.equal(insectsExpert.length, 12);
+  assert.equal(insectsExpert.length, 25);
 });
 
 test('le mélange personnalisé est une union sans doublons et accepte des sous-thèmes', () => {
   const state = freshState();
   const selected = filterQuestions(bank, config({ mode: 'custom', themes: ['math', 'math::Calcul', 'science::Astronomie'] }), state);
-  assert.equal(selected.length, 250);
+  assert.equal(selected.length, 500);
   assert.equal(new Set(selected.map(q => q.id)).size, selected.length);
   assert.ok(selected.every(q => q.category === 'math' || (q.category === 'science' && q.subtheme === 'Astronomie')));
   assert.deepEqual(filterQuestions(bank, config({ mode: 'custom', themes: [] }), state), []);
@@ -248,7 +250,7 @@ test('le mélange personnalisé est une union sans doublons et accepte des sous-
 test('général et détente donnent accès au mélange complet indépendamment du dernier thème choisi', () => {
   const state = freshState();
   for (const mode of ['general', 'relax', 'challenge']) {
-    assert.equal(filterQuestions(bank, config({ mode, themes: ['math'] }), state).length, 1800);
+    assert.equal(filterQuestions(bank, config({ mode, themes: ['math'] }), state).length, 4400);
   }
 });
 
@@ -257,10 +259,10 @@ test('une portée précise reste appliquée dans tous les modes, y compris défi
   for (const q of bank) state.questions[q.id] = { nextDue: 0 };
   for (const mode of ['general', 'specific', 'custom', 'review', 'challenge', 'relax']) {
     const selected = filterQuestions(bank, config({ mode, scope: 'single', themes: ['nature::Plantes'] }), state, 1);
-    assert.equal(selected.length, 50, mode);
+    assert.equal(selected.length, 100, mode);
     assert.ok(selected.every(q => q.category === 'nature' && q.subtheme === 'Plantes'), mode);
     const expert = filterQuestions(bank, config({ mode, scope: 'single', themes: ['nature::Plantes'], difficulty: 4 }), state, 1);
-    assert.equal(expert.length, 12, mode);
+    assert.equal(expert.length, 25, mode);
     assert.ok(expert.every(q => q.difficulty === 4), mode);
   }
 });
@@ -269,13 +271,13 @@ test('les portées tous les thèmes, univers entier et mélange personnalisé on
   const state = freshState();
   for (const q of bank) state.questions[q.id] = { nextDue: 0 };
   for (const mode of ['general', 'specific', 'custom', 'review', 'challenge', 'relax']) {
-    assert.equal(filterQuestions(bank, config({ mode, scope: 'all', themes: ['math'] }), state, 1).length, 1800, mode);
+    assert.equal(filterQuestions(bank, config({ mode, scope: 'all', themes: ['math'] }), state, 1).length, 4400, mode);
     const universe = filterQuestions(bank, config({ mode, scope: 'single', themes: ['nature'] }), state, 1);
-    assert.equal(universe.length, 200, mode);
+    assert.equal(universe.length, 400, mode);
     assert.ok(universe.every(q => q.category === 'nature'), mode);
     const custom = filterQuestions(bank, config({ mode, scope: 'custom', themes: ['math', 'math::Calcul', 'science::Astronomie'] }), state, 1);
-    assert.equal(custom.length, 250, mode);
-    assert.equal(new Set(custom.map(q => q.id)).size, 250, mode);
+    assert.equal(custom.length, 500, mode);
+    assert.equal(new Set(custom.map(q => q.id)).size, 500, mode);
     assert.deepEqual(filterQuestions(bank, config({ mode, scope: 'single', themes: [] }), state, 1), [], mode);
     assert.deepEqual(filterQuestions(bank, config({ mode, scope: 'custom', themes: [] }), state, 1), [], mode);
   }
@@ -320,7 +322,7 @@ test('la banque entière peut être parcourue une fois sans doublon dans une mê
     assert.ok(!used.includes(next.id));
     used.push(next.id);
   }
-  assert.equal(new Set(used).size, 1800);
+  assert.equal(new Set(used).size, 4400);
   assert.equal(pickQuestion(bank, state, config(), used, random), null);
 });
 

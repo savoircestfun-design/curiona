@@ -4,20 +4,20 @@ import bank from '../src/bank.mjs';
 import {CATEGORIES,freshState} from '../src/engine.mjs';
 import {studySelection} from '../src/study.mjs';
 
-test('une fiche pour apprendre fonctionne sans carnet et couvre les neuf univers',()=>{
+test('une fiche pour apprendre fonctionne sans carnet et couvre tous les univers',()=>{
   const selected=studySelection(bank,freshState(),{kind:'learn'});
-  assert.equal(selected.total,1800);assert.equal(selected.items.length,20);assert.equal(selected.parts,90);
+  assert.equal(selected.total,4400);assert.equal(selected.items.length,20);assert.equal(selected.parts,220);
   assert.deepEqual(new Set(selected.items.map(item=>item.question.category)),new Set(CATEGORIES.map(c=>c.id)));
 });
 test('les parties de découverte sont complètes, stables et sans doublons entre PDF',()=>{
   const ids=[];
-  for(let part=1;part<=36;part++)ids.push(...studySelection(bank,freshState(),{kind:'learn',batchSize:50,part}).items.map(item=>item.id));
-  assert.equal(ids.length,1800);assert.equal(new Set(ids).size,1800);
+  for(let part=1;part<=88;part++)ids.push(...studySelection(bank,freshState(),{kind:'learn',batchSize:50,part}).items.map(item=>item.id));
+  assert.equal(ids.length,4400);assert.equal(new Set(ids).size,4400);
   assert.deepEqual(ids.slice(50,100),studySelection(bank,freshState(),{kind:'learn',batchSize:50,part:2}).items.map(item=>item.id));
 });
 test('une fiche précise respecte univers, sous-thème et difficulté simultanément',()=>{
   const selected=studySelection(bank,freshState(),{kind:'learn',theme:'language::Grammaire',difficulty:4,batchSize:'all'});
-  assert.equal(selected.total,12);assert.equal(selected.parts,1);
+  assert.equal(selected.total,25);assert.equal(selected.parts,1);
   assert.ok(selected.items.every(item=>item.question.category==='language'&&item.question.subtheme==='Grammaire'&&item.question.difficulty===4));
   assert.equal(studySelection(bank,{}, {kind:'learn',theme:'inconnu'}).total,0);
 });
@@ -57,7 +57,7 @@ test('le PDF des erreurs d’une partie reste limité aux questions de cette par
 test('la sélection entière est disponible explicitement sans modifier les données du joueur',()=>{
   const state=freshState(),before=JSON.stringify(state),beforeIds=bank.map(q=>q.id);
   const selected=studySelection(bank,state,{kind:'learn',theme:'science',batchSize:'all',part:999});
-  assert.equal(selected.items.length,200);assert.equal(selected.part,1);assert.equal(selected.parts,1);
-  assert.equal(selected.start,1);assert.equal(selected.end,200);
+  assert.equal(selected.items.length,400);assert.equal(selected.part,1);assert.equal(selected.parts,1);
+  assert.equal(selected.start,1);assert.equal(selected.end,400);
   assert.equal(JSON.stringify(state),before);assert.deepEqual(bank.map(q=>q.id),beforeIds);
 });

@@ -36,7 +36,7 @@ function toggleBookmark(id){
   const q=QUESTIONS.find(q=>q.id===id);if(!q)return false;
   state.bookmarks ||= [];
   const index=state.bookmarks.indexOf(id),adding=index<0;
-  if(adding){if(state.bookmarks.length>=2000){notify('Ton carnet contient déjà 2 000 fiches. Retire une fiche avant d’en ajouter une autre.');return false;}state.bookmarks.unshift(id);}
+  if(adding){if(state.bookmarks.length>=QUESTIONS.length){notify('Toutes les questions du jeu sont déjà dans ton carnet.');return false;}state.bookmarks.unshift(id);}
   else state.bookmarks.splice(index,1);
   save();
   if(view==='notebook'){

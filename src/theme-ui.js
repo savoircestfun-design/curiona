@@ -37,6 +37,8 @@ function scopeDescription(config){
   if(scope==='all')return `Les ${CATEGORIES.length} univers, au fil de tes découvertes.`;
   if(scope==='custom')return config.themes.length?config.themes.map(themeName).join(' · '):'Choisis les thèmes que tu veux réunir.';
   const [id,sub]=(config.themes[0]||'animals').split('::'),c=CATEGORIES.find(c=>c.id===id);
+  if(c.id==='politics')return sub?`Politique · ${sub}`:'Général : institutions et histoire politique de tous les continents.';
+  if(c.id==='prevention')return sub?`Drogues et prévention · ${sub}`:'Sensibilisation : effets, risques, dépendance et entraide.';
   return sub?c.name:`${c.subs.join(' · ')} · tous les sous-thèmes`;
 }
 function sessionDescription(config){return `${scopeTitle(config)} · ${PLAY_STYLES.find(s=>s.id===styleOf(config))?.label||'Apprendre'}`;}
@@ -59,7 +61,7 @@ function setupSkill(){
 }
 function singleThemeChoices(){
   const [id,sub]=(setup.themes[0]||'animals').split('::'),c=CATEGORIES.find(c=>c.id===id);
-  return `<div class="subtheme-tabs" role="group" aria-label="Sous-thème de ${c.name}">${['',...c.subs].map(s=>{const key=s?id+'::'+s:id,p=skillProgress(QUESTIONS,state,key);return `<button data-action="choose-subtheme" data-theme-key="${esc(key)}" aria-pressed="${s===(sub||'')}"><span>${s||'Tout l’univers'}</span><small>Niv. ${p.level}</small></button>`;}).join('')}</div>`;
+  return `<div class="subtheme-tabs" role="group" aria-label="${c.id==='politics'?'Continent':'Sous-thème'} de ${c.name}">${['',...c.subs].map(s=>{const key=s?id+'::'+s:id,p=skillProgress(QUESTIONS,state,key);return `<button data-action="choose-subtheme" data-theme-key="${esc(key)}" aria-pressed="${s===(sub||'')}"><span>${s||(c.id==='politics'?'Général · tous les continents':'Tout l’univers')}</span><small>Niv. ${p.level}</small></button>`;}).join('')}</div>`;
 }
 function customThemePicker(openCategories){
   return `<fieldset class="custom-themes"><legend>Les thèmes de ton mélange</legend><div class="theme-choices">${CATEGORIES.map(c=>{const all=setup.themes.includes(c.id);return `<div><label class="theme-check"><input type="checkbox" data-theme="${c.id}" ${all?'checked':''}>${c.name}</label><details class="theme-detail" data-cat="${c.id}" ${openCategories.has(c.id)||setup.themes.some(t=>t.startsWith(c.id+'::'))?'open':''}><summary>Choisir les sous-thèmes</summary><div class="theme-sub">${c.subs.map(sub=>{const key=c.id+'::'+sub;return `<label class="theme-check"><input type="checkbox" data-theme="${esc(key)}" ${all||setup.themes.includes(key)?'checked':''} ${all?'disabled':''}>${sub}</label>`;}).join('')}</div></details></div>`;}).join('')}</div></fieldset>`;

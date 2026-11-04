@@ -1,4 +1,18 @@
-# Validation de Curiona 2.4
+# Validation de Curiona 3.0
+
+## Groupes mondiaux, mélanges et contenu — 4 novembre 2026
+
+Les 67 tests du jeu et les 66 tests d'intégration du serveur passent avec la banque finale de 4 400 questions. Chaque univers contient 400 questions, dont 100 par difficulté. Les neuf univers historiques reçoivent chacun 200 ajouts ; Politique et Drogues et prévention en contiennent chacun 400. Les 1 800 identifiants et contenus précédents restent disponibles, avec un recalibrage des difficultés à l'assemblage. Les tests de sauvegarde couvrent un ancien carnet complet et les 4 400 favoris.
+
+L'audit final ne détecte ni identifiant ou énoncé identique, ni explication dupliquée. Ses 29 proximités lexicales restantes sont des sujets distincts ou des formulations de même famille (pays, institutions, opérations différentes). Les notes `docs/content-v3-*-sources.md` décrivent les références et les limites de la revue ciblée ; l'audit structurel ne constitue pas une vérification exhaustive des faits.
+
+202 contrôles Chrome du solo, 22 du social, 30 des sanctions et 43 des nouveaux groupes passent. Ces derniers couvrent la découverte mondiale, l'entrée directe sans saisie de code, les mélanges d'univers, les salons privés, les invitations et la conservation du groupe entre les manches. L'hôte démarre manuellement ; une arrivée ne lance jamais la partie. Les captures ordinateur, tablette et mobile ont été inspectées. Ces formats sont émulés dans Chrome, sans appareil mobile physique.
+
+524 contrôles PDF passent sur six vrais téléchargements du jeu : erreurs, révision, 100 questions Maths Expert, astronomie, Politique · Océanie et Drogues et prévention. Les 45 pages ont été rendues ; la pagination et les pages représentatives ont été inspectées. Les énoncés, corrections, explications, caractères mathématiques et choix fautifs attendus sont présents, sans caractère hors page ni modification de la progression.
+
+Les tests serveur couvrent les salons publics et privés, le mélange équilibré, les huit participants, le lancement réservé à l'hôte, les manches successives avec le même accès, les requêtes périmées, les invitations privées et les écritures concurrentes. Une migration ajoutée crée les invitations sans réécrire les migrations antérieures. Les anciennes manches gardent leur difficulté historique jusqu'à leur fin.
+
+Les contrôles distants après publication sont consignés ci-dessous lorsqu'ils ont été exécutés. Les contrôles d'interface précédents utilisent une API simulée ; ils ne remplacent pas cette vérification distante.
 
 ## Battles à huit, lancement manuel et équité — 2 novembre 2026
 

@@ -7,7 +7,9 @@ export const CATEGORIES = [
   {id:'world',name:'Culture & monde',icon:'globe',color:'#aa523f',bg:'#f7e5de',description:'Voyager à travers les lieux, les arts et le temps.',subs:['Histoire','Géographie','Arts et culture','Civilisations et patrimoine']},
   {id:'tech',name:'Informatique',icon:'chip',color:'#58628a',bg:'#e8e9f3',description:'Comprendre les outils qui relient nos idées.',subs:['Numérique','Programmation','Réseaux','Données et cybersécurité']},
   {id:'language',name:'Langue française',icon:'book',color:'#8c6343',bg:'#f1e8da',description:'Le plaisir des mots, des phrases et des histoires.',subs:['Vocabulaire','Grammaire','Orthographe','Expression et littérature']},
-  {id:'daily',name:'Vie quotidienne',icon:'cup',color:'#527a78',bg:'#e2eeeb',description:'Des petits gestes aux grandes idées du quotidien.',subs:['Cuisine','Objets et matériaux','Mesures pratiques','Énergie au quotidien']}
+  {id:'daily',name:'Vie quotidienne',icon:'cup',color:'#527a78',bg:'#e2eeeb',description:'Des petits gestes aux grandes idées du quotidien.',subs:['Cuisine','Objets et matériaux','Mesures pratiques','Énergie au quotidien']},
+  {id:'prevention',name:'Drogues et prévention',icon:'mind',color:'#7b627d',bg:'#eee5f0',description:'Comprendre les effets, les risques et les façons de trouver de l’aide.',subs:['Substances et effets','Risques et dépendance','Prévention et entraide','Idées reçues et repères']},
+  {id:'politics',name:'Politique',icon:'globe',color:'#496b88',bg:'#e4edf5',description:'Institutions et histoire politique, en général ou par continent.',subs:['Afrique','Amérique du Nord','Amérique du Sud','Asie','Europe','Océanie']}
 ];
 export const DIFFICULTIES = ['','Débutant','Intermédiaire','Avancé','Expert'];
 export const MODES = [
@@ -143,7 +145,7 @@ export function parseSave(input,bank) {
   if(result.correct>result.total)throw Error('Statistiques incohérentes.');
   const ids=new Set(bank.map(q=>q.id));if(!raw.questions||typeof raw.questions!=='object'||Array.isArray(raw.questions))throw Error('Questions sauvegardées invalides.');
   if(raw.bookmarks!==undefined){
-    if(!Array.isArray(raw.bookmarks)||raw.bookmarks.length>2000||!raw.bookmarks.every(id=>typeof id==='string'))throw Error('Fiches sauvegardées invalides.');
+    if(!Array.isArray(raw.bookmarks)||raw.bookmarks.length>Math.max(2000,bank.length)||!raw.bookmarks.every(id=>typeof id==='string'))throw Error('Fiches sauvegardées invalides.');
     result.bookmarks=[...new Set(raw.bookmarks.filter(id=>ids.has(id)))];
   }
   if(raw.musicVolume!==undefined){

@@ -139,13 +139,17 @@ try{
   await screenshot('01-pdf-erreurs-desktop');
   await download({kind:'review',theme:'all',batchSize:20},'02-revision-globale');
   const experts=await download({kind:'learn',theme:'math',difficulty:4,batchSize:'all'},'03-apprendre-maths-expert');
-  check(experts.items.length===50&&experts.items.every(item=>item.question.category==='math'&&item.question.difficulty===4),'La fiche d’apprentissage respecte l’univers et la difficulté');
+  check(experts.items.length===100&&experts.items.every(item=>item.question.category==='math'&&item.question.difficulty===4),'La fiche d’apprentissage respecte l’univers et la difficulté');
   const astronomy=await download({kind:'learn',theme:'science::Astronomie',difficulty:1,batchSize:20},'04-apprendre-astronomie');
   check(astronomy.items.length>0&&astronomy.items.every(item=>item.question.subtheme==='Astronomie'),'La fiche précise reste dans le sous-thème sélectionné');
+  const politics=await download({kind:'learn',theme:'politics::Océanie',difficulty:4,batchSize:'all'},'05-politique-oceanie');
+  check(politics.items.length===10&&politics.items.every(item=>item.question.subtheme==='Océanie'&&item.question.category==='politics'),'Le PDF Politique respecte le continent et le niveau');
+  const prevention=await download({kind:'learn',theme:'prevention',difficulty:1,batchSize:20},'06-drogues-prevention');
+  check(prevention.items.length===20&&prevention.items.every(item=>item.question.category==='prevention'),'Le PDF de sensibilisation utilise le nouvel univers');
   const xpAfter=JSON.stringify((await snapshot()).state);
-  check(xpAfter===stateBefore,'Créer et télécharger les quatre fiches ne modifie pas la progression');
+  check(xpAfter===stateBefore,'Créer et télécharger les six fiches ne modifie pas la progression');
   const global=await selection({kind:'learn',theme:'all',batchSize:20});
-  check(global.total===1800&&global.parts===90,'L’apprentissage global donne accès à toute la banque par parties');
+  check(global.total===4400&&global.parts===220,'L’apprentissage global donne accès à toute la banque par parties');
   const next=await selection({kind:'learn',theme:'all',batchSize:20,part:2});
   check(!global.items.some(first=>next.items.some(second=>first.id===second.id)),'Deux parties successives ne répètent aucune question');
 
