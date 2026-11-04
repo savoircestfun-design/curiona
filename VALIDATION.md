@@ -12,7 +12,11 @@ L'audit final ne détecte ni identifiant ou énoncé identique, ni explication d
 
 Les tests serveur couvrent les salons publics et privés, le mélange équilibré, les huit participants, le lancement réservé à l'hôte, les manches successives avec le même accès, les requêtes périmées, les invitations privées et les écritures concurrentes. Une migration ajoutée crée les invitations sans réécrire les migrations antérieures. Les anciennes manches gardent leur difficulté historique jusqu'à leur fin.
 
-Les contrôles distants après publication sont consignés ci-dessous lorsqu'ils ont été exécutés. Les contrôles d'interface précédents utilisent une API simulée ; ils ne remplacent pas cette vérification distante.
+Après publication du serveur Sites version 5, 23 contrôles API réels passent : découverte d'un groupe mondial Nature + Politique, huit accès distincts, lancement par l'hôte, questions communes, mélange équilibré, calcul et cumul des points, gagnants, manche suivante dans le même groupe, chat conservé, refus d'une réponse de l'ancienne manche et invitation d'un ami dans un groupe privé protégé. Les dix participants de vérification ont quitté leurs salons et l'amitié de test a été retirée. Les deux profils sociaux QA restent identifiables comme tels ; aucun endpoint de suppression de profil n'est disponible. Reproduction : `node scripts/live-groups-qa.mjs --confirm-production`.
+
+17 contrôles supplémentaires passent sur le site public dans deux sessions Chrome réelles et isolées : découverte de la carte mondiale Nature + Politique, arrivée directe sans code, absence de lancement automatique, démarrage par l'hôte, même question et mêmes propositions, réponses CORS valides et affichage mobile 390 px sans débordement. Les captures ordinateur et mobile ont été inspectées. Les deux participants ont quitté par l'interface ; les profils temporaires ont été supprimés, sans erreur JavaScript ou réseau significative. Reproduction : `node scripts/live-world-browser-qa.mjs` après publication.
+
+Le serveur publié provient de `bb7037111399ff9a738a4837b69ec35636c4c7cf`. Le commit GitHub Pages de livraison est `0dd59f13ece21f368eb97e27d943f9afd792a358` ; son workflow de publication a réussi. Les quatre fichiers publics `index.html`, `game.bundle.js`, `battle.css` et `social.css` répondent en HTTP200 et leurs SHA-256 correspondent aux blobs Git de cette livraison. Les données personnelles et les jetons des participants ne figurent pas dans les rapports de QA.
 
 ## Battles à huit, lancement manuel et équité — 2 novembre 2026
 
