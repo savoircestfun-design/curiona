@@ -33,20 +33,20 @@ test('la préférence musicale est indépendante des effets et compatible avec l
   assert.equal(parseSave(legacy, bank).music, true);
 });
 
-test('la banque complète contient 4 500 questions, onze catégories et des niveaux équilibrés et quatre difficultés', () => {
-  assert.equal(bank.length, 4500);
-  assert.equal(CATEGORIES.length,11);
+test('la banque complète contient 4 900 questions, douze catégories et des niveaux équilibrés et quatre difficultés', () => {
+  assert.equal(bank.length, 4900);
+  assert.equal(CATEGORIES.length,12);
   assert.equal(validateBank(bank), true);
   assert.equal(new Set(bank.map(q => q.id)).size, bank.length);
   assert.ok(bank.some(q => q.type === 'boolean'));
   assert.ok(bank.filter(q => q.options.length === 4).length > 250);
   for (const category of CATEGORIES) {
     assert.equal(bank.filter(q => q.category === category.id).length, category.id==='prevention'?500:400, category.id);
-    assert.equal(category.subs.length,category.id==='politics'?6:category.id==='prevention'?5:4);
+    assert.equal(category.subs.length,category.id==='trades'?10:category.id==='politics'?6:category.id==='prevention'?5:4);
     for (const [subIndex,subtheme] of category.subs.entries()) {
-      const total=category.id==='politics'?[80,60,60,80,80,40][subIndex]:100;
+      const total=category.id==='trades'?40:category.id==='politics'?[80,60,60,80,80,40][subIndex]:100;
       assert.equal(bank.filter(q=>q.category===category.id&&q.subtheme===subtheme).length,total);
-      const target=category.id==='politics'||category.id==='prevention'?Array(4).fill(total/4):[[25,26,24,25],[25,25,25,25],[25,24,26,25],[25,25,25,25]][subIndex];
+      const target=['politics','prevention','trades'].includes(category.id)?Array(4).fill(total/4):[[25,26,24,25],[25,25,25,25],[25,24,26,25],[25,25,25,25]][subIndex];
       for (let difficulty = 1; difficulty <= 4; difficulty++) {
         assert.equal(bank.filter(q => q.category === category.id && q.subtheme === subtheme && q.difficulty === difficulty).length, target[difficulty-1], `${category.id}/${subtheme}/${difficulty}`);
       }
@@ -216,10 +216,10 @@ test('les filtres de difficulté restent stricts, y compris en révision', () =>
   for (const q of bank) state.questions[q.id] = { nextDue: 0 };
   for (let difficulty = 1; difficulty <= 4; difficulty++) {
     const selected = filterQuestions(bank, config({ difficulty }), state, 1);
-    assert.equal(selected.length, 1125);
+    assert.equal(selected.length, 1225);
     assert.ok(selected.every(q => q.difficulty === difficulty));
     const reviewed = filterQuestions(bank, config({ mode: 'review', difficulty }), state, 1);
-    assert.equal(reviewed.length, 1125);
+    assert.equal(reviewed.length, 1225);
     assert.ok(reviewed.every(q => q.difficulty === difficulty));
   }
   assert.equal(filterQuestions(bank, config({ difficulty: 9 }), state).length, 0);
@@ -250,7 +250,7 @@ test('le mélange personnalisé est une union sans doublons et accepte des sous-
 test('général et détente donnent accès au mélange complet indépendamment du dernier thème choisi', () => {
   const state = freshState();
   for (const mode of ['general', 'relax', 'challenge']) {
-    assert.equal(filterQuestions(bank, config({ mode, themes: ['math'] }), state).length, 4500);
+    assert.equal(filterQuestions(bank, config({ mode, themes: ['math'] }), state).length, 4900);
   }
 });
 
@@ -271,7 +271,7 @@ test('les portées tous les thèmes, univers entier et mélange personnalisé on
   const state = freshState();
   for (const q of bank) state.questions[q.id] = { nextDue: 0 };
   for (const mode of ['general', 'specific', 'custom', 'review', 'challenge', 'relax']) {
-    assert.equal(filterQuestions(bank, config({ mode, scope: 'all', themes: ['math'] }), state, 1).length, 4500, mode);
+    assert.equal(filterQuestions(bank, config({ mode, scope: 'all', themes: ['math'] }), state, 1).length, 4900, mode);
     const universe = filterQuestions(bank, config({ mode, scope: 'single', themes: ['nature'] }), state, 1);
     assert.equal(universe.length, 400, mode);
     assert.ok(universe.every(q => q.category === 'nature'), mode);
@@ -322,7 +322,7 @@ test('la banque entière peut être parcourue une fois sans doublon dans une mê
     assert.ok(!used.includes(next.id));
     used.push(next.id);
   }
-  assert.equal(new Set(used).size, 4500);
+  assert.equal(new Set(used).size, 4900);
   assert.equal(pickQuestion(bank, state, config(), used, random), null);
 });
 

@@ -1,6 +1,6 @@
 # Curiona — La curiosité se cultive
 
-Un jeu éducatif en français : **4 500 questions**, **11 univers** — dix de 400 questions et **Addictions et prévention de 500 questions** —, **47 sous-thèmes et continents**, **4 difficultés**, **4 façons de jouer en solo** et des **battles en ligne entre amis**. Gratuit et sans compte obligatoire. En solo, les questions, les explications et les ressources du jeu sont intégrées aux fichiers ; les réponses sont corrigées directement dans le navigateur.
+Un jeu éducatif en français : **4 900 questions**, **12 univers** — onze de 400 questions et **Addictions et prévention de 500 questions** —, **57 sous-thèmes et continents**, **4 difficultés**, **4 façons de jouer en solo** et des **battles en ligne entre amis**. Gratuit et sans compte obligatoire. En solo, les questions, les explications et les ressources du jeu sont intégrées aux fichiers ; les réponses sont corrigées directement dans le navigateur.
 
 ## Jouer
 
@@ -64,9 +64,9 @@ On peut refuser une demande, retirer un ami ou bloquer une personne depuis Amis.
 
 ## Jouer à son rythme
 
-Choisir d’abord **les thèmes** : un univers complet, un sous-thème précis, tous les univers ou un mélange personnalisé. Les cartes de l’accueil donnent accès directement aux 47 sous-thèmes et continents et à leur niveau. Le bouton **Modifier** dans les réglages permet de changer cette sélection.
+Choisir d’abord **les thèmes** : un univers complet, un sous-thème précis, tous les univers ou un mélange personnalisé. Les cartes de l’accueil donnent accès directement aux 57 sous-thèmes et continents et à leur niveau. Le bouton **Modifier** dans les réglages permet de changer cette sélection.
 
-La version **3.1** conserve les **1 800 questions historiques** et ajoute **2 700 questions** : 200 dans chacun des neuf univers d’origine, 500 dans **Addictions et prévention** et 400 dans **Politique**. Les dix univers de 400 questions contiennent chacun 100 questions de chaque difficulté ; Addictions et prévention en contient 125 par difficulté. Les anciens niveaux 1/2 sont regroupés au niveau Intermédiaire, les anciens niveaux 3/4 au niveau Avancé ; les nouveaux Débutant et Expert proposent respectivement des repères plus accessibles et des raisonnements ou connaissances plus poussés. Les textes, réponses et identifiants précédents restent stables pour conserver les carnets. Les sources originales ne sont pas réécrites : le recalibrage est appliqué dans la banque commune.
+La version **3.2** conserve les **1 800 questions historiques** et ajoute **3 100 questions** : 200 dans chacun des neuf univers d’origine, 500 dans **Addictions et prévention**, 400 dans **Politique** et 400 dans **Métiers**. Les onze univers de 400 questions contiennent chacun 100 questions de chaque difficulté ; Addictions et prévention en contient 125 par difficulté. Les anciens niveaux 1/2 sont regroupés au niveau Intermédiaire, les anciens niveaux 3/4 au niveau Avancé ; les nouveaux Débutant et Expert proposent respectivement des repères plus accessibles et des raisonnements ou connaissances plus poussés. Les textes, réponses et identifiants précédents restent stables pour conserver les carnets. Les sources originales ne sont pas réécrites : le recalibrage est appliqué dans la banque commune.
 
 | Univers | Sous-thèmes ou continents |
 | --- | --- |
@@ -81,6 +81,9 @@ La version **3.1** conserve les **1 800 questions historiques** et ajoute **2 70
 | Vie quotidienne | Cuisine · Objets et matériaux · Mesures pratiques · Énergie au quotidien |
 | Addictions et prévention | Substances et effets · Risques et dépendance · Prévention et entraide · Idées reçues et repères · Habitudes, jeux et alimentation |
 | Politique | Afrique · Amérique du Nord · Amérique du Sud · Asie · Europe · Océanie |
+| Métiers | Peintre en bâtiment · Électricien · Carreleur · Plombier · Menuisier · Maçon · Couvreur · Mécanicien automobile · Boulanger · Jardinier paysagiste |
+
+L’univers **Métiers** propose 40 questions par métier, soit 10 par difficulté, sur les outils, les matériaux, le vocabulaire et les situations professionnelles. Chaque métier se sélectionne en solo, en battle et dans les fiches PDF. Les réponses sont accompagnées d’explications et de références.
 
 Les neuf univers d’origine comptent quatre sous-thèmes de 100 questions. **Addictions et prévention** en propose cinq de 100 questions : les quatre premiers sont conservés, et **Habitudes, jeux et alimentation** ajoute 100 questions réparties en 25 questions de chaque niveau. Politique propose **Général · tous les continents** ou un filtre continental : Afrique, Asie et Europe 80 questions chacune ; Amérique du Nord et Amérique du Sud 60 chacune ; Océanie 40. Les niveaux sont répartis également dans chaque continent. Le filtre est disponible en solo, en battle et dans les fiches PDF. Les questions politiques portent sur les institutions et l'histoire, sans prise de position partisane.
 
@@ -113,7 +116,7 @@ Le petit bouton de **réglage à côté de la note de musique** ouvre son volume
 
 ## Fiches PDF pour réviser ou apprendre
 
-L’onglet **Fiches PDF** propose trois contenus : **Mes questions déjà manquées**, **Réviser les notions déjà vues** et **Apprendre de nouvelles notions**. Choisir tous les univers, un univers précis ou un sous-thème, puis éventuellement une difficulté. Les fiches couvrent 20 ou 50 notions par partie, ou toute la sélection sur demande. Un aperçu et les numéros des parties indiquent exactement ce qui sera téléchargé. Une fiche globale d’apprentissage présente les onze univers dès la première partie.
+L’onglet **Fiches PDF** propose trois contenus : **Mes questions déjà manquées**, **Réviser les notions déjà vues** et **Apprendre de nouvelles notions**. Choisir tous les univers, un univers précis ou un sous-thème, puis éventuellement une difficulté. Les fiches couvrent 20 ou 50 notions par partie, ou toute la sélection sur demande. Un aperçu et les numéros des parties indiquent exactement ce qui sera téléchargé. Une fiche globale d’apprentissage présente les douze univers dès la première partie.
 
 Chaque PDF contient les questions, les bonnes réponses, les explications et les sources lorsqu’elles sont disponibles. Les fiches d’erreurs ajoutent le dernier choix incorrect enregistré. Les anciens carnets n’ayant pas conservé ce choix restent utilisables : la fiche le signale sans inventer de réponse. Le temps écoulé est indiqué séparément. Après une partie, **Préparer mon PDF de révision** limite la fiche aux erreurs de cette partie.
 
@@ -123,7 +126,7 @@ Les PDF sont générés dans le navigateur, sans transmettre le carnet à un ser
 
 Une bonne réponse rapporte 100 / 125 / 150 / 175 points selon la difficulté, plus un bonus de série allant jusqu’à 50 points. Elle donne 30 / 35 / 40 / 45 XP. Une erreur donne 8 XP et ne retire rien. Le niveau joueur vaut `1 + floor(sqrt(XP / 100))`.
 
-Chaque univers et chacun des **47 sous-thèmes et continents** possède son propre niveau de compétence, sa jauge d’expérience, sa précision et ses notions consolidées. Une réponse en Jardinage fait progresser Jardinage et Nature & jardin, sans ajouter d’XP à Plantes ou à Arbres. Le niveau de compétence utilise les mêmes seuils d’XP que le niveau global. Il reflète la progression dans le jeu ; la précision et la consolidation complètent cet indicateur.
+Chaque univers et chacun des **57 sous-thèmes et continents** possède son propre niveau de compétence, sa jauge d’expérience, sa précision et ses notions consolidées. Une réponse en Jardinage fait progresser Jardinage et Nature & jardin, sans ajouter d’XP à Plantes ou à Arbres. Le niveau de compétence utilise les mêmes seuils d’XP que le niveau global. Il reflète la progression dans le jeu ; la précision et la consolidation complètent cet indicateur.
 
 La **difficulté conseillée** est distincte du niveau de compétence : l’adaptatif suit chaque sous-thème séparément, à partir du niveau débutant. Trois réussites consécutives le font monter d’un cran ; deux erreurs consécutives le font redescendre. Le tirage favorise le niveau ciblé sans exclure totalement les autres niveaux. Le choix explicite d’une difficulté constitue, lui, un filtre strict.
 
@@ -206,7 +209,7 @@ export default [{
 }];
 ```
 
-Les catégories et sous-thèmes autorisés sont décrits par `CATEGORIES` dans le moteur. Le build refuse les identifiants et énoncés dupliqués, les thèmes inconnus, les options invalides, les corrections manquantes et une distribution différente des effectifs attendus : dix univers de 400 questions et Addictions et prévention de 500 questions. Les tests de distribution décrivent la banque livrée de 4 500 questions ; les adapter si celle-ci s’enrichit. La détection de proximités lexicales de l’audit est une aide à la relecture, pas une validation automatique des faits.
+Les catégories et sous-thèmes autorisés sont décrits par `CATEGORIES` dans le moteur. Le build refuse les identifiants et énoncés dupliqués, les thèmes inconnus, les options invalides, les corrections manquantes et une distribution différente des effectifs attendus : onze univers de 400 questions et Addictions et prévention de 500 questions. Les tests de distribution décrivent la banque livrée de 4 900 questions ; les adapter si celle-ci s’enrichit. La détection de proximités lexicales de l’audit est une aide à la relecture, pas une validation automatique des faits.
 
 ## Vérification et limites
 

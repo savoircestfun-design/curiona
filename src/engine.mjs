@@ -9,7 +9,8 @@ export const CATEGORIES = [
   {id:'language',name:'Langue française',icon:'book',color:'#8c6343',bg:'#f1e8da',description:'Le plaisir des mots, des phrases et des histoires.',subs:['Vocabulaire','Grammaire','Orthographe','Expression et littérature']},
   {id:'daily',name:'Vie quotidienne',icon:'cup',color:'#527a78',bg:'#e2eeeb',description:'Des petits gestes aux grandes idées du quotidien.',subs:['Cuisine','Objets et matériaux','Mesures pratiques','Énergie au quotidien']},
   {id:'prevention',name:'Addictions et prévention',icon:'mind',color:'#7b627d',bg:'#eee5f0',description:'Alcool, tabac, autres drogues, jeux, écrans et alimentation : comprendre les risques et trouver de l’aide.',subs:['Substances et effets','Risques et dépendance','Prévention et entraide','Idées reçues et repères','Habitudes, jeux et alimentation']},
-  {id:'politics',name:'Politique',icon:'globe',color:'#496b88',bg:'#e4edf5',description:'Institutions et histoire politique, en général ou par continent.',subs:['Afrique','Amérique du Nord','Amérique du Sud','Asie','Europe','Océanie']}
+  {id:'politics',name:'Politique',icon:'globe',color:'#496b88',bg:'#e4edf5',description:'Institutions et histoire politique, en général ou par continent.',subs:['Afrique','Amérique du Nord','Amérique du Sud','Asie','Europe','Océanie']},
+  {id:'trades',name:'Métiers',icon:'tools',color:'#94612d',bg:'#f4eadb',description:'Peintre, électricien, carreleur… découvre les outils, les matériaux et les savoir-faire de dix métiers.',subs:['Peintre en bâtiment','Électricien','Carreleur','Plombier','Menuisier','Maçon','Couvreur','Mécanicien automobile','Boulanger','Jardinier paysagiste']}
 ];
 export const DIFFICULTIES = ['','Débutant','Intermédiaire','Avancé','Expert'];
 export const MODES = [

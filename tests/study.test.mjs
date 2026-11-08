@@ -6,13 +6,13 @@ import {studySelection} from '../src/study.mjs';
 
 test('une fiche pour apprendre fonctionne sans carnet et couvre tous les univers',()=>{
   const selected=studySelection(bank,freshState(),{kind:'learn'});
-  assert.equal(selected.total,4500);assert.equal(selected.items.length,20);assert.equal(selected.parts,225);
+  assert.equal(selected.total,4900);assert.equal(selected.items.length,20);assert.equal(selected.parts,245);
   assert.deepEqual(new Set(selected.items.map(item=>item.question.category)),new Set(CATEGORIES.map(c=>c.id)));
 });
 test('les parties de découverte sont complètes, stables et sans doublons entre PDF',()=>{
   const ids=[];
-  for(let part=1;part<=90;part++)ids.push(...studySelection(bank,freshState(),{kind:'learn',batchSize:50,part}).items.map(item=>item.id));
-  assert.equal(ids.length,4500);assert.equal(new Set(ids).size,4500);
+  for(let part=1;part<=98;part++)ids.push(...studySelection(bank,freshState(),{kind:'learn',batchSize:50,part}).items.map(item=>item.id));
+  assert.equal(ids.length,4900);assert.equal(new Set(ids).size,4900);
   assert.deepEqual(ids.slice(50,100),studySelection(bank,freshState(),{kind:'learn',batchSize:50,part:2}).items.map(item=>item.id));
 });
 test('une fiche précise respecte univers, sous-thème et difficulté simultanément',()=>{

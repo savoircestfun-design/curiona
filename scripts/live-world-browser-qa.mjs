@@ -1,4 +1,4 @@
-// Smoke test de production : exécuter seulement après publication de Curiona 3.1.
+// Smoke test de production : exécuter seulement après publication de Curiona 3.2.
 // Deux profils Chrome jetables ; aucune interception réseau ni profil personnel.
 import {spawn} from 'node:child_process';
 import {mkdtemp,readFile,writeFile,mkdir,rm} from 'node:fs/promises';
@@ -87,7 +87,7 @@ try{
     await c.send('Page.navigate',{url:site+'?qa_world='+stamp+'#battles'});
     await until(c,'!!window.Curiona&&!!document.querySelector("#battle-world-groups")','version mondiale publiée');
     await check(c,'Curiona.info().categories.find(c=>c.id==="prevention").count===500&&Curiona.study({kind:"learn",theme:"prevention::Habitudes, jeux et alimentation",batchSize:"all"}).total===100','Les 500 questions Addictions et les 100 nouveaux repères sont publiés ('+c.role+')');
-    await check(c,'Curiona.info().questions===4500','La version publiée charge 4 500 questions ('+c.role+')');
+    await check(c,'Curiona.info().questions===4900','La version publiée charge 4 900 questions ('+c.role+')');
     await check(c,'!sessionStorage.getItem("curiona.battle.session.v1")&&!localStorage.getItem("curiona.social.profile.v1")','Session isolée sans profil ni groupe préexistant ('+c.role+')');
   }
   await input(host,'#battle-name','QA Mondial hôte');await input(host,'#battle-title',title);

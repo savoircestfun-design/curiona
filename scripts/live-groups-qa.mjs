@@ -38,7 +38,7 @@ async function cleanup(){
 
 let failure=null;
 try{
-  check(bank.length===4500&&bank.some(q=>q.category==='politics'),'La QA utilise la banque finale de 4 500 questions.');
+  check(bank.length===4900&&bank.some(q=>q.category==='politics'),'La QA utilise la banque finale de 4 900 questions.');
   const title='QA Curiona mondial '+stamp;
   const created=await api('create',{name:'QA Monde '+stamp+' 1',title,themes:['nature','politics'],difficulty:'all',count:8,maxPlayers:8,visibility:'public',listed:true,password:''});
   const host=remember(created),actors=[host];

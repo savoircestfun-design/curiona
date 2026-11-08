@@ -18,8 +18,8 @@ test('toutes les questions historiques conservent exactement leur identifiant et
   }
 });
 test('la banque est équilibrée et les nouveaux univers fonctionnent dans tous les modes',()=>{
-  assert.equal(bank.length,4500);assert.equal(CATEGORIES.length,11);assert.equal(validateBank(bank),true);
-  for(const category of ['language','daily','prevention','politics'])for(const mode of ['general','specific','custom','challenge','relax','review']){
+  assert.equal(bank.length,4900);assert.equal(CATEGORIES.length,12);assert.equal(validateBank(bank),true);
+  for(const category of ['language','daily','prevention','politics','trades'])for(const mode of ['general','specific','custom','challenge','relax','review']){
     const state=freshState();if(mode==='review')for(const q of bank)state.questions[q.id]={nextDue:0};
     const selected=filterQuestions(bank,{scope:'single',mode,themes:[category],difficulty:'adaptive'},state,1);
     assert.equal(selected.length,category==='prevention'?500:400);assert.ok(selected.every(q=>q.category===category));

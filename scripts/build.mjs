@@ -22,5 +22,5 @@ const study=(await readFile(path.join(root,'src/study.mjs'),'utf8')).replace(/^i
 const studyUi=await readFile(path.join(root,'src/study-ui.js'),'utf8');
 await mkdir(path.join(root,'dist'),{recursive:true});
 await writeFile(path.join(root,'dist/.nojekyll'),'');
-await writeFile(path.join(root,'dist/game.bundle.js'),`/* Curiona 3.1 — généré par npm run build. */\n(()=>{\n'use strict';\n${engine}\nconst QUESTIONS=${JSON.stringify(bank)};\n${music}\n${themeUi}\n${discovery}\n${notebook}\n${comfort}\n${study}\n${studyUi}\n${battleConfig}\n${battleUi}\n${socialUi}\n${battleAttention}\n${app}\n})();\n`);
+await writeFile(path.join(root,'dist/game.bundle.js'),`/* Curiona 3.2 — généré par npm run build. */\n(()=>{\n'use strict';\n${engine}\nconst QUESTIONS=${JSON.stringify(bank)};\n${music}\n${themeUi}\n${discovery}\n${notebook}\n${comfort}\n${study}\n${studyUi}\n${battleConfig}\n${battleUi}\n${socialUi}\n${battleAttention}\n${app}\n})();\n`);
 console.log(`${bank.length} questions intégrées. Distribution : ${CATEGORIES.map(c=>c.name+' '+bank.filter(q=>q.category===c.id).length).join(' · ')}`);

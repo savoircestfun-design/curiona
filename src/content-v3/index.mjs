@@ -10,5 +10,8 @@ import daily from './daily.mjs';
 import prevention from './prevention.mjs';
 import politics from './politics.mjs';
 import addictionsBehaviours from './addictions-behaviours.mjs';
+import tradesFinishes from './trades-finishes.mjs';
+import tradesConstruction from './trades-construction.mjs';
+import tradesCrafts from './trades-crafts.mjs';
 
-export default [...animals,...nature,...math,...mind,...science,...world,...tech,...language,...daily,...prevention,...politics,...addictionsBehaviours];
+export default [...animals,...nature,...math,...mind,...science,...world,...tech,...language,...daily,...prevention,...politics,...addictionsBehaviours,...tradesFinishes,...tradesConstruction,...tradesCrafts];

@@ -1,4 +1,14 @@
-# Validation de Curiona 3.1
+# Validation de Curiona 3.2
+
+## Métiers — 8 novembre 2026
+
+L'univers **Métiers** ajoute 400 questions : 40 pour chacun des dix métiers, dont 10 par difficulté. Peintre en bâtiment, Électricien, Carreleur, Plombier, Menuisier, Maçon, Couvreur, Mécanicien automobile, Boulanger et Jardinier paysagiste disposent de filtres et de progressions indépendants. La banque compte désormais 4 900 questions, 12 univers et 57 sous-thèmes/continents. Les questions existantes et les identifiants du carnet sont conservés.
+
+Les 400 ajouts ont des identifiants et énoncés uniques, quatre réponses distinctes, une explication d'au moins 70 caractères et une référence HTTPS. Les sources comprennent Onisep, INRS, des organismes professionnels et des documentations de fabricants. Les calculs ont été relus et trois formulations ambiguës ont été corrigées. L'audit lexical signale quelques applications d'une même notion de mesure dans plusieurs métiers, sans explication dupliquée. Les situations électriques et les travaux en hauteur restent des questions de connaissances et de prévention.
+
+69 tests du jeu et 67 tests d'intégration du serveur passent. Ils couvrent notamment chacun des dix métiers aux quatre niveaux, les modes solo et révision, la sélection des fiches PDF, la conservation de la progression, les mélanges en battle et les parties raccourcies lorsqu'un filtre ne contient que dix questions. 238 contrôles Chrome passent sur la version construite : dix accès directs, filtres Expert, vraies réponses Peintre/Électricien/Carreleur et progression associée, ancien carnet, sauvegarde et import. Les captures de sélection et de correction ont été inspectées sur ordinateur et mobile émulé à 390 px, sans appareil physique.
+
+Le serveur Sites version 7 utilise le commit `bc18846e5fcef299fdaa7ebe133c56b84d6d6ddf`. Vérification publiée ciblée : `node scripts/live-trades-qa.mjs --confirm-production` ; le script compare les fichiers publics à la construction locale et vérifie les métiers dans un salon privé, puis fait sortir les deux participants QA.
 
 ## Addictions et prévention — 4 novembre 2026
 

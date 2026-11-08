@@ -4,6 +4,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const nf=new Intl.NumberFormat('fr-FR');
 const fmt=n=>nf.format(n);
 const paths={
+  tools:'<path d="m14 6 4-4a6 6 0 0 1-7 8L4 17a2 2 0 0 0 3 3l7-7a6 6 0 0 0 8-7l-4 4Z"/>',
   spark:'<path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/><circle cx="12" cy="12" r="3"/>',
   arrow:'<path d="M4 12h16m-6-6 6 6-6 6"/>',back:'<path d="M20 12H4m6-6-6 6 6 6"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',
   leaf:'<path d="M20 3C6 2 2 8 5 15s15 4 15-12Z"/><path d="M3 22 17 7M9 16l-1-5m5 1 4 1"/>',

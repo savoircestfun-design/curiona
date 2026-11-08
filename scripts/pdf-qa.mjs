@@ -149,7 +149,7 @@ try{
   const xpAfter=JSON.stringify((await snapshot()).state);
   check(xpAfter===stateBefore,'Créer et télécharger les six fiches ne modifie pas la progression');
   const global=await selection({kind:'learn',theme:'all',batchSize:20});
-  check(global.total===4500&&global.parts===225,'L’apprentissage global donne accès à toute la banque par parties');
+  check(global.total===4900&&global.parts===245,'L’apprentissage global donne accès à toute la banque par parties');
   const next=await selection({kind:'learn',theme:'all',batchSize:20,part:2});
   check(!global.items.some(first=>next.items.some(second=>first.id===second.id)),'Deux parties successives ne répètent aucune question');
 
