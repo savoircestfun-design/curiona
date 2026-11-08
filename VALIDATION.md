@@ -8,7 +8,7 @@ Les 400 ajouts ont des identifiants et énoncés uniques, quatre réponses disti
 
 69 tests du jeu et 67 tests d'intégration du serveur passent. Ils couvrent notamment chacun des dix métiers aux quatre niveaux, les modes solo et révision, la sélection des fiches PDF, la conservation de la progression, les mélanges en battle et les parties raccourcies lorsqu'un filtre ne contient que dix questions. 238 contrôles Chrome passent sur la version construite : dix accès directs, filtres Expert, vraies réponses Peintre/Électricien/Carreleur et progression associée, ancien carnet, sauvegarde et import. Les captures de sélection et de correction ont été inspectées sur ordinateur et mobile émulé à 390 px, sans appareil physique.
 
-Le serveur Sites version 7 utilise le commit `bc18846e5fcef299fdaa7ebe133c56b84d6d6ddf`. Vérification publiée ciblée : `node scripts/live-trades-qa.mjs --confirm-production` ; le script compare les fichiers publics à la construction locale et vérifie les métiers dans un salon privé, puis fait sortir les deux participants QA.
+Le serveur Sites version 7 utilise le commit `bc18846e5fcef299fdaa7ebe133c56b84d6d6ddf` et GitHub Pages le commit `ed8fbd23f736814b837f5d08d619d7f43a6db6a2`. Les 16 contrôles publiés passent : les contenus de `index.html` et `game.bundle.js` correspondent à la construction locale après normalisation des fins de ligne Windows ; les dix métiers sont acceptés en Expert dans une battle privée ; deux joueurs reçoivent la même question de carreleur, la bonne correction et des points. Les deux participants QA ont quitté. Reproduction : `node scripts/live-trades-qa.mjs --confirm-production`.
 
 ## Addictions et prévention — 4 novembre 2026
 

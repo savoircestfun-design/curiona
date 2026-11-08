@@ -22,7 +22,8 @@ try{
     const response=await fetch('https://savoircestfun-design.github.io/curiona/'+file+'?qa='+Date.now(),{signal:AbortSignal.timeout(30000)});
     assert.equal(response.status,200,file);
     const live=Buffer.from(await response.arrayBuffer()),local=await readFile(new URL('../dist/'+file,import.meta.url));
-    const hash=buffer=>createHash('sha256').update(buffer).digest('hex');
+    // Git normalise les fins de ligne ; les sources Windows peuvent garder CRLF.
+    const hash=buffer=>createHash('sha256').update(buffer.toString('utf8').replace(/\r\n/g,'\n')).digest('hex');
     check(hash(live)===hash(local),'Le fichier publié correspond à la version vérifiée : '+file);
   }
   const created=await api('create',{name:'QA Métiers hôte',title:'QA Métiers privée',themes:['trades'],difficulty:'all',count:50,maxPlayers:2,visibility:'private'});
